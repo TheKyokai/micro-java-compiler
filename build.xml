@@ -1,11 +1,20 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="MJCompiler" basedir=".">
-
+<project name="MJCompiler" default="compile" basedir=".">
+	
+	<target name="cleanLogs">
+		<delete>
+			<fileset dir="./logs">
+			</fileset>
+		</delete>
+	</target>
+	
+	
 	<target name="clean">
 		<delete>
 			<fileset dir="./src/rs/ac/bg/etf/pp1">
 			    <exclude name="util/Log4JUtils.java"/>
-				<exclude name="Yylex.java"/>
+				<exclude name="Compiler.java"/>
+				<exclude name="SemanticAnalyzer.java"/>
 			</fileset>
 		</delete>
 		<delete>
@@ -21,20 +30,32 @@
 			<arg value="-d"/>
 			<arg value="./src/rs/ac/bg/etf/pp1"/>
 			<arg value="./src/spec/mjlexer.flex"/>
+			
+			<redirector
+				output="build_logs/lexer_build.txt"
+				error="build_logs/lexer_build_error.txt"
+				append="false"
+			/>
 		</java>
 	</target>
 	
-	<target name="parserGen" depends="clean">
-		<java jar="lib/cup_v10k.jar" fork="true">
+	<target name="parserGen" depends="lexerGen">
+		<java jar="./lib/cup_v10k.jar" fork="true">
 			<arg value="-destdir"/>
 			<arg value="./src/rs/ac/bg/etf/pp1"/>
-			<!-- <arg value="-ast"/>
-			<arg value="src.rs.ac.bg.etf.pp1.ast"/>  -->
+			<arg value="-ast"/>
+			<arg value="src.rs.ac.bg.etf.pp1.ast"/>
 			<arg value="-parser"/>
 			<arg value="MJParser"/>
-			<arg value="-dump_states"/>
-			<!-- <arg value="-buildtree"/> -->
-			<arg value="./spec/mjparser.cup"/>
+			<!-- <arg value="-dump_states"/> -->
+			<arg value="-buildtree"/>
+			<arg value="./src/spec/mjparser.cup"/>
+			
+			<redirector
+				output="build_logs/parser_build.txt"
+				error="build_logs/parser_build_error.txt"
+				append="false"
+			/>
 		</java>
 	</target>
 	
@@ -49,6 +70,7 @@
 				<pathelement path="./lib/JFlex.jar"/>
 				<pathelement path="./lib/cup_v10k.jar"/>
 				<pathelement path="./lib/log4j-1.2.17.jar"/>
+				<pathelement path="./lib/symboltable-1-1.jar"/>
 			</classpath>
 		</javac>
 	</target>

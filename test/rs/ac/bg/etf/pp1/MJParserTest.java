@@ -37,19 +37,12 @@ public class MJParserTest {
 			MJParser p = new MJParser(lexer);
 	        Symbol s = p.parse();  //pocetak parsiranja
 	        
-	        Program prog = (Program)(s.value); 
-			// ispis sintaksnog stabla
-			log.info(prog.toString(""));
-			log.info("===================================");
-
-			// ispis prepoznatih programskih konstrukcija
-			RuleVisitor v = new RuleVisitor();
-			prog.traverseBottomUp(v); 
-	      
-			log.info(" Print count calls = " + v.printCallCount);
-
-			log.info(" Deklarisanih promenljivih ima = " + v.varDeclCount);
+	        log.info("==================== Syntax analysis ====================");
+	        
+	        Program prog = (Program)(s.value);
+			log.info(prog.toString("")); 
 			
+
 		} 
 		finally {
 			if (br != null) try { br.close(); } catch (IOException e1) { log.error(e1.getMessage(), e1); }

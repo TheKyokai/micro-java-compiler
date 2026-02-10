@@ -1,5 +1,5 @@
 /*------------------------- PACKAGE AND IMPORT -------------------------*/
-package rs.ac.bg.etf.pp1
+package rs.ac.bg.etf.pp1;
 
 
 import java_cup.runtime.*;
@@ -19,6 +19,7 @@ import rs.ac.bg.etf.pp1.ast.*;
 parser code {:
 
 	Logger log = Logger.getLogger(getClass());
+	boolean error_detected = false; 
    
      
     public void report_fatal_error(String message, Object info) throws java.lang.Exception {
@@ -27,18 +28,19 @@ parser code {:
     }
   
     public void syntax_error(Symbol cur_token) {
-        report_error("\nSintaksna greska", cur_token);
+        report_error("\nSyntax error", cur_token);
     }
   
     public void unrecovered_syntax_error(Symbol cur_token) throws java.lang.Exception {
-        report_fatal_error("Fatalna greska, parsiranje se ne moze nastaviti", cur_token);
+        report_fatal_error("Fatal error, parsing cannot continue", cur_token);
     }
 
     public void report_error(String message, Object info) {
     	StringBuilder msg = new StringBuilder(message); 
     	if (info instanceof Symbol)
-            msg.append (" na liniji ").append(((Symbol)info).left);
+            msg.append (" on line ").append(((Symbol)info).left);
         log.error(msg.toString());
+        error_detected = true;
     }
 
 
@@ -47,8 +49,8 @@ parser code {:
 
 scan with {:
 	Symbol s = this.getScanner().next_token();
-	if (s != null && s.value != null) 
-		log.info(s.toString() + " " + s.value.toString());
+	//if (s != null && s.value != null) 
+		//log.info(s.toString() + " " + s.value.toString());
 	return s;
 :}
 
@@ -86,18 +88,25 @@ terminal Boolean BOOLCONST;
 
 nonterminal Program;
 nonterminal GlobalDeclList, GlobalDecl;
-nonterminal ConstDecl, ConstVal, MultConstDecl;			/* Constant related nonterminals */
-nonterminal VarDecl, MultVarDecl, ArrayDecl; 			/* Variable related nonterminals */
-nonterminal EnumDecl, EnumDeclList, NumConstAssign;		/* Enumeration related nonterminals */
-nonterminal ClassDecl, ClassExtension, FieldDeclList, ClassMethods, ClassMethodDeclList; 	/* Class related nonterminals */
+nonterminal ConstDecl, MultConstDecl, SingleConstDecl;													/* Constant related nonterminals */
+nonterminal VarDecl, MultVarDecl, ArrayDecl, SingleVarDecl; 											/* Variable related nonterminals */
+nonterminal EnumDecl, EnumDeclList, SingleIdentEnumDecl, NumConstAssign;						        /* Enumeration related nonterminals */	
+nonterminal ClassDecl, ClassName, ClassExtension;
+nonterminal ExtFieldIntercept, FieldDeclList, FieldDecl;
+nonterminal ClassMethods, ExtMethodIntercept, ExtMethodEIntercept, ClassMethodDeclList, ClassMethodDecl, ClassMethodName; 	
 nonterminal AbsClassDecl, AbsClassMethods, AbsClassMethodList, AbsMethodDecl;
 
-nonterminal MethodDeclList, MethodDecl, ReturnType, FormalParamList, FormalParam, MultFormalParam, VarDeclList;
-nonterminal StatementList, Statement, Designator, DesignatorStatement, ForDesignatorStmnt, ForCondition, CaseList;
-nonterminal Condition, CondTerm, MultCondTerm, CondFact, MultCondFact;
+nonterminal MethodDeclList, MethodDecl, ReturnType, MethodName, FormalParamList, FormalParams, FormalParam, VarDeclList;
+nonterminal StatementList, Statement, Designator, DesignatorStatement, DesignatorChain, ForDesignatorStmnt, ForCondition, CaseList;
+nonterminal Condition, CondTerm, CondFact;
+nonterminal ActualParamList, ActualParam, MultActualParam;
 nonterminal Expr, Term, TermList, Factor, FactorList;
 
 nonterminal Assignop, Relop, Addop, Mulop;
+
+
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName, EnumName, Type;
+nonterminal rs.etf.pp1.symboltable.concepts.Struct ConstVal;
 
 
 
@@ -118,330 +127,381 @@ precedence left ELSE;
 /*------------------------- GRAMMAR -------------------------*/
 
 
-Program 			::= PROG IDENT GlobalDeclList LBRACE MethodDeclList RBRACE;
+Program 			::= (Program) PROG ProgramName:programName GlobalDeclList LBRACE MethodDeclList RBRACE;
+
+
+ProgramName			::= (ProgramName) IDENT:programName;
+
 
 
 /*------------------------- Non Method Declarations -------------------------*/
 
-GlobalDeclList 		::= GlobalDeclList GlobalDecl
-				 	| 
-			 	 	/* epsilon */;
+GlobalDeclList 		::= (GlobalDecls) GlobalDeclList GlobalDecl
+					 	| 
+				 	 	(EmptyGlobalDeclList) /* epsilon */;
 
 
-GlobalDecl 			::= ConstDecl
-					|
-					VarDecl
-					|
-					ClassDecl
-					|
-					EnumDecl
-					|
-					AbsClassDecl;
+GlobalDecl 			::= (GlobalConstDecl) ConstDecl
+						|
+						(GlobalVarDecl) VarDecl
+						|
+						(GlobalClassDecl) ClassDecl
+						|
+						(GlobalEnumDecl) EnumDecl
+						|
+						(GlobalAbsClassDecl) AbsClassDecl;
 				
 
 
 /*------------------------- Constant Declaration -------------------------*/
 
-ConstDecl			::= CONST Type IDENT ASSIGN ConstVal MultConstDecl SEMI;
+ConstDecl			::= (ConstDecl) CONST Type MultConstDecl SEMI;
 
 
-MultConstDecl		::= MultConstDecl COMMA IDENT ASSIGN ConstVal
+MultConstDecl		::= (MultConstDecls) MultConstDecl COMMA SingleConstDecl
 						|
-						/* epsilon */;  
+						(FirstConstDecl) SingleConstDecl;
+						
+						
+SingleConstDecl		::= (SingleConstDecl) IDENT:constName ASSIGN ConstVal;   
 
 
-ConstVal			::= NUMCONST
+ConstVal			::= (NumConstVal) NUMCONST:val
 						|
-						CHARCONST
+						(CharConstVal) CHARCONST:val
 						|
-						BOOLCONST;
+						(BoolConstVal) BOOLCONST:val;
 
 
 					
 /*------------------------- Variable Declaration -------------------------*/
 
-VarDecl 			::= Type IDENT ArrayDecl MultVarDecl SEMI;
+VarDecl 			::= (VarDecl) Type MultVarDecl SEMI;
 
 
-MultVarDecl			::= MultVarDecl COMMA IDENT ArrayDecl
+MultVarDecl			::= (MultVarDecls) MultVarDecl COMMA SingleVarDecl
 						|
-						/* epsilon */;
+						(FirstVarDecl) SingleVarDecl;
+						
+
+SingleVarDecl		::= (SingleVarDecl) IDENT:varName ArrayDecl;
 
 
-ArrayDecl			::= LBRACKET RBRACKET
+ArrayDecl			::= (IsArray) LBRACKET RBRACKET
 						|
-						/* epsilon */;
-
+						(NotArray) /* epsilon */;
+						
 
 
 /*------------------------- Enumeration Declaration -------------------------*/
 
-EnumDecl			::= ENUM IDENT LBRACE IDENT NumConstAssign EnumDeclList RBRACE;
+EnumDecl			::= (EnumDecl) ENUM EnumName LBRACE EnumDeclList RBRACE;
 
 
-EnumDeclList		::= EnumDeclList COMMA IDENT NumConstAssign
+EnumName			::= (EnumName) IDENT:name;
+
+
+EnumDeclList		::= (EnumDecls) EnumDeclList COMMA SingleIdentEnumDecl
 						|
-						/* epsilon */;
+						(FirstIdentEnumDeclList) SingleIdentEnumDecl;
 						
 						
-NumConstAssign		::= ASSIGN NUMCONST
+SingleIdentEnumDecl	::=	(SingleIdentEnumDecl) IDENT:innerEnumName NumConstAssign;
+						
+						
+NumConstAssign		::= (EnumNumConstAssign) ASSIGN NUMCONST:val
 						|
-						/* epsilon */;
+						(NoEnumNumConstAssign) /* epsilon */;
 					
 						
 
 /*------------------------- Class Declaration -------------------------*/
 	
-ClassDecl			::= CLASS IDENT ClassExtension LBRACE FieldDeclList ClassMethods RBRACE; 
+ClassDecl			::= (ClassDecl) CLASS ClassName ClassExtension ExtFieldIntercept FieldDeclList ClassMethods RBRACE;
 
 
-ClassExtension		::= EXTENDS Type
+ClassName			::= (ClassName) IDENT:className;
+
+
+ClassExtension		::= (CExtension) EXTENDS Type
 						|
-						/* epsilon */;
+						(CExtensionError) error:e
+							{: parser.report_error("Invalid class extension on line " + eleft, null); :}
+						|
+						(NoCExtension) /* epsilon */;
+
+
+ExtFieldIntercept	::=	(ExtFieldIntercept) LBRACE;
 
 						
-FieldDeclList		::= FieldDeclList VarDecl
+FieldDeclList		::= (FieldDecls) FieldDeclList FieldDecl
 						|
-						/* epsilon */;
-
-
-ClassMethods		::= LBRACE ClassMethodDeclList RBRACE
-						|
-						/* epsilon */;
-
-
-ClassMethodDeclList	::= ClassMethodDeclList MethodDecl
-						|
-						/* epsilon */;
+						(EmptyFieldDeclList) /* epsilon */;
 						
 						
-AbsClassDecl		::= ABSTRACT CLASS IDENT ClassExtension LBRACE FieldDeclList AbsClassMethods RBRACE;
-
-
-AbsClassMethods		::= LBRACE AbsClassMethodList RBRACE
+FieldDecl			::= (SingleFieldDecl) Type MultVarDecl SEMI
 						|
-						/* epsilon */;
+						(FieldDeclError) error SEMI:e
+							{: parser.report_error("Invalid class field declaration on line " + eleft, null); :};
 
 
-AbsClassMethodList	::= AbsClassMethodList AbsMethodDecl
+ClassMethods		::= (ClassMethodBlock) ExtMethodIntercept ClassMethodDeclList ExtMethodEIntercept 
 						|
-						AbsClassMethodList MethodDecl
+						(NoClassMethods) /* epsilon */;
+
+
+ExtMethodIntercept	::= (ExtMethodIntercept) LBRACE;
+
+/* USELESS??? */
+ExtMethodEIntercept	::= (ExtMethodEndIntercept) RBRACE;
+
+
+ClassMethodDeclList	::= (ClassMethodDecls) ClassMethodDeclList ClassMethodDecl
 						|
-						/* epsilon */;
+						(EmptyClassMethodDeclList) /* epsilon */;
 
 
-AbsMethodDecl		::= ABSTRACT ReturnType IDENT LPAREN FormalParamList RPAREN SEMI;
+ClassMethodDecl		::= (ClassMethodDecl) ReturnType ClassMethodName LPAREN FormalParams RPAREN VarDeclList LBRACE StatementList RBRACE;
+
+
+ClassMethodName		::= (ClassMethodName) IDENT:name;					
+
+
+/*------------------------- Abstract Class Declaration -------------------------*/
+						
+AbsClassDecl		::= (AbsClassDecl) ABSTRACT CLASS IDENT:className ClassExtension LBRACE FieldDeclList AbsClassMethods RBRACE;
+
+
+AbsClassMethods		::= (AbsClassMethodBlock) LBRACE AbsClassMethodList RBRACE
+						|
+						(NoAbsClassMethods) /* epsilon */;
+
+
+AbsClassMethodList	::= (AbsClassMethodListAbsMethod) AbsClassMethodList AbsMethodDecl
+						|
+						(AbsClassMethodListConcMethod) AbsClassMethodList ClassMethodDecl
+						|
+						(EmptyAbsClassMethodList) /* epsilon */;
+
+
+AbsMethodDecl		::= (AbsMethodDecl) ABSTRACT ReturnType IDENT:methodName LPAREN FormalParams RPAREN SEMI;
 
 
 
 /*------------------------- Method Declaration -------------------------*/
 
-MethodDeclList		::= MethodDeclList MethodDecl
+MethodDeclList		::= (MethodDecls) MethodDeclList MethodDecl
 						|
-						/* epsilon */; 
+						(EmptyMethodDeclList) /* epsilon */; 
 
 
-MethodDecl			::= ReturnType IDENT LPAREN FormalParamList RPAREN VarDeclList LBRACE StatementList RBRACE;
+MethodDecl			::= (MethodDecl) ReturnType MethodName LPAREN FormalParams RPAREN VarDeclList LBRACE StatementList RBRACE;
 
 
-ReturnType			::= Type
+ReturnType			::= (TypeReturn) Type
 						|
-						VOID;
+						(VoidReturn) VOID;
+						
+						
+MethodName			::= (MethodName) IDENT:name;
 
 
-FormalParamList		::= FormalParam MultFormalParam
+FormalParams		::= (FormalParamListValid) FormalParamList
 						|
-						/* epsilon */;
+						(NoFormalParams) /* epsilon */ ;
 
 
-MultFormalParam		::= MultFormalParam COMMA FormalParam  
-					|
-					/* epsilon */;
-					
-
-FormalParam 		::= Type IDENT ArrayDecl;
-
-
-VarDeclList 		::= VarDeclList VarDecl
+FormalParamList		::= (MultFormalParams) FormalParamList COMMA FormalParam
 						|
-						/* epsilon */;
+						(FirstFormalParam) FormalParam;
 
 
-StatementList		::= StatementList Statement 
+FormalParam 		::= (SingleFormalParam) Type IDENT:paramName ArrayDecl
 						|
-						/* epsilon */;
+						(FormalParamError) error:e
+							{: parser.report_error("Invalid formal parameter on line " + eleft, null); :};
+						
+
+VarDeclList 		::= (VarDecls) VarDeclList VarDecl
+						|
+						(EmptyVarDeclList) /* epsilon */;
+
+
+StatementList		::= (Statements) StatementList Statement 
+						|
+						(EmptyStatementList) /* epsilon */;
 
 
 
 /*------------------------- Non primitive Type -------------------------*/
 
-Type				::= IDENT;
+Type				::= (Type) IDENT:typeName;
 
 
 
 /*------------------------- Statements -------------------------*/
 
-Statement			::= DesignatorStatement SEMI
+Statement			::= (GeneralDesignatorStatement) DesignatorStatement SEMI
 						|
-						IF LPAREN Condition RPAREN Statement
+						(IfStatement) IF LPAREN Condition RPAREN Statement
 						|
-						IF LPAREN Condition RPAREN Statement ELSE Statement
+						(IfElseStatement) IF LPAREN Condition RPAREN Statement ELSE Statement
 						|
-						BREAK SEMI
+						(IfStatementError) IF LPAREN error RPAREN Statement:e 
+							{: parser.report_error("Invalid IF condition on line " + eleft, null); :}
 						|
-						CONTINUE SEMI
+						(IfElseStatementError) IF LPAREN error RPAREN Statement ELSE Statement:e 
+							{: parser.report_error("Invalid IF-ELSE condition on line " + eleft, null); :}
 						|
-						RETURN SEMI			/* void function return */
+						(BreakStatement) BREAK SEMI
+						|
+						(ContinueStatement) CONTINUE SEMI
+						|
+						(VoidReturnStatement) RETURN SEMI			/* void function return */
 						| 
-						RETURN Expr SEMI	/* typed function return */
+						(TypedReturnStatement)RETURN Expr SEMI		/* typed function return */
 						|
-						READ LPAREN Designator RPAREN SEMI
+						(ReadStatement) READ LPAREN Designator RPAREN SEMI
 						|
-						PRINT LPAREN Expr RPAREN SEMI
+						(PrintStatement) PRINT LPAREN Expr RPAREN SEMI
 						|
-						PRINT LPAREN Expr COMMA NUMCONST RPAREN SEMI
+						(NumConstPrintStatement) PRINT LPAREN Expr COMMA NUMCONST:val RPAREN SEMI
 						| 
-						FOR LPAREN ForDesignatorStmnt SEMI ForCondition SEMI ForDesignatorStmnt RPAREN Statement
+						(ForStatement) FOR LPAREN ForDesignatorStmnt SEMI ForCondition SEMI ForDesignatorStmnt RPAREN Statement
 						|
-						LBRACE StatementList RBRACE
+						(StatementBlock) LBRACE StatementList RBRACE
 						|
-						SWITCH LPAREN Expr RPAREN LBRACE CaseList RBRACE;
+						(SwitchStatement) SWITCH LPAREN Expr RPAREN LBRACE CaseList RBRACE;
 
 
-ForDesignatorStmnt	::= DesignatorStatement
+ForDesignatorStmnt	::= (ForDesignatorStatement) DesignatorStatement
 						|
-						/* epsilon */; 
+						(NoForDesignatorStatement) /* epsilon */; 
 
 
-ForCondition		::= Condition
+ForCondition		::= (ForCond) Condition
 						|
-						/* epsilon */;
+						(NoForCond) /* epsilon */;
 						
 
-CaseList			::= CaseList CASE NUMCONST COLON StatementList
+CaseList			::= (Cases) CaseList CASE NUMCONST:val COLON StatementList
 						|
-						/* epsilon */;
+						(EmptyCaseList) /* epsilon */;
 						
 					
-DesignatorStatement	::= Designator Assignop Expr
+DesignatorStatement	::= (DesignatorAssignment) Designator Assignop Expr
 						|
-						Designator LPAREN ActualParamList RPAREN
+						(DesignatorFCall) Designator LPAREN ActualParamList RPAREN
 						|
-						Designator INC
+						(DesignatorInc) Designator INC
 						|
-						Designator DEC;
+						(DesignatorDec) Designator DEC;
 						
 
-Designator			::= DesignatorChain;
+Designator			::= (Designator) DesignatorChain;
 
 
-DesignatorChain		::= DesignatorChain LBRACKET Expr RBRACKET 
+DesignatorChain		::= (DesignatorChainIndexAccess) DesignatorChain LBRACKET Expr RBRACKET 
 						|
-						DesignatorChain DOT IDENT
+						(DesignatorChainFieldAccess) DesignatorChain DOT IDENT:fieldName
 						|
-						IDENT;
+						(DesignatorChainIdent) IDENT:objName;
 
 
-ActualParamList		::= ActualParam MultActualParam
+ActualParamList		::= (ActualParams) ActualParam MultActualParam
 						|
-						/* epsilon */;
+						(EmptyActualParamList) /* epsilon */;
 
 
-MultActualParam		::= MultActualParam COMMA ActualParam 
+MultActualParam		::= (MultActualParams) MultActualParam COMMA ActualParam 
 						|
-						/* epsilon */;
+						(EmptyMultActualParam) /* epsilon */;
 
 
-ActualParam			::= Expr;
-
-
-Condition			::= CondTerm MultCondTerm;
-
-
-MultCondTerm		::= MultCondTerm OR CondTerm 
-						|
-						/* epsilon */;
-
-
-CondTerm			::= CondFact MultCondFact;
-
-
-MultCondFact		::= MultCondFact AND CondFact 
-						|
-						/* epsilon */;
-		
+ActualParam			::= (ActualParam) Expr;
 						
-CondFact			::= Expr
+
+Condition			::= (SimpleCondition) CondTerm 
 						|
-						Expr Relop Expr;
+						(OrCondition) Condition OR CondTerm;
+
+
+CondTerm			::= (SimpleCondTerm) CondFact
+						|
+						(AndCondTerm) CondTerm AND CondFact;
+
+								
+CondFact			::= (SimpleCondFact) TermList
+						|
+						(RelopCondFact) TermList Relop TermList;
 						
 						
-Expr				::= TermList
+Expr				::= (SimpleExpr) TermList
 						|
-						Condition QMARK Expr COLON Expr;
+						(TernaryExpr) Condition QMARK Expr COLON Expr;
 						
 						
-TermList			::= TermList Addop Term
+TermList			::= (Terms) TermList Addop Term
 						|
-						MINUS Term;
+						(UMinusFirstTermInList) MINUS Term
 						|
-						Term;
+						(FirstTermInList) Term;
 
 
-Term				::= FactorList;
+Term				::= (Term) FactorList;
 
 
-FactorList			::= FactorList Mulop Factor
+FactorList			::= (Factors) FactorList Mulop Factor
 						|
-						Factor;
+						(FirstFactorInList) Factor;
 						
 						
-Factor				::= Designator
+Factor				::= (FactorDesignator) Designator
 						|
-						Designator LPAREN ActualParamList RPAREN
+						(FactorFCall) Designator LPAREN ActualParamList RPAREN
 						|
-						NUMCONST
+						(FactorNumConst) NUMCONST:val
 						|
-						CHARCONST
+						(FactorCharConst) CHARCONST:val
 						|
-						BOOLCONST
+						(FactorBoolConst) BOOLCONST:val
 						|
-						NEW Type
+						(FactorTypeInst) NEW Type
 						|
-						NEW Type LBRACKET Expr RBRACKET
+						(FactorArrayInst) NEW Type LBRACKET Expr RBRACKET
 						|
-						LPAREN Expr RPAREN;
+						(FactorExpr) LPAREN Expr RPAREN;
 
 
 
 /*------------------------- Operators -------------------------*/
 
-Assignop			::= ASSIGN 	/* Right associative */
+Assignop			::= (Assign) ASSIGN; 	/* Right associative */
 
 
-Relop				::= EQUAL
+Relop				::= (Equal) EQUAL
 						|
-						NOTEQUAL
+						(NotEqual) NOTEQUAL
 						|
-						GT
+						(GreaterThan) GT
 						|
-						GTEQ
+						(GreaterEqual) GTEQ
 						|
-						LT
+						(LesserThan) LT
 						|
-						LTEQ;
+						(LesserThanEqual) LTEQ;
 
 
-Addop				::= PLUS 	/* Left associative */
+Addop				::= (Plus) PLUS 	/* Left associative */
 						|
-						MINUS;
+						(Minus) MINUS;
 						
 
-Mulop				::= MUL 	/* Left associative */
+Mulop				::= (Mul) MUL 	/* Left associative */
 						|
-						DIV
+						(Div) DIV
 						|
-						MOD;
+						(Mod) MOD;
 
 
 

@@ -1,0 +1,58 @@
+// generated with ast extension for cup
+// version 0.8
+// 9/1/2026 12:14:35
+
+
+package rs.ac.bg.etf.pp1.ast;
+
+public class GlobalAbsClassDecl extends GlobalDecl {
+
+    private AbsClassDecl AbsClassDecl;
+
+    public GlobalAbsClassDecl (AbsClassDecl AbsClassDecl) {
+        this.AbsClassDecl=AbsClassDecl;
+        if(AbsClassDecl!=null) AbsClassDecl.setParent(this);
+    }
+
+    public AbsClassDecl getAbsClassDecl() {
+        return AbsClassDecl;
+    }
+
+    public void setAbsClassDecl(AbsClassDecl AbsClassDecl) {
+        this.AbsClassDecl=AbsClassDecl;
+    }
+
+    public void accept(Visitor visitor) {
+        visitor.visit(this);
+    }
+
+    public void childrenAccept(Visitor visitor) {
+        if(AbsClassDecl!=null) AbsClassDecl.accept(visitor);
+    }
+
+    public void traverseTopDown(Visitor visitor) {
+        accept(visitor);
+        if(AbsClassDecl!=null) AbsClassDecl.traverseTopDown(visitor);
+    }
+
+    public void traverseBottomUp(Visitor visitor) {
+        if(AbsClassDecl!=null) AbsClassDecl.traverseBottomUp(visitor);
+        accept(visitor);
+    }
+
+    public String toString(String tab) {
+        StringBuffer buffer=new StringBuffer();
+        buffer.append(tab);
+        buffer.append("GlobalAbsClassDecl(\n");
+
+        if(AbsClassDecl!=null)
+            buffer.append(AbsClassDecl.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        buffer.append(tab);
+        buffer.append(") [GlobalAbsClassDecl]");
+        return buffer.toString();
+    }
+}

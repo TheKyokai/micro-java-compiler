@@ -100,4 +100,4 @@ import java_cup.runtime.Symbol;
 \'[ -~]\'					{ return new_symbol(sym.CHARCONST, new Character(yytext().charAt(1))); }
 
 
-. { System.err.println("Leksicka greska --- (" + yytext() + ") na " + (yyline + 1) + ":" + (yycolumn + 1)); }
+. { System.err.println("Lexical error --- (" + yytext() + ") on " + (yyline + 1) + ":" + (yycolumn + 1)); }

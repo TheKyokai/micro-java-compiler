@@ -1,12 +1,42 @@
-program MJProgram
-	int x; int y;
+program MJProgram 
+
+//int x;
+//const int y = 10;
+//const char c = 'A';
+//const bool boolConst = true;
+
+//enum Broj { NULA, JEDAN = 1, PET=5, DESET=10}
+
+
+
+class retSuper {}
+class ret extends retSuper{}
+
+class k1 
 {
-	int main() {
-		
-		print(1);
-		
-		x = y + 5 + ;
-		
-		print(2);
+	int x;
+	k1 var;
+	{
+		k1 meth(ret ret_fp, int x, char c) int k;{}
 	}
+}
+
+
+
+class k2 extends k1
+{
+	char a;
+	{
+		k2 meth(retSuper retSuper_fp, int x, char c){}
+	}
+}
+
+//k2 k2_ref;
+
+//class k3 extends k2 { { k3 meth(retSuper parameter) {} }}
+
+
+{
+	
+
 }
