@@ -1,13 +1,12 @@
 // generated with ast extension for cup
 // version 0.8
-// 9/1/2026 12:14:35
+// 11/1/2026 18:37:44
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public abstract class VisitorAdaptor implements Visitor { 
 
-    public void visit(ExtMethodEIntercept ExtMethodEIntercept) { }
     public void visit(ReturnType ReturnType) { }
     public void visit(Mulop Mulop) { }
     public void visit(MultActualParam MultActualParam) { }
@@ -134,18 +133,19 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(MethodDecl MethodDecl) { visit(); }
     public void visit(EmptyMethodDeclList EmptyMethodDeclList) { visit(); }
     public void visit(MethodDecls MethodDecls) { visit(); }
+    public void visit(AbsMethodName AbsMethodName) { visit(); }
     public void visit(AbsMethodDecl AbsMethodDecl) { visit(); }
     public void visit(EmptyAbsClassMethodList EmptyAbsClassMethodList) { visit(); }
     public void visit(AbsClassMethodListConcMethod AbsClassMethodListConcMethod) { visit(); }
     public void visit(AbsClassMethodListAbsMethod AbsClassMethodListAbsMethod) { visit(); }
     public void visit(NoAbsClassMethods NoAbsClassMethods) { visit(); }
     public void visit(AbsClassMethodBlock AbsClassMethodBlock) { visit(); }
+    public void visit(AbsClassName AbsClassName) { visit(); }
     public void visit(AbsClassDecl AbsClassDecl) { visit(); }
     public void visit(ClassMethodName ClassMethodName) { visit(); }
     public void visit(ClassMethodDecl ClassMethodDecl) { visit(); }
     public void visit(EmptyClassMethodDeclList EmptyClassMethodDeclList) { visit(); }
     public void visit(ClassMethodDecls ClassMethodDecls) { visit(); }
-    public void visit(ExtMethodEndIntercept ExtMethodEndIntercept) { visit(); }
     public void visit(ExtMethodIntercept ExtMethodIntercept) { visit(); }
     public void visit(NoClassMethods NoClassMethods) { visit(); }
     public void visit(ClassMethodBlock ClassMethodBlock) { visit(); }

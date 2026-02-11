@@ -93,8 +93,8 @@ nonterminal VarDecl, MultVarDecl, ArrayDecl, SingleVarDecl; 											/* Variab
 nonterminal EnumDecl, EnumDeclList, SingleIdentEnumDecl, NumConstAssign;						        /* Enumeration related nonterminals */	
 nonterminal ClassDecl, ClassName, ClassExtension;
 nonterminal ExtFieldIntercept, FieldDeclList, FieldDecl;
-nonterminal ClassMethods, ExtMethodIntercept, ExtMethodEIntercept, ClassMethodDeclList, ClassMethodDecl, ClassMethodName; 	
-nonterminal AbsClassDecl, AbsClassMethods, AbsClassMethodList, AbsMethodDecl;
+nonterminal ClassMethods, ExtMethodIntercept, ClassMethodDeclList, ClassMethodDecl, ClassMethodName; 	
+nonterminal AbsClassDecl, AbsClassName, AbsClassMethods, AbsClassMethodList, AbsMethodDecl, AbsMethodName;
 
 nonterminal MethodDeclList, MethodDecl, ReturnType, MethodName, FormalParamList, FormalParams, FormalParam, VarDeclList;
 nonterminal StatementList, Statement, Designator, DesignatorStatement, DesignatorChain, ForDesignatorStmnt, ForCondition, CaseList;
@@ -245,15 +245,12 @@ FieldDecl			::= (SingleFieldDecl) Type MultVarDecl SEMI
 							{: parser.report_error("Invalid class field declaration on line " + eleft, null); :};
 
 
-ClassMethods		::= (ClassMethodBlock) ExtMethodIntercept ClassMethodDeclList ExtMethodEIntercept 
+ClassMethods		::= (ClassMethodBlock) ExtMethodIntercept ClassMethodDeclList RBRACE 
 						|
 						(NoClassMethods) /* epsilon */;
 
 
 ExtMethodIntercept	::= (ExtMethodIntercept) LBRACE;
-
-/* USELESS??? */
-ExtMethodEIntercept	::= (ExtMethodEndIntercept) RBRACE;
 
 
 ClassMethodDeclList	::= (ClassMethodDecls) ClassMethodDeclList ClassMethodDecl
@@ -267,12 +264,16 @@ ClassMethodDecl		::= (ClassMethodDecl) ReturnType ClassMethodName LPAREN FormalP
 ClassMethodName		::= (ClassMethodName) IDENT:name;					
 
 
+
 /*------------------------- Abstract Class Declaration -------------------------*/
 						
-AbsClassDecl		::= (AbsClassDecl) ABSTRACT CLASS IDENT:className ClassExtension LBRACE FieldDeclList AbsClassMethods RBRACE;
+AbsClassDecl		::= (AbsClassDecl) ABSTRACT CLASS AbsClassName ClassExtension ExtFieldIntercept FieldDeclList AbsClassMethods RBRACE;
 
 
-AbsClassMethods		::= (AbsClassMethodBlock) LBRACE AbsClassMethodList RBRACE
+AbsClassName		::= (AbsClassName) IDENT:name;
+
+
+AbsClassMethods		::= (AbsClassMethodBlock) ExtMethodIntercept AbsClassMethodList RBRACE
 						|
 						(NoAbsClassMethods) /* epsilon */;
 
@@ -284,7 +285,10 @@ AbsClassMethodList	::= (AbsClassMethodListAbsMethod) AbsClassMethodList AbsMetho
 						(EmptyAbsClassMethodList) /* epsilon */;
 
 
-AbsMethodDecl		::= (AbsMethodDecl) ABSTRACT ReturnType IDENT:methodName LPAREN FormalParams RPAREN SEMI;
+AbsMethodDecl		::= (AbsMethodDecl) ABSTRACT ReturnType AbsMethodName LPAREN FormalParams RPAREN SEMI;
+
+
+AbsMethodName		::= (AbsMethodName) IDENT:name;
 
 
 

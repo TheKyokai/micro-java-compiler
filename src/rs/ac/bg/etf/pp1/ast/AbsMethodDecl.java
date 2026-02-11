@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 9/1/2026 12:14:35
+// 11/1/2026 18:37:44
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -10,13 +10,14 @@ public class AbsMethodDecl implements SyntaxNode {
     private SyntaxNode parent;
     private int line;
     private ReturnType ReturnType;
-    private String methodName;
+    private AbsMethodName AbsMethodName;
     private FormalParams FormalParams;
 
-    public AbsMethodDecl (ReturnType ReturnType, String methodName, FormalParams FormalParams) {
+    public AbsMethodDecl (ReturnType ReturnType, AbsMethodName AbsMethodName, FormalParams FormalParams) {
         this.ReturnType=ReturnType;
         if(ReturnType!=null) ReturnType.setParent(this);
-        this.methodName=methodName;
+        this.AbsMethodName=AbsMethodName;
+        if(AbsMethodName!=null) AbsMethodName.setParent(this);
         this.FormalParams=FormalParams;
         if(FormalParams!=null) FormalParams.setParent(this);
     }
@@ -29,12 +30,12 @@ public class AbsMethodDecl implements SyntaxNode {
         this.ReturnType=ReturnType;
     }
 
-    public String getMethodName() {
-        return methodName;
+    public AbsMethodName getAbsMethodName() {
+        return AbsMethodName;
     }
 
-    public void setMethodName(String methodName) {
-        this.methodName=methodName;
+    public void setAbsMethodName(AbsMethodName AbsMethodName) {
+        this.AbsMethodName=AbsMethodName;
     }
 
     public FormalParams getFormalParams() {
@@ -67,17 +68,20 @@ public class AbsMethodDecl implements SyntaxNode {
 
     public void childrenAccept(Visitor visitor) {
         if(ReturnType!=null) ReturnType.accept(visitor);
+        if(AbsMethodName!=null) AbsMethodName.accept(visitor);
         if(FormalParams!=null) FormalParams.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(ReturnType!=null) ReturnType.traverseTopDown(visitor);
+        if(AbsMethodName!=null) AbsMethodName.traverseTopDown(visitor);
         if(FormalParams!=null) FormalParams.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(ReturnType!=null) ReturnType.traverseBottomUp(visitor);
+        if(AbsMethodName!=null) AbsMethodName.traverseBottomUp(visitor);
         if(FormalParams!=null) FormalParams.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -93,7 +97,10 @@ public class AbsMethodDecl implements SyntaxNode {
             buffer.append(tab+"  null");
         buffer.append("\n");
 
-        buffer.append(" "+tab+methodName);
+        if(AbsMethodName!=null)
+            buffer.append(AbsMethodName.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(FormalParams!=null)

@@ -5,19 +5,17 @@ program MJProgram
 //const char c = 'A';
 //const bool boolConst = true;
 
-//enum Broj { NULA, JEDAN = 1, PET=5, DESET=10}
+enum Broj { NULA, JEDAN = 1, PET=5, DESET=10}
 
 
 
-class retSuper {}
-class ret extends retSuper{}
 
-class k1 
+class ret {{ void retMeth(){}}}
+
+abstract class k1 extends ret
 {
-	int x;
-	k1 var;
 	{
-		k1 meth(ret ret_fp, int x, char c) int k;{}
+		Broj meth(ret ret_fp, int num, k1 c[]){}		
 	}
 }
 
@@ -25,18 +23,17 @@ class k1
 
 class k2 extends k1
 {
-	char a;
 	{
-		k2 meth(retSuper retSuper_fp, int x, char c){}
+		Broj meth(ret retSuper_fp, int x, k1 c[]){}
 	}
 }
 
-//k2 k2_ref;
+//k2 k2_ref[];
 
-//class k3 extends k2 { { k3 meth(retSuper parameter) {} }}
+abstract class k3 extends k2 { }
 
 
 {
 	
-
+	//void main(char character, ret smth) int x;{}
 }

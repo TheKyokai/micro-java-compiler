@@ -1,13 +1,12 @@
 // generated with ast extension for cup
 // version 0.8
-// 9/1/2026 12:14:35
+// 11/1/2026 18:37:44
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public interface Visitor { 
 
-    public void visit(ExtMethodEIntercept ExtMethodEIntercept);
     public void visit(ReturnType ReturnType);
     public void visit(Mulop Mulop);
     public void visit(MultActualParam MultActualParam);
@@ -134,18 +133,19 @@ public interface Visitor {
     public void visit(MethodDecl MethodDecl);
     public void visit(EmptyMethodDeclList EmptyMethodDeclList);
     public void visit(MethodDecls MethodDecls);
+    public void visit(AbsMethodName AbsMethodName);
     public void visit(AbsMethodDecl AbsMethodDecl);
     public void visit(EmptyAbsClassMethodList EmptyAbsClassMethodList);
     public void visit(AbsClassMethodListConcMethod AbsClassMethodListConcMethod);
     public void visit(AbsClassMethodListAbsMethod AbsClassMethodListAbsMethod);
     public void visit(NoAbsClassMethods NoAbsClassMethods);
     public void visit(AbsClassMethodBlock AbsClassMethodBlock);
+    public void visit(AbsClassName AbsClassName);
     public void visit(AbsClassDecl AbsClassDecl);
     public void visit(ClassMethodName ClassMethodName);
     public void visit(ClassMethodDecl ClassMethodDecl);
     public void visit(EmptyClassMethodDeclList EmptyClassMethodDeclList);
     public void visit(ClassMethodDecls ClassMethodDecls);
-    public void visit(ExtMethodEndIntercept ExtMethodEndIntercept);
     public void visit(ExtMethodIntercept ExtMethodIntercept);
     public void visit(NoClassMethods NoClassMethods);
     public void visit(ClassMethodBlock ClassMethodBlock);

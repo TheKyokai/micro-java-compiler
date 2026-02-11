@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 9/1/2026 12:14:35
+// 11/1/2026 18:37:44
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -9,27 +9,31 @@ public class AbsClassDecl implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    private String className;
+    private AbsClassName AbsClassName;
     private ClassExtension ClassExtension;
+    private ExtFieldIntercept ExtFieldIntercept;
     private FieldDeclList FieldDeclList;
     private AbsClassMethods AbsClassMethods;
 
-    public AbsClassDecl (String className, ClassExtension ClassExtension, FieldDeclList FieldDeclList, AbsClassMethods AbsClassMethods) {
-        this.className=className;
+    public AbsClassDecl (AbsClassName AbsClassName, ClassExtension ClassExtension, ExtFieldIntercept ExtFieldIntercept, FieldDeclList FieldDeclList, AbsClassMethods AbsClassMethods) {
+        this.AbsClassName=AbsClassName;
+        if(AbsClassName!=null) AbsClassName.setParent(this);
         this.ClassExtension=ClassExtension;
         if(ClassExtension!=null) ClassExtension.setParent(this);
+        this.ExtFieldIntercept=ExtFieldIntercept;
+        if(ExtFieldIntercept!=null) ExtFieldIntercept.setParent(this);
         this.FieldDeclList=FieldDeclList;
         if(FieldDeclList!=null) FieldDeclList.setParent(this);
         this.AbsClassMethods=AbsClassMethods;
         if(AbsClassMethods!=null) AbsClassMethods.setParent(this);
     }
 
-    public String getClassName() {
-        return className;
+    public AbsClassName getAbsClassName() {
+        return AbsClassName;
     }
 
-    public void setClassName(String className) {
-        this.className=className;
+    public void setAbsClassName(AbsClassName AbsClassName) {
+        this.AbsClassName=AbsClassName;
     }
 
     public ClassExtension getClassExtension() {
@@ -38,6 +42,14 @@ public class AbsClassDecl implements SyntaxNode {
 
     public void setClassExtension(ClassExtension ClassExtension) {
         this.ClassExtension=ClassExtension;
+    }
+
+    public ExtFieldIntercept getExtFieldIntercept() {
+        return ExtFieldIntercept;
+    }
+
+    public void setExtFieldIntercept(ExtFieldIntercept ExtFieldIntercept) {
+        this.ExtFieldIntercept=ExtFieldIntercept;
     }
 
     public FieldDeclList getFieldDeclList() {
@@ -77,20 +89,26 @@ public class AbsClassDecl implements SyntaxNode {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(AbsClassName!=null) AbsClassName.accept(visitor);
         if(ClassExtension!=null) ClassExtension.accept(visitor);
+        if(ExtFieldIntercept!=null) ExtFieldIntercept.accept(visitor);
         if(FieldDeclList!=null) FieldDeclList.accept(visitor);
         if(AbsClassMethods!=null) AbsClassMethods.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(AbsClassName!=null) AbsClassName.traverseTopDown(visitor);
         if(ClassExtension!=null) ClassExtension.traverseTopDown(visitor);
+        if(ExtFieldIntercept!=null) ExtFieldIntercept.traverseTopDown(visitor);
         if(FieldDeclList!=null) FieldDeclList.traverseTopDown(visitor);
         if(AbsClassMethods!=null) AbsClassMethods.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(AbsClassName!=null) AbsClassName.traverseBottomUp(visitor);
         if(ClassExtension!=null) ClassExtension.traverseBottomUp(visitor);
+        if(ExtFieldIntercept!=null) ExtFieldIntercept.traverseBottomUp(visitor);
         if(FieldDeclList!=null) FieldDeclList.traverseBottomUp(visitor);
         if(AbsClassMethods!=null) AbsClassMethods.traverseBottomUp(visitor);
         accept(visitor);
@@ -101,11 +119,20 @@ public class AbsClassDecl implements SyntaxNode {
         buffer.append(tab);
         buffer.append("AbsClassDecl(\n");
 
-        buffer.append(" "+tab+className);
+        if(AbsClassName!=null)
+            buffer.append(AbsClassName.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(ClassExtension!=null)
             buffer.append(ClassExtension.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(ExtFieldIntercept!=null)
+            buffer.append(ExtFieldIntercept.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

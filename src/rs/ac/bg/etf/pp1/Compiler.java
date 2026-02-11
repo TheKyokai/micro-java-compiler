@@ -71,7 +71,9 @@ public class Compiler {
 				output.append(", ");
 				output.append(objToVisit.getAdr());
 				output.append(", ");
-				output.append(objToVisit.getLevel() + " ");
+				output.append(objToVisit.getLevel());
+				output.append(", ");
+				output.append(objToVisit.getFpPos() + " ");
 
 				if (objToVisit.getKind() == Obj.Prog || objToVisit.getKind() == Obj.Meth) {
 					output.append("\n");
@@ -101,6 +103,9 @@ public class Compiler {
 				case Struct.Char:
 					output.append("char");
 					break;
+				case Struct.Bool:
+					output.append("bool");
+					break;
 				case Struct.Array:
 					output.append("Arr of ");
 					
@@ -114,8 +119,13 @@ public class Compiler {
 					case Struct.Char:
 						output.append("char");
 						break;
+					case Struct.Bool:
+						output.append("bool");
+						break;
 					case Struct.Class:
-						output.append("Class");
+						Obj program = Tab.currentScope.getLocals().symbols().stream().filter(sym -> sym.getKind() == Obj.Prog).collect(Collectors.toList()).get(0);
+						Obj classType = program.getLocalSymbols().stream().filter(sym -> sym.getKind() == Obj.Type && sym.getType() == structToVisit.getElemType()).collect(Collectors.toList()).get(0);
+						output.append(classType.getName());
 						break;
 					}
 					break;

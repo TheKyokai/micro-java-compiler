@@ -108,14 +108,15 @@ nonterminal FieldDeclList FieldDeclList;
 nonterminal FieldDecl FieldDecl;
 nonterminal ClassMethods ClassMethods;
 nonterminal ExtMethodIntercept ExtMethodIntercept;
-nonterminal ExtMethodEIntercept ExtMethodEIntercept;
 nonterminal ClassMethodDeclList ClassMethodDeclList;
 nonterminal ClassMethodDecl ClassMethodDecl;
 nonterminal ClassMethodName ClassMethodName; 	
 nonterminal AbsClassDecl AbsClassDecl;
+nonterminal AbsClassName AbsClassName;
 nonterminal AbsClassMethods AbsClassMethods;
 nonterminal AbsClassMethodList AbsClassMethodList;
 nonterminal AbsMethodDecl AbsMethodDecl;
+nonterminal AbsMethodName AbsMethodName;
 
 nonterminal MethodDeclList MethodDeclList;
 nonterminal MethodDecl MethodDecl;
@@ -291,15 +292,12 @@ FieldDecl			::= (SingleFieldDecl) Type:T1 MultVarDecl:M2 SEMI {: RESULT=new Sing
 							{: parser.report_error("Invalid class field declaration on line " + eleft, null); :} {: RESULT=new FieldDeclError(); :};
 
 
-ClassMethods		::= (ClassMethodBlock) ExtMethodIntercept:E1 ClassMethodDeclList:C2 ExtMethodEIntercept:E3 {: RESULT=new ClassMethodBlock(E1, C2, E3); RESULT.setLine(E1left); :} 
+ClassMethods		::= (ClassMethodBlock) ExtMethodIntercept:E1 ClassMethodDeclList:C2 RBRACE {: RESULT=new ClassMethodBlock(E1, C2); RESULT.setLine(E1left); :} 
 						|
 						(NoClassMethods) {: RESULT=new NoClassMethods(); :} /* epsilon */;
 
 
 ExtMethodIntercept	::= (ExtMethodIntercept) LBRACE {: RESULT=new ExtMethodIntercept(); :};
-
-/* USELESS??? */
-ExtMethodEIntercept	::= (ExtMethodEndIntercept) RBRACE {: RESULT=new ExtMethodEndIntercept(); :};
 
 
 ClassMethodDeclList	::= (ClassMethodDecls) ClassMethodDeclList:C1 ClassMethodDecl:C2 {: RESULT=new ClassMethodDecls(C1, C2); RESULT.setLine(C1left); :}
@@ -313,12 +311,16 @@ ClassMethodDecl		::= (ClassMethodDecl) ReturnType:R1 ClassMethodName:C2 LPAREN F
 ClassMethodName		::= (ClassMethodName) IDENT:name {: RESULT=new ClassMethodName(name); RESULT.setLine(nameleft); :};					
 
 
+
 /*------------------------- Abstract Class Declaration -------------------------*/
 						
-AbsClassDecl		::= (AbsClassDecl) ABSTRACT CLASS IDENT:className ClassExtension:C1 LBRACE FieldDeclList:F2 AbsClassMethods:A3 RBRACE {: RESULT=new AbsClassDecl(className, C1, F2, A3); RESULT.setLine(classNameleft); :};
+AbsClassDecl		::= (AbsClassDecl) ABSTRACT CLASS AbsClassName:A1 ClassExtension:C2 ExtFieldIntercept:E3 FieldDeclList:F4 AbsClassMethods:A5 RBRACE {: RESULT=new AbsClassDecl(A1, C2, E3, F4, A5); RESULT.setLine(A1left); :};
 
 
-AbsClassMethods		::= (AbsClassMethodBlock) LBRACE AbsClassMethodList:A1 RBRACE {: RESULT=new AbsClassMethodBlock(A1); RESULT.setLine(A1left); :}
+AbsClassName		::= (AbsClassName) IDENT:name {: RESULT=new AbsClassName(name); RESULT.setLine(nameleft); :};
+
+
+AbsClassMethods		::= (AbsClassMethodBlock) ExtMethodIntercept:E1 AbsClassMethodList:A2 RBRACE {: RESULT=new AbsClassMethodBlock(E1, A2); RESULT.setLine(E1left); :}
 						|
 						(NoAbsClassMethods) {: RESULT=new NoAbsClassMethods(); :} /* epsilon */;
 
@@ -330,7 +332,10 @@ AbsClassMethodList	::= (AbsClassMethodListAbsMethod) AbsClassMethodList:A1 AbsMe
 						(EmptyAbsClassMethodList) {: RESULT=new EmptyAbsClassMethodList(); :} /* epsilon */;
 
 
-AbsMethodDecl		::= (AbsMethodDecl) ABSTRACT ReturnType:R1 IDENT:methodName LPAREN FormalParams:F2 RPAREN SEMI {: RESULT=new AbsMethodDecl(R1, methodName, F2); RESULT.setLine(R1left); :};
+AbsMethodDecl		::= (AbsMethodDecl) ABSTRACT ReturnType:R1 AbsMethodName:A2 LPAREN FormalParams:F3 RPAREN SEMI {: RESULT=new AbsMethodDecl(R1, A2, F3); RESULT.setLine(R1left); :};
+
+
+AbsMethodName		::= (AbsMethodName) IDENT:name {: RESULT=new AbsMethodName(name); RESULT.setLine(nameleft); :};
 
 
 
