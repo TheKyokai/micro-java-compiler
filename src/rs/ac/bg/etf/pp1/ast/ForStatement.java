@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 11/1/2026 18:37:44
+// 13/1/2026 0:38:39
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -10,15 +10,18 @@ public class ForStatement extends Statement {
     private ForDesignatorStmnt ForDesignatorStmnt;
     private ForCondition ForCondition;
     private ForDesignatorStmnt ForDesignatorStmnt1;
+    private ForInterrupt ForInterrupt;
     private Statement Statement;
 
-    public ForStatement (ForDesignatorStmnt ForDesignatorStmnt, ForCondition ForCondition, ForDesignatorStmnt ForDesignatorStmnt1, Statement Statement) {
+    public ForStatement (ForDesignatorStmnt ForDesignatorStmnt, ForCondition ForCondition, ForDesignatorStmnt ForDesignatorStmnt1, ForInterrupt ForInterrupt, Statement Statement) {
         this.ForDesignatorStmnt=ForDesignatorStmnt;
         if(ForDesignatorStmnt!=null) ForDesignatorStmnt.setParent(this);
         this.ForCondition=ForCondition;
         if(ForCondition!=null) ForCondition.setParent(this);
         this.ForDesignatorStmnt1=ForDesignatorStmnt1;
         if(ForDesignatorStmnt1!=null) ForDesignatorStmnt1.setParent(this);
+        this.ForInterrupt=ForInterrupt;
+        if(ForInterrupt!=null) ForInterrupt.setParent(this);
         this.Statement=Statement;
         if(Statement!=null) Statement.setParent(this);
     }
@@ -47,6 +50,14 @@ public class ForStatement extends Statement {
         this.ForDesignatorStmnt1=ForDesignatorStmnt1;
     }
 
+    public ForInterrupt getForInterrupt() {
+        return ForInterrupt;
+    }
+
+    public void setForInterrupt(ForInterrupt ForInterrupt) {
+        this.ForInterrupt=ForInterrupt;
+    }
+
     public Statement getStatement() {
         return Statement;
     }
@@ -63,6 +74,7 @@ public class ForStatement extends Statement {
         if(ForDesignatorStmnt!=null) ForDesignatorStmnt.accept(visitor);
         if(ForCondition!=null) ForCondition.accept(visitor);
         if(ForDesignatorStmnt1!=null) ForDesignatorStmnt1.accept(visitor);
+        if(ForInterrupt!=null) ForInterrupt.accept(visitor);
         if(Statement!=null) Statement.accept(visitor);
     }
 
@@ -71,6 +83,7 @@ public class ForStatement extends Statement {
         if(ForDesignatorStmnt!=null) ForDesignatorStmnt.traverseTopDown(visitor);
         if(ForCondition!=null) ForCondition.traverseTopDown(visitor);
         if(ForDesignatorStmnt1!=null) ForDesignatorStmnt1.traverseTopDown(visitor);
+        if(ForInterrupt!=null) ForInterrupt.traverseTopDown(visitor);
         if(Statement!=null) Statement.traverseTopDown(visitor);
     }
 
@@ -78,6 +91,7 @@ public class ForStatement extends Statement {
         if(ForDesignatorStmnt!=null) ForDesignatorStmnt.traverseBottomUp(visitor);
         if(ForCondition!=null) ForCondition.traverseBottomUp(visitor);
         if(ForDesignatorStmnt1!=null) ForDesignatorStmnt1.traverseBottomUp(visitor);
+        if(ForInterrupt!=null) ForInterrupt.traverseBottomUp(visitor);
         if(Statement!=null) Statement.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -101,6 +115,12 @@ public class ForStatement extends Statement {
 
         if(ForDesignatorStmnt1!=null)
             buffer.append(ForDesignatorStmnt1.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(ForInterrupt!=null)
+            buffer.append(ForInterrupt.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

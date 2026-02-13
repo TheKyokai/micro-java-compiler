@@ -1,8 +1,8 @@
 package rs.ac.bg.etf.pp1;
 
 import java.util.ArrayList;
-import java.util.Currency;
 import java.util.List;
+import java.util.Optional;
 
 import org.apache.log4j.Logger;
 
@@ -10,7 +10,10 @@ import rs.ac.bg.etf.pp1.ast.AbsClassDecl;
 import rs.ac.bg.etf.pp1.ast.AbsClassName;
 import rs.ac.bg.etf.pp1.ast.AbsMethodDecl;
 import rs.ac.bg.etf.pp1.ast.AbsMethodName;
+import rs.ac.bg.etf.pp1.ast.Addop;
+import rs.ac.bg.etf.pp1.ast.AndCondTerm;
 import rs.ac.bg.etf.pp1.ast.BoolConstVal;
+import rs.ac.bg.etf.pp1.ast.BreakStatement;
 import rs.ac.bg.etf.pp1.ast.CExtension;
 import rs.ac.bg.etf.pp1.ast.CharConstVal;
 import rs.ac.bg.etf.pp1.ast.ClassDecl;
@@ -18,36 +21,90 @@ import rs.ac.bg.etf.pp1.ast.ClassMethodDecl;
 import rs.ac.bg.etf.pp1.ast.ClassMethodName;
 import rs.ac.bg.etf.pp1.ast.ClassName;
 import rs.ac.bg.etf.pp1.ast.ConstDecl;
+import rs.ac.bg.etf.pp1.ast.ContinueStatement;
+import rs.ac.bg.etf.pp1.ast.Designator;
+import rs.ac.bg.etf.pp1.ast.DesignatorChainFieldAccess;
+import rs.ac.bg.etf.pp1.ast.DesignatorChainIdent;
+import rs.ac.bg.etf.pp1.ast.DesignatorChainIndexAccess;
+import rs.ac.bg.etf.pp1.ast.DesignatorDec;
+import rs.ac.bg.etf.pp1.ast.DesignatorInc;
+import rs.ac.bg.etf.pp1.ast.Div;
 import rs.ac.bg.etf.pp1.ast.EnumDecl;
 import rs.ac.bg.etf.pp1.ast.EnumName;
 import rs.ac.bg.etf.pp1.ast.EnumNumConstAssign;
+import rs.ac.bg.etf.pp1.ast.Equal;
 import rs.ac.bg.etf.pp1.ast.ExtFieldIntercept;
 import rs.ac.bg.etf.pp1.ast.ExtMethodIntercept;
+import rs.ac.bg.etf.pp1.ast.FactorArrayInst;
+import rs.ac.bg.etf.pp1.ast.FactorBoolConst;
+import rs.ac.bg.etf.pp1.ast.FactorCharConst;
+import rs.ac.bg.etf.pp1.ast.FactorDesignator;
+import rs.ac.bg.etf.pp1.ast.FactorExpr;
+import rs.ac.bg.etf.pp1.ast.FactorFCall;
+import rs.ac.bg.etf.pp1.ast.FactorNumConst;
+import rs.ac.bg.etf.pp1.ast.FactorTypeInst;
+import rs.ac.bg.etf.pp1.ast.Factors;
+import rs.ac.bg.etf.pp1.ast.FirstFactorInList;
+import rs.ac.bg.etf.pp1.ast.FirstTermInList;
+import rs.ac.bg.etf.pp1.ast.ForCond;
+import rs.ac.bg.etf.pp1.ast.ForInterrupt;
+import rs.ac.bg.etf.pp1.ast.ForStatement;
+import rs.ac.bg.etf.pp1.ast.GreaterEqual;
+import rs.ac.bg.etf.pp1.ast.GreaterThan;
+import rs.ac.bg.etf.pp1.ast.IfElseStatement;
+import rs.ac.bg.etf.pp1.ast.IfStatement;
 import rs.ac.bg.etf.pp1.ast.IsArray;
+import rs.ac.bg.etf.pp1.ast.LesserThan;
+import rs.ac.bg.etf.pp1.ast.LesserThanEqual;
 import rs.ac.bg.etf.pp1.ast.MethodDecl;
 import rs.ac.bg.etf.pp1.ast.MethodName;
+import rs.ac.bg.etf.pp1.ast.Minus;
+import rs.ac.bg.etf.pp1.ast.Mod;
+import rs.ac.bg.etf.pp1.ast.Mul;
 import rs.ac.bg.etf.pp1.ast.NoAbsClassMethods;
 import rs.ac.bg.etf.pp1.ast.NoCExtension;
 import rs.ac.bg.etf.pp1.ast.NoClassMethods;
+import rs.ac.bg.etf.pp1.ast.NotEqual;
+import rs.ac.bg.etf.pp1.ast.NumConstPrintStatement;
 import rs.ac.bg.etf.pp1.ast.NumConstVal;
+import rs.ac.bg.etf.pp1.ast.OrCondition;
+import rs.ac.bg.etf.pp1.ast.Plus;
+import rs.ac.bg.etf.pp1.ast.PrintStatement;
 import rs.ac.bg.etf.pp1.ast.Program;
 import rs.ac.bg.etf.pp1.ast.ProgramName;
+import rs.ac.bg.etf.pp1.ast.ReadStatement;
+import rs.ac.bg.etf.pp1.ast.RelopCondFact;
+import rs.ac.bg.etf.pp1.ast.SimpleCondFact;
+import rs.ac.bg.etf.pp1.ast.SimpleCondTerm;
+import rs.ac.bg.etf.pp1.ast.SimpleCondition;
+import rs.ac.bg.etf.pp1.ast.SimpleExpr;
 import rs.ac.bg.etf.pp1.ast.SingleConstDecl;
 import rs.ac.bg.etf.pp1.ast.SingleFormalParam;
 import rs.ac.bg.etf.pp1.ast.SingleIdentEnumDecl;
 import rs.ac.bg.etf.pp1.ast.SingleVarDecl;
+import rs.ac.bg.etf.pp1.ast.SwitchStatement;
 import rs.ac.bg.etf.pp1.ast.SyntaxNode;
+import rs.ac.bg.etf.pp1.ast.Term;
+import rs.ac.bg.etf.pp1.ast.Terms;
+import rs.ac.bg.etf.pp1.ast.TernaryExpr;
 import rs.ac.bg.etf.pp1.ast.Type;
 import rs.ac.bg.etf.pp1.ast.TypeReturn;
+import rs.ac.bg.etf.pp1.ast.TypedReturnStatement;
+import rs.ac.bg.etf.pp1.ast.UMinusFirstTermInList;
 import rs.ac.bg.etf.pp1.ast.VarDecl;
 import rs.ac.bg.etf.pp1.ast.VisitorAdaptor;
 import rs.ac.bg.etf.pp1.ast.VoidReturn;
+import rs.ac.bg.etf.pp1.ast.VoidReturnStatement;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.*;
 
 public class SemanticAnalyzer extends VisitorAdaptor {
 
 	private final Struct boolType;
+
+	private final Obj intObj;
+	private final Obj chrObj;
+	private final Obj boolObj;
 
 	// Logging and error handling
 	Logger log = Logger.getLogger(getClass());
@@ -80,6 +137,36 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		return type == superClass;
 	}
 
+	private Obj findArrayElemTypeObj(Struct arrayStruct) {
+		if (arrayStruct.getKind() != Struct.Array)
+			return Tab.noObj;
+
+		return findTypeObj(arrayStruct.getElemType());
+	}
+
+	private Obj findTypeObj(Struct type) {
+		if (type.equals(intObj.getType()))
+			return intObj;
+
+		if (type.equals(chrObj.getType()))
+			return chrObj;
+
+		if (type.equals(boolObj.getType()))
+			return boolObj;
+
+		Scope currentSearchScope = Tab.currentScope;
+		while (currentSearchScope != null && currentSearchScope.getOuter() != null
+				&& currentSearchScope.getOuter().getOuter() != null) {
+			currentSearchScope = currentSearchScope.getOuter(); // Looking for program scope
+		}
+		Optional<Obj> typeObjOpt = currentSearchScope.getLocals().symbols().stream()
+				.filter(sym -> sym.getKind() == Obj.Type && sym.getType().equals(type)).findFirst();
+		if (!typeObjOpt.isPresent()) {
+			return Tab.noObj;
+		}
+		return typeObjOpt.get();
+	}
+
 	private Struct currentType; // Type currently used for declaration of variables or method returns
 	private int nextConstVal; // Next value to be assigned to a constant
 
@@ -94,6 +181,16 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 
 	public SemanticAnalyzer(Struct boolType) {
 		this.boolType = boolType;
+		this.intObj = Tab.find("int");
+		this.chrObj = Tab.find("char");
+		this.boolObj = Tab.find("bool");
+
+		if (chrObj == Tab.noObj)
+			System.out.println("Nema char");
+		if (intObj == Tab.noObj)
+			System.out.println("Nema int");
+		if (boolObj == Tab.noObj)
+			System.out.println("Nema bool");
 	}
 
 	@Override
@@ -157,7 +254,11 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return;
 		Struct varType = (singleVarDecl.getArrayDecl() instanceof IsArray) ? new Struct(Struct.Array, currentType)
 				: currentType;
-		Obj cVar = Tab.insert(Obj.Var, name, varType);
+		Obj cVar = null;
+		if (classDeclInitialized && currentMeth == Tab.noObj)
+			cVar = Tab.insert(Obj.Fld, name, varType);
+		else
+			cVar = Tab.insert(Obj.Var, name, varType);
 		if (classDeclInitialized && currentMeth != Tab.noObj)
 			cVar.setLevel(2);
 	}
@@ -292,6 +393,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 
 	@Override
 	public void visit(ClassDecl classDecl) {
+		if (currentClassType == Tab.noType)
+			return;
 		Tab.chainLocalSymbols(currentClassType);
 		Tab.closeScope();
 		currentClassType = Tab.noType;
@@ -309,8 +412,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	public void visit(ExtFieldIntercept extFieldIntercept) {
 		if (currentClassType.getElemType() == Tab.noType)
 			return;
-		currentType.getMembers().stream().filter(sym -> sym.getKind() == Obj.Var)
-				.forEach(field -> Tab.insert(Obj.Var, field.getName(), field.getType()));
+		currentType.getMembers().stream().filter(sym -> sym.getKind() == Obj.Fld)
+				.forEach(field -> Tab.insert(Obj.Fld, field.getName(), field.getType()));
 	}
 
 	@Override
@@ -524,6 +627,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 
 	@Override
 	public void visit(AbsClassDecl absClassDecl) {
+		if (currentClassType == Tab.noType)
+			return;
 		Tab.chainLocalSymbols(currentClassType);
 		Tab.closeScope();
 		currentClassType = Tab.noType;
@@ -704,4 +809,537 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		overridingMeth = Tab.noObj;
 	}
 
+	// Expressions and conditions
+
+	// USELESS -> Probably needed for code generation
+	private enum ADDOP {
+		NONE(""), PLUS("addition"), MINUS("subtraction");
+
+		private final String ident;
+
+		ADDOP(String id) {
+			ident = id;
+		}
+
+		String getIdent() {
+			return ident;
+		}
+	}
+
+	private enum MULOP {
+		NONE(""), MUL("multiplication"), DIV("division"), MOD("mod");
+
+		private final String ident;
+
+		MULOP(String id) {
+			ident = id;
+		}
+
+		String getIdent() {
+			return ident;
+		}
+	}
+
+	private enum RELOP {
+		NONE, EQUAL, NOTEQUAL, GREATER, GREATEREQ, LESSER, LESSEREQ
+	}
+
+	private ADDOP currentAddOp = ADDOP.NONE;
+	private MULOP currentMulOp = MULOP.NONE;
+	private RELOP currentRelOp = RELOP.NONE;
+
+	@Override
+	public void visit(Plus Plus) {
+		currentAddOp = ADDOP.PLUS;
+	}
+
+	@Override
+	public void visit(Minus Minus) {
+		currentAddOp = ADDOP.MINUS;
+	}
+
+	@Override
+	public void visit(Div Div) {
+		currentMulOp = MULOP.DIV;
+	}
+
+	@Override
+	public void visit(Mul Mul) {
+		currentMulOp = MULOP.MUL;
+	}
+
+	@Override
+	public void visit(Mod Mod) {
+		currentMulOp = MULOP.MOD;
+	}
+	
+	@Override
+	public void visit(Equal equal) {
+		currentRelOp = RELOP.EQUAL;
+	}
+	
+	@Override
+	public void visit(NotEqual notEqual) {
+	    currentRelOp = RELOP.NOTEQUAL;
+	}
+
+	@Override
+	public void visit(GreaterThan greaterThan) {
+	    currentRelOp = RELOP.GREATER;
+	}
+
+	@Override
+	public void visit(GreaterEqual greaterEqual) {
+	    currentRelOp = RELOP.GREATEREQ;
+	}
+
+	@Override
+	public void visit(LesserThan lesserThan) {
+	    currentRelOp = RELOP.LESSER;
+	}
+
+	@Override
+	public void visit(LesserThanEqual lesserThanEqual) {
+	    currentRelOp = RELOP.LESSEREQ;
+	}
+	
+
+	private Struct assignOpEnumType = Tab.noType; // Enum assignment
+	private Obj lastVisitedDesignator = Tab.noObj; // Actual parameter checking
+
+	@Override
+	public void visit(Designator designator) {
+		lastVisitedDesignator = designator.obj = designator.getDesignatorChain().obj;
+	}
+
+	@Override
+	public void visit(DesignatorChainIdent designatorChainIdent) {
+		assignOpEnumType = Tab.noType;
+		Obj foundSymbol = Tab.find(designatorChainIdent.getName());
+		if (foundSymbol == Tab.noObj) {
+			report_error("Unknown name '" + designatorChainIdent.getName() + "'", designatorChainIdent);
+			designatorChainIdent.obj = Tab.noObj;
+			return;
+		}
+		// TODO REMOVE THE MEGA OVERKILL
+		if (foundSymbol.getKind() != Obj.Con && foundSymbol.getKind() != Obj.Var
+				&& !(foundSymbol.getKind() == Obj.Type && foundSymbol.getType().getKind() == Struct.Enum)
+				&& foundSymbol.getKind() != Obj.Meth && foundSymbol.getKind() != Obj.Fld) {
+			report_error("Name '" + designatorChainIdent.getName()
+					+ "' does not represent an enum, a constant, a method nor a variable reachable from the current scope",
+					designatorChainIdent);
+			designatorChainIdent.obj = Tab.noObj;
+			return;
+		}
+		designatorChainIdent.obj = foundSymbol;
+		assignOpEnumType = Tab.noType;
+	}
+
+	@Override
+	public void visit(DesignatorChainFieldAccess designatorChainFieldAccess) {
+		if (designatorChainFieldAccess.getDesignatorChain().obj == Tab.noObj)
+			return;
+		if (designatorChainFieldAccess.getDesignatorChain().obj.getKind() == Obj.Meth) {
+			report_error("Invalid acccess for method '" + designatorChainFieldAccess.getDesignatorChain().obj.getName()
+					+ "'", designatorChainFieldAccess);
+			return;
+		}
+		if (designatorChainFieldAccess.getDesignatorChain().obj.getKind() == Obj.Con) {
+			report_error("Invalid acccess for constant '"
+					+ designatorChainFieldAccess.getDesignatorChain().obj.getName() + "'", designatorChainFieldAccess);
+			return;
+		}
+		String accessName = designatorChainFieldAccess.getFieldName();
+		switch (designatorChainFieldAccess.getDesignatorChain().obj.getType().getKind()) {
+		case Struct.Array:
+			if (!accessName.equals("length")) {
+				report_error("Invalid field/method access of an array", designatorChainFieldAccess);
+				designatorChainFieldAccess.obj = Tab.noObj;
+				return;
+			}
+			designatorChainFieldAccess.obj = intObj;
+			break;
+		case Struct.Enum:
+			Optional<Obj> enumConstOpt = designatorChainFieldAccess.getDesignatorChain().obj.getType().getMembers()
+					.stream().filter(con -> con.getName().equals(accessName)).findFirst();
+			if (!enumConstOpt.isPresent()) {
+				report_error("Invalid enum constant access. Constant with name '" + accessName + "' does not exist",
+						designatorChainFieldAccess);
+				designatorChainFieldAccess.obj = Tab.noObj;
+				return;
+			}
+			assignOpEnumType = designatorChainFieldAccess.getDesignatorChain().obj.getType();
+			designatorChainFieldAccess.obj = intObj;
+			break;
+		case Struct.Class:
+			Optional<Obj> classFieldOpt;
+			// Current class struct has not yet been chained
+			if (designatorChainFieldAccess.getDesignatorChain().obj.getName().equals("this")
+					|| designatorChainFieldAccess.getDesignatorChain().obj.getType().equals(currentClassType))
+				// TODO REMOVE TEMP PRINT
+				classFieldOpt = Tab.currentScope.getOuter().getLocals().symbols().stream()
+						.filter(sym -> sym.getName().equals(accessName)).findFirst();
+			else
+				// TODO REMOVE TEMP PRINT
+				classFieldOpt = designatorChainFieldAccess.getDesignatorChain().obj.getType().getMembers().stream()
+						.filter(sym -> sym.getName().equals(accessName)).findFirst();
+			if (!classFieldOpt.isPresent()) {
+				report_error("Invalid class field/method access. Field/method with name '" + accessName + "'",
+						designatorChainFieldAccess);
+				designatorChainFieldAccess.obj = Tab.noObj;
+				return;
+			}
+			designatorChainFieldAccess.obj = classFieldOpt.get();
+
+		}
+
+	}
+
+	@Override
+	public void visit(DesignatorChainIndexAccess designatorChainIndexAccess) {
+		if (designatorChainIndexAccess.getDesignatorChain().obj == Tab.noObj)
+			return;
+		if (designatorChainIndexAccess.getDesignatorChain().obj.getKind() != Obj.Var) {
+			report_error("Indexed access of non-variable", designatorChainIndexAccess);
+			designatorChainIndexAccess.obj = Tab.noObj;
+			return;
+		}
+		if (designatorChainIndexAccess.getDesignatorChain().obj.getType().getKind() != Struct.Array) {
+			report_error("Indexed access of non-array variable", designatorChainIndexAccess);
+			designatorChainIndexAccess.obj = Tab.noObj;
+			return;
+		}
+		// TODO TEST
+		Obj indexExpr = designatorChainIndexAccess.getExpr().obj;
+		if (indexExpr == null || indexExpr == Tab.noObj || !indexExpr.getType().equals(Tab.intType)) {
+			report_error("Array cannot be indexed using expressions not resulting in int type",
+					designatorChainIndexAccess);
+			designatorChainIndexAccess.obj = Tab.noObj;
+			return;
+		}
+		Obj arrayElemObj = findArrayElemTypeObj(designatorChainIndexAccess.getDesignatorChain().obj.getType());
+		designatorChainIndexAccess.obj = arrayElemObj;
+	}
+
+	@Override
+	public void visit(SimpleExpr simpleExpr) {
+		simpleExpr.obj = simpleExpr.getTermList().obj;
+	}
+
+	@Override
+	public void visit(FactorDesignator factorDesignator) {
+		factorDesignator.obj = factorDesignator.getDesignator().obj;
+	}
+
+	// TODO Add act param checking
+	@Override
+	public void visit(FactorFCall factorFCall) {
+		Obj methObj = factorFCall.getDesignator().obj;
+		if (methObj == Tab.noObj || methObj.getKind() != Obj.Meth) {
+			report_error("Method call of non-method designator", factorFCall);
+			factorFCall.obj = Tab.noObj;
+			return;
+		}
+		Obj methRetObj = findTypeObj(methObj.getType());
+		//TODO REMOVE LATER
+		//System.out.println("Found type '" + methRetObj.getName() + "' for method '" + methObj.getName() + "'");
+		factorFCall.obj = methRetObj;
+	}
+
+	@Override
+	public void visit(FactorNumConst factorNumConst) {
+		factorNumConst.obj = intObj;
+	}
+
+	@Override
+	public void visit(FactorCharConst factorCharConst) {
+		factorCharConst.obj = chrObj;
+	}
+
+	@Override
+	public void visit(FactorBoolConst factorBoolConst) {
+		factorBoolConst.obj = boolObj;
+	}
+
+	@Override
+	public void visit(FactorTypeInst factorTypeInst) {
+		if (currentType == Tab.noType)
+			return;
+		if (currentType.getKind() != Struct.Class) {
+			report_error("Instantiating a non-class type ", factorTypeInst);
+			factorTypeInst.obj = Tab.noObj;
+			return;
+		}
+		Obj classTypeObj = findTypeObj(currentType);
+		//TODO REMOVE LATER
+		//System.out.println("Found type '" + classTypeObj.getName() + "'");
+		if (classTypeObj.getFpPos() == 1) {
+			report_error("Instantiating an abstract class '" + classTypeObj.getName() + "'", factorTypeInst);
+			factorTypeInst.obj = Tab.noObj;
+			return;
+		}
+		factorTypeInst.obj = classTypeObj;
+	}
+
+	@Override
+	public void visit(FactorArrayInst factorArrayInst) {
+		if (!factorArrayInst.getExpr().obj.getType().equals(Tab.intType)) {
+			report_error("Invalid non-int expression during array instantiating", factorArrayInst);
+			factorArrayInst.obj = Tab.noObj;
+			return;
+		}
+		if (currentType == Tab.noType)
+			return;
+		factorArrayInst.obj = new Obj(Obj.Var, "array_wrapper_obj", new Struct(Struct.Array, currentType));
+	}
+
+	@Override
+	public void visit(FactorExpr factorExpr) {
+		factorExpr.obj = factorExpr.getExpr().obj;
+	}
+
+	@Override
+	public void visit(FirstFactorInList firstFactorInList) {
+		firstFactorInList.obj = firstFactorInList.getFactor().obj;
+	}
+
+	@Override
+	public void visit(Factors factors) {
+		if (factors.getFactorList().obj.getType() != Tab.intType || factors.getFactor().obj.getType() != Tab.intType) {
+			report_error("Invalid " + currentMulOp.getIdent() + " of non-compatible types", factors);
+			factors.obj = Tab.noObj;
+			currentMulOp = MULOP.NONE;
+			return;
+		}
+		factors.obj = intObj;
+		currentMulOp = MULOP.NONE;
+	}
+
+	@Override
+	public void visit(Term term) {
+		term.obj = term.getFactorList().obj;
+	}
+
+	@Override
+	public void visit(FirstTermInList firstTermInList) {
+		firstTermInList.obj = firstTermInList.getTerm().obj;
+	}
+
+	@Override
+	public void visit(UMinusFirstTermInList uMinusFirstTermInList) {
+		Obj termObj = uMinusFirstTermInList.getTerm().obj;
+		if (!termObj.getType().equals(Tab.intType)) {
+			report_error("Unary minus used on non-int type term", uMinusFirstTermInList);
+			uMinusFirstTermInList.obj = Tab.noObj;
+			return;
+		}
+		uMinusFirstTermInList.obj = termObj;
+
+	}
+
+	@Override
+	public void visit(Terms terms) {
+		if (terms.getTermList().obj.getType() != Tab.intType || terms.getTerm().obj.getType() != Tab.intType) {
+			report_error("Invalid " + currentAddOp.getIdent() + " of non-compatible types", terms);
+			terms.obj = Tab.noObj;
+			currentAddOp = ADDOP.NONE;
+			return;
+		}
+		terms.obj = intObj;
+		currentAddOp = ADDOP.NONE;
+	}
+	
+	
+	@Override
+	public void visit(TernaryExpr ternaryExpr) {
+		//TODO TEST MORE
+		if (!ternaryExpr.getExpr().obj.getType().equals(ternaryExpr.getExpr1().obj.getType())) {
+			report_error("Ternary expression sub-expression types do not match", ternaryExpr);
+			ternaryExpr.obj = Tab.noObj;
+			return;
+		}
+		ternaryExpr.obj = ternaryExpr.getExpr().obj;
+	}
+	
+	
+	@Override
+	public void visit(SimpleCondFact simpleCondFact) {
+		simpleCondFact.obj = simpleCondFact.getTermList().obj;
+	}
+	
+	@Override
+	public void visit(RelopCondFact relopCondFact) {
+		Obj leftExpr = relopCondFact.getTermList().obj, rightExpr = relopCondFact.getTermList1().obj; 
+		if (!leftExpr.getType().compatibleWith(rightExpr.getType())) {
+			report_error("Incompatible type comparison", relopCondFact);
+			relopCondFact.obj = Tab.noObj;
+			currentRelOp = RELOP.NONE;
+			return;
+		}
+		if (leftExpr.getType().isRefType() && rightExpr.getType().isRefType()
+				&& currentRelOp != RELOP.EQUAL && currentRelOp != RELOP.NOTEQUAL) {
+			report_error("Invalid comparison of references (only == and != relational operators are allowed)", relopCondFact);
+			relopCondFact.obj = Tab.noObj;
+			currentRelOp = RELOP.NONE;
+			return;
+		}
+		currentRelOp = RELOP.NONE;
+		relopCondFact.obj = boolObj;
+	}
+	
+	
+	@Override
+	public void visit(SimpleCondTerm simpleCondTerm) {
+		simpleCondTerm.obj = simpleCondTerm.getCondFact().obj;
+	}
+	
+	@Override
+	public void visit(AndCondTerm andCondTerm) {
+		if (andCondTerm.getCondFact().obj.getType() != boolType
+				|| andCondTerm.getCondTerm().obj.getType() != boolType)
+			andCondTerm.obj = Tab.noObj;
+		else
+			andCondTerm.obj = boolObj;
+	}
+	
+	@Override
+	public void visit(SimpleCondition simpleCondition) {
+		simpleCondition.obj = simpleCondition.getCondTerm().obj;
+	}
+	
+	@Override
+	public void visit(OrCondition orCondition) {
+		if (orCondition.getCondition().obj.getType() != boolType
+				|| orCondition.getCondTerm().obj.getType() != boolType)
+			orCondition.obj = Tab.noObj;
+		else
+			orCondition.obj = boolObj;
+	}
+	
+	
+	private int forLoopDepth = 0;
+	private int switchDepth = 0;
+	
+	@Override
+	public void visit(ForCond forCond) {
+		if (forCond.getCondition().obj.getType() != boolType) 
+			report_error("Invalid condition type in for loop", forCond);
+	}
+	
+	@Override
+	public void visit(ForInterrupt forInterrupt) {
+		forLoopDepth++;
+	}
+	
+	@Override
+	public void visit(ForStatement forStatement) {
+		forLoopDepth--;
+	}
+	
+	@Override
+	public void visit(IfElseStatement ifElseStatement) {
+		if (ifElseStatement.getCondition().obj.getType() != boolType)
+			report_error("Invalid if condition type", ifElseStatement);
+	}
+	
+	@Override
+	public void visit(IfStatement ifStatement) {
+		if (ifStatement.getCondition().obj.getType() != boolType)
+			report_error("Invalid if condition type", ifStatement);
+	}
+	
+	@Override
+	public void visit(BreakStatement breakStatement) {
+		if (forLoopDepth == 0 && switchDepth == 0)
+			report_error("Break outside of a for loop or a switch", breakStatement);
+	}
+	
+	@Override
+	public void visit(ContinueStatement continueStatement) {
+		if (forLoopDepth == 0)
+			report_error("Continue outside of a for loop", continueStatement);
+	}
+	
+	@Override
+	public void visit(SwitchStatement switchStatement) {
+		if (!switchStatement.getExpr().obj.getType().equals(Tab.intType))
+			report_error("Invalid switch expression type", switchStatement);
+	}
+	
+	//TODO TEST EVERYTHING BELOW
+	@Override
+	public void visit(PrintStatement printStatement) {
+		Struct exprType = printStatement.getExpr().obj.getType();
+		if (!exprType.equals(Tab.intType) 
+				&& !exprType.equals(boolType)
+				&& !exprType.equals(Tab.charType))
+			report_error("Invalid print expression type", printStatement);
+	}
+	
+	
+	@Override
+	public void visit(NumConstPrintStatement numConstPrintStatement) {
+		Struct exprType = numConstPrintStatement.getExpr().obj.getType();
+		if (!exprType.equals(Tab.intType) 
+				&& !exprType.equals(boolType)
+				&& !exprType.equals(Tab.charType))
+			report_error("Invalid print expression type", numConstPrintStatement);
+	}
+	
+	@Override
+	public void visit(ReadStatement readStatement) {
+		Obj designatorObj = readStatement.getDesignator().obj; 
+		if (designatorObj.getKind() != Obj.Var 
+				&& designatorObj.getKind() != Obj.Fld)
+			report_error("Read designator is not an array element, variable or a field", readStatement);
+		if (!designatorObj.getType().equals(Tab.intType) 
+				&& !designatorObj.getType().equals(boolType)
+				&& !designatorObj.getType().equals(Tab.charType))
+			report_error("Invalid read designator type", readStatement);
+	}
+	
+	@Override
+	public void visit(VoidReturnStatement voidReturnStatement) {
+		if (currentMeth == Tab.noObj)
+			return;
+		if (returnTyped)
+			report_error("Return statement of a non-void method does not return anything", voidReturnStatement);
+	}
+	
+	
+	@Override
+	public void visit(TypedReturnStatement typedReturnStatement) {
+		if (currentMeth == Tab.noObj)
+			return;
+		if (!returnTyped) {
+			report_error("Return statement of a void method returns something", typedReturnStatement);
+			return;
+		}
+		if (!currentMeth.getType().equals(typedReturnStatement.getExpr().obj.getType()))
+			report_error("Return statement expression type does not match the return type of the method", typedReturnStatement);
+	}
+	
+	
+	@Override
+	public void visit(DesignatorDec designatorDec) {
+		Obj designatorObj = designatorDec.getDesignator().obj;
+		if (designatorObj.getKind() != Obj.Var 
+				&& designatorObj.getKind() != Obj.Fld)
+			report_error("Decrement designator is not an array element, variable or a field", designatorDec);
+		if (!designatorObj.getType().equals(Tab.intType))
+			report_error("Invalid decrement designator type", designatorDec);
+	}
+	
+	@Override
+	public void visit(DesignatorInc designatorInc) {
+		Obj designatorObj = designatorInc.getDesignator().obj;
+		if (designatorObj.getKind() != Obj.Var 
+				&& designatorObj.getKind() != Obj.Fld)
+			report_error("Increment designator is not an array element, variable or a field", designatorInc);
+		if (!designatorObj.getType().equals(Tab.intType))
+			report_error("Invalid increment designator type", designatorInc);
+	}
+	
+	
+	
 }

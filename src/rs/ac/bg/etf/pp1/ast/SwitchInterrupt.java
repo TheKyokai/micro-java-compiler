@@ -1,13 +1,31 @@
 // generated with ast extension for cup
 // version 0.8
-// 11/1/2026 18:37:44
+// 13/1/2026 0:38:39
 
 
 package rs.ac.bg.etf.pp1.ast;
 
-public class EmptyMultActualParam extends MultActualParam {
+public class SwitchInterrupt implements SyntaxNode {
 
-    public EmptyMultActualParam () {
+    private SyntaxNode parent;
+    private int line;
+    public SwitchInterrupt () {
+    }
+
+    public SyntaxNode getParent() {
+        return parent;
+    }
+
+    public void setParent(SyntaxNode parent) {
+        this.parent=parent;
+    }
+
+    public int getLine() {
+        return line;
+    }
+
+    public void setLine(int line) {
+        this.line=line;
     }
 
     public void accept(Visitor visitor) {
@@ -28,10 +46,10 @@ public class EmptyMultActualParam extends MultActualParam {
     public String toString(String tab) {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
-        buffer.append("EmptyMultActualParam(\n");
+        buffer.append("SwitchInterrupt(\n");
 
         buffer.append(tab);
-        buffer.append(") [EmptyMultActualParam]");
+        buffer.append(") [SwitchInterrupt]");
         return buffer.toString();
     }
 }

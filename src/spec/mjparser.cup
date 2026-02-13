@@ -97,17 +97,18 @@ nonterminal ClassMethods, ExtMethodIntercept, ClassMethodDeclList, ClassMethodDe
 nonterminal AbsClassDecl, AbsClassName, AbsClassMethods, AbsClassMethodList, AbsMethodDecl, AbsMethodName;
 
 nonterminal MethodDeclList, MethodDecl, ReturnType, MethodName, FormalParamList, FormalParams, FormalParam, VarDeclList;
-nonterminal StatementList, Statement, Designator, DesignatorStatement, DesignatorChain, ForDesignatorStmnt, ForCondition, CaseList;
-nonterminal Condition, CondTerm, CondFact;
-nonterminal ActualParamList, ActualParam, MultActualParam;
-nonterminal Expr, Term, TermList, Factor, FactorList;
+nonterminal StatementList, Statement, DesignatorStatement, ForDesignatorStmnt, ForCondition, ForInterrupt, SwitchInterrupt, CaseList;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Condition, CondTerm, CondFact;
+nonterminal ActualParamList, MultActualParam;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Expr, Term, TermList, Factor, FactorList;
 
 nonterminal Assignop, Relop, Addop, Mulop;
 
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName, EnumName, Type;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct ConstVal;
-
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator,  DesignatorChain;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ActualParam;
 
 
 /*------------------------- TERMINALS AND NONTERMINALS END -------------------------*/
@@ -371,11 +372,14 @@ Statement			::= (GeneralDesignatorStatement) DesignatorStatement SEMI
 						|
 						(NumConstPrintStatement) PRINT LPAREN Expr COMMA NUMCONST:val RPAREN SEMI
 						| 
-						(ForStatement) FOR LPAREN ForDesignatorStmnt SEMI ForCondition SEMI ForDesignatorStmnt RPAREN Statement
+						(ForStatement) FOR LPAREN ForDesignatorStmnt SEMI ForCondition SEMI ForDesignatorStmnt ForInterrupt Statement
 						|
 						(StatementBlock) LBRACE StatementList RBRACE
 						|
-						(SwitchStatement) SWITCH LPAREN Expr RPAREN LBRACE CaseList RBRACE;
+						(SwitchStatement) SWITCH LPAREN Expr RPAREN SwitchInterrupt CaseList RBRACE;
+
+
+ForInterrupt		::= (ForInterrupt) RPAREN;
 
 
 ForDesignatorStmnt	::= (ForDesignatorStatement) DesignatorStatement
@@ -387,6 +391,9 @@ ForCondition		::= (ForCond) Condition
 						|
 						(NoForCond) /* epsilon */;
 						
+
+SwitchInterrupt		::= (SwitchInterrupt) LBRACE;
+
 
 CaseList			::= (Cases) CaseList CASE NUMCONST:val COLON StatementList
 						|
@@ -405,21 +412,21 @@ DesignatorStatement	::= (DesignatorAssignment) Designator Assignop Expr
 Designator			::= (Designator) DesignatorChain;
 
 
-DesignatorChain		::= (DesignatorChainIndexAccess) DesignatorChain LBRACKET Expr RBRACKET 
+DesignatorChain		::= (DesignatorChainIndexAccess) DesignatorChain:prevDesignator LBRACKET Expr RBRACKET 
 						|
-						(DesignatorChainFieldAccess) DesignatorChain DOT IDENT:fieldName
+						(DesignatorChainFieldAccess) DesignatorChain:prevDeisgnator DOT IDENT:fieldName
 						|
-						(DesignatorChainIdent) IDENT:objName;
+						(DesignatorChainIdent) IDENT:name;
 
 
-ActualParamList		::= (ActualParams) ActualParam MultActualParam
+ActualParamList		::= (ActualParams)  MultActualParam
 						|
 						(EmptyActualParamList) /* epsilon */;
 
 
 MultActualParam		::= (MultActualParams) MultActualParam COMMA ActualParam 
 						|
-						(EmptyMultActualParam) /* epsilon */;
+						(SingleActualParam) ActualParam;
 
 
 ActualParam			::= (ActualParam) Expr;
@@ -442,7 +449,7 @@ CondFact			::= (SimpleCondFact) TermList
 						
 Expr				::= (SimpleExpr) TermList
 						|
-						(TernaryExpr) Condition QMARK Expr COLON Expr;
+						(TernaryExpr) Condition QMARK Expr:trueExpr COLON Expr:falseExpr;
 						
 						
 TermList			::= (Terms) TermList Addop Term

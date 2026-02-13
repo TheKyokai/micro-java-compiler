@@ -13,6 +13,7 @@
 		<delete>
 			<fileset dir="./src/rs/ac/bg/etf/pp1">
 			    <exclude name="util/Log4JUtils.java"/>
+				<exclude name="util/ExpandedDumpSymbolTableVisitor.java"/>
 				<exclude name="Compiler.java"/>
 				<exclude name="SemanticAnalyzer.java"/>
 			</fileset>

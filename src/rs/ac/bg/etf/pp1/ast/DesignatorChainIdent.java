@@ -1,24 +1,24 @@
 // generated with ast extension for cup
 // version 0.8
-// 11/1/2026 18:37:44
+// 13/1/2026 0:38:39
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class DesignatorChainIdent extends DesignatorChain {
 
-    private String objName;
+    private String name;
 
-    public DesignatorChainIdent (String objName) {
-        this.objName=objName;
+    public DesignatorChainIdent (String name) {
+        this.name=name;
     }
 
-    public String getObjName() {
-        return objName;
+    public String getName() {
+        return name;
     }
 
-    public void setObjName(String objName) {
-        this.objName=objName;
+    public void setName(String name) {
+        this.name=name;
     }
 
     public void accept(Visitor visitor) {
@@ -41,7 +41,7 @@ public class DesignatorChainIdent extends DesignatorChain {
         buffer.append(tab);
         buffer.append("DesignatorChainIdent(\n");
 
-        buffer.append(" "+tab+objName);
+        buffer.append(" "+tab+name);
         buffer.append("\n");
 
         buffer.append(tab);

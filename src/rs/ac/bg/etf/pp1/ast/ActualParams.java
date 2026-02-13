@@ -1,28 +1,17 @@
 // generated with ast extension for cup
 // version 0.8
-// 11/1/2026 18:37:44
+// 13/1/2026 0:38:39
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class ActualParams extends ActualParamList {
 
-    private ActualParam ActualParam;
     private MultActualParam MultActualParam;
 
-    public ActualParams (ActualParam ActualParam, MultActualParam MultActualParam) {
-        this.ActualParam=ActualParam;
-        if(ActualParam!=null) ActualParam.setParent(this);
+    public ActualParams (MultActualParam MultActualParam) {
         this.MultActualParam=MultActualParam;
         if(MultActualParam!=null) MultActualParam.setParent(this);
-    }
-
-    public ActualParam getActualParam() {
-        return ActualParam;
-    }
-
-    public void setActualParam(ActualParam ActualParam) {
-        this.ActualParam=ActualParam;
     }
 
     public MultActualParam getMultActualParam() {
@@ -38,18 +27,15 @@ public class ActualParams extends ActualParamList {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(ActualParam!=null) ActualParam.accept(visitor);
         if(MultActualParam!=null) MultActualParam.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(ActualParam!=null) ActualParam.traverseTopDown(visitor);
         if(MultActualParam!=null) MultActualParam.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(ActualParam!=null) ActualParam.traverseBottomUp(visitor);
         if(MultActualParam!=null) MultActualParam.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -58,12 +44,6 @@ public class ActualParams extends ActualParamList {
         StringBuffer buffer=new StringBuffer();
         buffer.append(tab);
         buffer.append("ActualParams(\n");
-
-        if(ActualParam!=null)
-            buffer.append(ActualParam.toString("  "+tab));
-        else
-            buffer.append(tab+"  null");
-        buffer.append("\n");
 
         if(MultActualParam!=null)
             buffer.append(MultActualParam.toString("  "+tab));

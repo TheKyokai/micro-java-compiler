@@ -128,23 +128,16 @@ nonterminal FormalParam FormalParam;
 nonterminal VarDeclList VarDeclList;
 nonterminal StatementList StatementList;
 nonterminal Statement Statement;
-nonterminal Designator Designator;
 nonterminal DesignatorStatement DesignatorStatement;
-nonterminal DesignatorChain DesignatorChain;
 nonterminal ForDesignatorStmnt ForDesignatorStmnt;
 nonterminal ForCondition ForCondition;
+nonterminal ForInterrupt ForInterrupt;
+nonterminal SwitchInterrupt SwitchInterrupt;
 nonterminal CaseList CaseList;
-nonterminal Condition Condition;
-nonterminal CondTerm CondTerm;
-nonterminal CondFact CondFact;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Condition, CondTerm, CondFact;
 nonterminal ActualParamList ActualParamList;
-nonterminal ActualParam ActualParam;
 nonterminal MultActualParam MultActualParam;
-nonterminal Expr Expr;
-nonterminal Term Term;
-nonterminal TermList TermList;
-nonterminal Factor Factor;
-nonterminal FactorList FactorList;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Expr, Term, TermList, Factor, FactorList;
 
 nonterminal Assignop Assignop;
 nonterminal Relop Relop;
@@ -154,7 +147,8 @@ nonterminal Mulop Mulop;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName, EnumName, Type;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct ConstVal;
-
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator,  DesignatorChain;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ActualParam;
 
 
 /*------------------------- TERMINALS AND NONTERMINALS END -------------------------*/
@@ -418,11 +412,14 @@ Statement			::= (GeneralDesignatorStatement) DesignatorStatement:D1 SEMI {: RESU
 						|
 						(NumConstPrintStatement) PRINT LPAREN Expr:E1 COMMA NUMCONST:val RPAREN SEMI {: RESULT=new NumConstPrintStatement(E1, val); RESULT.setLine(E1left); :}
 						| 
-						(ForStatement) FOR LPAREN ForDesignatorStmnt:F1 SEMI ForCondition:F2 SEMI ForDesignatorStmnt:F3 RPAREN Statement:S4 {: RESULT=new ForStatement(F1, F2, F3, S4); RESULT.setLine(F1left); :}
+						(ForStatement) FOR LPAREN ForDesignatorStmnt:F1 SEMI ForCondition:F2 SEMI ForDesignatorStmnt:F3 ForInterrupt:F4 Statement:S5 {: RESULT=new ForStatement(F1, F2, F3, F4, S5); RESULT.setLine(F1left); :}
 						|
 						(StatementBlock) LBRACE StatementList:S1 RBRACE {: RESULT=new StatementBlock(S1); RESULT.setLine(S1left); :}
 						|
-						(SwitchStatement) SWITCH LPAREN Expr:E1 RPAREN LBRACE CaseList:C2 RBRACE {: RESULT=new SwitchStatement(E1, C2); RESULT.setLine(E1left); :};
+						(SwitchStatement) SWITCH LPAREN Expr:E1 RPAREN SwitchInterrupt:S2 CaseList:C3 RBRACE {: RESULT=new SwitchStatement(E1, S2, C3); RESULT.setLine(E1left); :};
+
+
+ForInterrupt		::= (ForInterrupt) RPAREN {: RESULT=new ForInterrupt(); :};
 
 
 ForDesignatorStmnt	::= (ForDesignatorStatement) DesignatorStatement:D1 {: RESULT=new ForDesignatorStatement(D1); RESULT.setLine(D1left); :}
@@ -434,6 +431,9 @@ ForCondition		::= (ForCond) Condition:C1 {: RESULT=new ForCond(C1); RESULT.setLi
 						|
 						(NoForCond) {: RESULT=new NoForCond(); :} /* epsilon */;
 						
+
+SwitchInterrupt		::= (SwitchInterrupt) LBRACE {: RESULT=new SwitchInterrupt(); :};
+
 
 CaseList			::= (Cases) CaseList:C1 CASE NUMCONST:val COLON StatementList:S2 {: RESULT=new Cases(C1, val, S2); RESULT.setLine(C1left); :}
 						|
@@ -452,21 +452,21 @@ DesignatorStatement	::= (DesignatorAssignment) Designator:D1 Assignop:A2 Expr:E3
 Designator			::= (Designator) DesignatorChain:D1 {: RESULT=new Designator(D1); RESULT.setLine(D1left); :};
 
 
-DesignatorChain		::= (DesignatorChainIndexAccess) DesignatorChain:D1 LBRACKET Expr:E2 RBRACKET {: RESULT=new DesignatorChainIndexAccess(D1, E2); RESULT.setLine(D1left); :} 
+DesignatorChain		::= (DesignatorChainIndexAccess) DesignatorChain:prevDesignator LBRACKET Expr:E1 RBRACKET {: RESULT=new DesignatorChainIndexAccess(prevDesignator, E1); RESULT.setLine(prevDesignatorleft); :} 
 						|
-						(DesignatorChainFieldAccess) DesignatorChain:D1 DOT IDENT:fieldName {: RESULT=new DesignatorChainFieldAccess(D1, fieldName); RESULT.setLine(D1left); :}
+						(DesignatorChainFieldAccess) DesignatorChain:prevDeisgnator DOT IDENT:fieldName {: RESULT=new DesignatorChainFieldAccess(prevDeisgnator, fieldName); RESULT.setLine(prevDeisgnatorleft); :}
 						|
-						(DesignatorChainIdent) IDENT:objName {: RESULT=new DesignatorChainIdent(objName); RESULT.setLine(objNameleft); :};
+						(DesignatorChainIdent) IDENT:name {: RESULT=new DesignatorChainIdent(name); RESULT.setLine(nameleft); :};
 
 
-ActualParamList		::= (ActualParams) ActualParam:A1 MultActualParam:M2 {: RESULT=new ActualParams(A1, M2); RESULT.setLine(A1left); :}
+ActualParamList		::= (ActualParams)  MultActualParam:M1 {: RESULT=new ActualParams(M1); RESULT.setLine(M1left); :}
 						|
 						(EmptyActualParamList) {: RESULT=new EmptyActualParamList(); :} /* epsilon */;
 
 
 MultActualParam		::= (MultActualParams) MultActualParam:M1 COMMA ActualParam:A2 {: RESULT=new MultActualParams(M1, A2); RESULT.setLine(M1left); :} 
 						|
-						(EmptyMultActualParam) {: RESULT=new EmptyMultActualParam(); :} /* epsilon */;
+						(SingleActualParam) ActualParam:A1 {: RESULT=new SingleActualParam(A1); RESULT.setLine(A1left); :};
 
 
 ActualParam			::= (ActualParam) Expr:E1 {: RESULT=new ActualParam(E1); RESULT.setLine(E1left); :};
@@ -489,7 +489,7 @@ CondFact			::= (SimpleCondFact) TermList:T1 {: RESULT=new SimpleCondFact(T1); RE
 						
 Expr				::= (SimpleExpr) TermList:T1 {: RESULT=new SimpleExpr(T1); RESULT.setLine(T1left); :}
 						|
-						(TernaryExpr) Condition:C1 QMARK Expr:E2 COLON Expr:E3 {: RESULT=new TernaryExpr(C1, E2, E3); RESULT.setLine(C1left); :};
+						(TernaryExpr) Condition:C1 QMARK Expr:trueExpr COLON Expr:falseExpr {: RESULT=new TernaryExpr(C1, trueExpr, falseExpr); RESULT.setLine(C1left); :};
 						
 						
 TermList			::= (Terms) TermList:T1 Addop:A2 Term:T3 {: RESULT=new Terms(T1, A2, T3); RESULT.setLine(T1left); :}

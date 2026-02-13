@@ -1,6 +1,6 @@
 program MJProgram 
 
-//int x;
+int x;
 //const int y = 10;
 //const char c = 'A';
 //const bool boolConst = true;
@@ -10,30 +10,41 @@ enum Broj { NULA, JEDAN = 1, PET=5, DESET=10}
 
 
 
-class ret {{ void retMeth(){}}}
+class ret { bool ret_field; { int retMeth(){}}}
 
-abstract class k1 extends ret
-{
-	{
-		Broj meth(ret ret_fp, int num, k1 c[]){}		
-	}
-}
+
+abstract class k1 extends ret { int k1_field; {  Broj meth(ret ret_fp, int num, k1 c[]){}	} }
 
 
 
-class k2 extends k1
-{
-	{
-		Broj meth(ret retSuper_fp, int x, k1 c[]){}
-	}
-}
+//class k2 extends k1 { char k2_field; {	Broj meth(ret retSuper_fp, int x, k1 c[]){}  }}
 
-//k2 k2_ref[];
+//k2 k2_ref;
 
-abstract class k3 extends k2 { }
+//abstract class k3 extends k2 { }
 
 
 {
+	ret function() {}
 	
-	//void main(char character, ret smth) int x;{}
+	
+	void main() int x[]; ret ret_arr[]; Broj br;
+	{
+		x[1] = ret_arr[1].retMeth(); 	// PASS
+		x[1] = x[0];					// PASS
+		//x = function(); 				// FAIL
+		ret_arr = new ret[2];		 	// PASS
+		//x = new ret; 					// FAIL
+		//ret_arr[0] = new k1; 			// FAIL
+		//x[0] = ret_arr[1] - 3; 		// FAIL
+		x[0] = x[1] % 2; 				// PASS
+		br = Broj.NULA;					// PASS
+		br = (true)? 1 : 10;			// PASS
+		x = function(x);				// FAIL
+		for (;;) x[1] = x[2];			// PASS
+		if (true) br = br;				// PASS
+		for (;;) continue;				// PASS
+		for (;;) break;					// PASS
+		//switch('c') {}				// FAIL
+	}
 }
