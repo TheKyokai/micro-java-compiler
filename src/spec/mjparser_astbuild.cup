@@ -134,6 +134,7 @@ nonterminal ForCondition ForCondition;
 nonterminal ForInterrupt ForInterrupt;
 nonterminal SwitchInterrupt SwitchInterrupt;
 nonterminal CaseList CaseList;
+nonterminal SingleCase SingleCase;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Condition, CondTerm, CondFact;
 nonterminal ActualParamList ActualParamList;
 nonterminal MultActualParam MultActualParam;
@@ -435,9 +436,13 @@ ForCondition		::= (ForCond) Condition:C1 {: RESULT=new ForCond(C1); RESULT.setLi
 SwitchInterrupt		::= (SwitchInterrupt) LBRACE {: RESULT=new SwitchInterrupt(); :};
 
 
-CaseList			::= (Cases) CaseList:C1 CASE NUMCONST:val COLON StatementList:S2 {: RESULT=new Cases(C1, val, S2); RESULT.setLine(C1left); :}
+CaseList			::= (Cases) CaseList:C1 SingleCase:S2 {: RESULT=new Cases(C1, S2); RESULT.setLine(C1left); :} 
 						|
 						(EmptyCaseList) {: RESULT=new EmptyCaseList(); :} /* epsilon */;
+						
+						
+SingleCase			::= (SingleCase) CASE NUMCONST:val COLON StatementList:S1 {: RESULT=new SingleCase(val, S1); RESULT.setLine(valleft); :};	
+						
 						
 					
 DesignatorStatement	::= (DesignatorAssignment) Designator:D1 Assignop:A2 Expr:E3 {: RESULT=new DesignatorAssignment(D1, A2, E3); RESULT.setLine(D1left); :}

@@ -97,7 +97,7 @@ nonterminal ClassMethods, ExtMethodIntercept, ClassMethodDeclList, ClassMethodDe
 nonterminal AbsClassDecl, AbsClassName, AbsClassMethods, AbsClassMethodList, AbsMethodDecl, AbsMethodName;
 
 nonterminal MethodDeclList, MethodDecl, ReturnType, MethodName, FormalParamList, FormalParams, FormalParam, VarDeclList;
-nonterminal StatementList, Statement, DesignatorStatement, ForDesignatorStmnt, ForCondition, ForInterrupt, SwitchInterrupt, CaseList;
+nonterminal StatementList, Statement, DesignatorStatement, ForDesignatorStmnt, ForCondition, ForInterrupt, SwitchInterrupt, CaseList, SingleCase;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Condition, CondTerm, CondFact;
 nonterminal ActualParamList, MultActualParam;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Expr, Term, TermList, Factor, FactorList;
@@ -395,9 +395,13 @@ ForCondition		::= (ForCond) Condition
 SwitchInterrupt		::= (SwitchInterrupt) LBRACE;
 
 
-CaseList			::= (Cases) CaseList CASE NUMCONST:val COLON StatementList
+CaseList			::= (Cases) CaseList SingleCase 
 						|
 						(EmptyCaseList) /* epsilon */;
+						
+						
+SingleCase			::= (SingleCase) CASE NUMCONST:val COLON StatementList;	
+						
 						
 					
 DesignatorStatement	::= (DesignatorAssignment) Designator Assignop Expr

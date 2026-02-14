@@ -15,6 +15,7 @@ import rs.ac.bg.etf.pp1.ast.AndCondTerm;
 import rs.ac.bg.etf.pp1.ast.BoolConstVal;
 import rs.ac.bg.etf.pp1.ast.BreakStatement;
 import rs.ac.bg.etf.pp1.ast.CExtension;
+import rs.ac.bg.etf.pp1.ast.Cases;
 import rs.ac.bg.etf.pp1.ast.CharConstVal;
 import rs.ac.bg.etf.pp1.ast.ClassDecl;
 import rs.ac.bg.etf.pp1.ast.ClassMethodDecl;
@@ -23,12 +24,15 @@ import rs.ac.bg.etf.pp1.ast.ClassName;
 import rs.ac.bg.etf.pp1.ast.ConstDecl;
 import rs.ac.bg.etf.pp1.ast.ContinueStatement;
 import rs.ac.bg.etf.pp1.ast.Designator;
+import rs.ac.bg.etf.pp1.ast.DesignatorAssignment;
 import rs.ac.bg.etf.pp1.ast.DesignatorChainFieldAccess;
 import rs.ac.bg.etf.pp1.ast.DesignatorChainIdent;
 import rs.ac.bg.etf.pp1.ast.DesignatorChainIndexAccess;
 import rs.ac.bg.etf.pp1.ast.DesignatorDec;
+import rs.ac.bg.etf.pp1.ast.DesignatorFCall;
 import rs.ac.bg.etf.pp1.ast.DesignatorInc;
 import rs.ac.bg.etf.pp1.ast.Div;
+import rs.ac.bg.etf.pp1.ast.EmptyCaseList;
 import rs.ac.bg.etf.pp1.ast.EnumDecl;
 import rs.ac.bg.etf.pp1.ast.EnumName;
 import rs.ac.bg.etf.pp1.ast.EnumNumConstAssign;
@@ -78,10 +82,12 @@ import rs.ac.bg.etf.pp1.ast.SimpleCondFact;
 import rs.ac.bg.etf.pp1.ast.SimpleCondTerm;
 import rs.ac.bg.etf.pp1.ast.SimpleCondition;
 import rs.ac.bg.etf.pp1.ast.SimpleExpr;
+import rs.ac.bg.etf.pp1.ast.SingleCase;
 import rs.ac.bg.etf.pp1.ast.SingleConstDecl;
 import rs.ac.bg.etf.pp1.ast.SingleFormalParam;
 import rs.ac.bg.etf.pp1.ast.SingleIdentEnumDecl;
 import rs.ac.bg.etf.pp1.ast.SingleVarDecl;
+import rs.ac.bg.etf.pp1.ast.SwitchInterrupt;
 import rs.ac.bg.etf.pp1.ast.SwitchStatement;
 import rs.ac.bg.etf.pp1.ast.SyntaxNode;
 import rs.ac.bg.etf.pp1.ast.Term;
@@ -127,7 +133,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		log.info(msg.toString());
 	}
 
-	// Util
+	// UTIL
 
 	private boolean isSuperClass(Struct superClass, Struct type) {
 		if (superClass.getKind() != Struct.Class || type.getKind() != Struct.Class)
@@ -135,13 +141,6 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		while (type != Tab.noType && type != superClass)
 			type = type.getElemType();
 		return type == superClass;
-	}
-
-	private Obj findArrayElemTypeObj(Struct arrayStruct) {
-		if (arrayStruct.getKind() != Struct.Array)
-			return Tab.noObj;
-
-		return findTypeObj(arrayStruct.getElemType());
 	}
 
 	private Obj findTypeObj(Struct type) {
@@ -165,6 +164,22 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return Tab.noObj;
 		}
 		return typeObjOpt.get();
+	}
+
+	private boolean assignmentTypeCompatible(Obj dst, Obj src) {
+		if (dst.getType().getKind() == Struct.Enum) {
+			// Enum variable or array element
+			if (src.getType().getKind() == Struct.Enum && (src.getKind() == Obj.Var || src.getKind() == Obj.Elem))
+				return dst.getType() == src.getType();
+			if (src.getType() != Tab.intType)
+				return false;			
+			return dst.getType() == assignOpEnumType;
+		}
+		if (dst.getType().isRefType() && src.getType() == Tab.nullType)
+			return true;
+		if (isSuperClass(dst.getType(), src.getType()))
+			return true;
+		return dst.getType().equals(src.getType());
 	}
 
 	private Struct currentType; // Type currently used for declaration of variables or method returns
@@ -872,37 +887,36 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	public void visit(Mod Mod) {
 		currentMulOp = MULOP.MOD;
 	}
-	
+
 	@Override
 	public void visit(Equal equal) {
 		currentRelOp = RELOP.EQUAL;
 	}
-	
+
 	@Override
 	public void visit(NotEqual notEqual) {
-	    currentRelOp = RELOP.NOTEQUAL;
+		currentRelOp = RELOP.NOTEQUAL;
 	}
 
 	@Override
 	public void visit(GreaterThan greaterThan) {
-	    currentRelOp = RELOP.GREATER;
+		currentRelOp = RELOP.GREATER;
 	}
 
 	@Override
 	public void visit(GreaterEqual greaterEqual) {
-	    currentRelOp = RELOP.GREATEREQ;
+		currentRelOp = RELOP.GREATEREQ;
 	}
 
 	@Override
 	public void visit(LesserThan lesserThan) {
-	    currentRelOp = RELOP.LESSER;
+		currentRelOp = RELOP.LESSER;
 	}
 
 	@Override
 	public void visit(LesserThanEqual lesserThanEqual) {
-	    currentRelOp = RELOP.LESSEREQ;
+		currentRelOp = RELOP.LESSEREQ;
 	}
-	
 
 	private Struct assignOpEnumType = Tab.noType; // Enum assignment
 	private Obj lastVisitedDesignator = Tab.noObj; // Actual parameter checking
@@ -922,9 +936,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return;
 		}
 		// TODO REMOVE THE MEGA OVERKILL
-		if (foundSymbol.getKind() != Obj.Con && foundSymbol.getKind() != Obj.Var
-				&& !(foundSymbol.getKind() == Obj.Type && foundSymbol.getType().getKind() == Struct.Enum)
-				&& foundSymbol.getKind() != Obj.Meth && foundSymbol.getKind() != Obj.Fld) {
+		if (foundSymbol.getKind() == Obj.Type && foundSymbol.getType().getKind() != Struct.Enum) {
 			report_error("Name '" + designatorChainIdent.getName()
 					+ "' does not represent an enum, a constant, a method nor a variable reachable from the current scope",
 					designatorChainIdent);
@@ -960,6 +972,11 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			designatorChainFieldAccess.obj = intObj;
 			break;
 		case Struct.Enum:
+			if (designatorChainFieldAccess.getDesignatorChain().obj.getKind() != Obj.Type) {
+				report_error("Enum constant accessed using something other than the enum identificator",
+						designatorChainFieldAccess);
+				return;
+			}
 			Optional<Obj> enumConstOpt = designatorChainFieldAccess.getDesignatorChain().obj.getType().getMembers()
 					.stream().filter(con -> con.getName().equals(accessName)).findFirst();
 			if (!enumConstOpt.isPresent()) {
@@ -976,11 +993,9 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			// Current class struct has not yet been chained
 			if (designatorChainFieldAccess.getDesignatorChain().obj.getName().equals("this")
 					|| designatorChainFieldAccess.getDesignatorChain().obj.getType().equals(currentClassType))
-				// TODO REMOVE TEMP PRINT
 				classFieldOpt = Tab.currentScope.getOuter().getLocals().symbols().stream()
 						.filter(sym -> sym.getName().equals(accessName)).findFirst();
 			else
-				// TODO REMOVE TEMP PRINT
 				classFieldOpt = designatorChainFieldAccess.getDesignatorChain().obj.getType().getMembers().stream()
 						.filter(sym -> sym.getName().equals(accessName)).findFirst();
 			if (!classFieldOpt.isPresent()) {
@@ -1017,7 +1032,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			designatorChainIndexAccess.obj = Tab.noObj;
 			return;
 		}
-		Obj arrayElemObj = findArrayElemTypeObj(designatorChainIndexAccess.getDesignatorChain().obj.getType());
+		Obj arrayElemObj = new Obj(Obj.Elem, "array_elem_wrapper",
+				designatorChainIndexAccess.getDesignatorChain().obj.getType().getElemType());
 		designatorChainIndexAccess.obj = arrayElemObj;
 	}
 
@@ -1041,28 +1057,33 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return;
 		}
 		Obj methRetObj = findTypeObj(methObj.getType());
-		//TODO REMOVE LATER
-		//System.out.println("Found type '" + methRetObj.getName() + "' for method '" + methObj.getName() + "'");
+		// TODO REMOVE LATER
+		// System.out.println("Found type '" + methRetObj.getName() + "' for method '" +
+		// methObj.getName() + "'");
 		factorFCall.obj = methRetObj;
 	}
 
 	@Override
 	public void visit(FactorNumConst factorNumConst) {
+		assignOpEnumType = Tab.noType;
 		factorNumConst.obj = intObj;
 	}
 
 	@Override
 	public void visit(FactorCharConst factorCharConst) {
+		assignOpEnumType = Tab.noType;
 		factorCharConst.obj = chrObj;
 	}
 
 	@Override
 	public void visit(FactorBoolConst factorBoolConst) {
+		assignOpEnumType = Tab.noType;
 		factorBoolConst.obj = boolObj;
 	}
 
 	@Override
 	public void visit(FactorTypeInst factorTypeInst) {
+		assignOpEnumType = Tab.noType;
 		if (currentType == Tab.noType)
 			return;
 		if (currentType.getKind() != Struct.Class) {
@@ -1071,18 +1092,17 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return;
 		}
 		Obj classTypeObj = findTypeObj(currentType);
-		//TODO REMOVE LATER
-		//System.out.println("Found type '" + classTypeObj.getName() + "'");
 		if (classTypeObj.getFpPos() == 1) {
 			report_error("Instantiating an abstract class '" + classTypeObj.getName() + "'", factorTypeInst);
 			factorTypeInst.obj = Tab.noObj;
 			return;
 		}
-		factorTypeInst.obj = classTypeObj;
+		factorTypeInst.obj = new Obj(Obj.Var, classTypeObj.getName() + " inst_wrapper", classTypeObj.getType());
 	}
 
 	@Override
 	public void visit(FactorArrayInst factorArrayInst) {
+		assignOpEnumType = Tab.noType;
 		if (!factorArrayInst.getExpr().obj.getType().equals(Tab.intType)) {
 			report_error("Invalid non-int expression during array instantiating", factorArrayInst);
 			factorArrayInst.obj = Tab.noObj;
@@ -1105,6 +1125,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 
 	@Override
 	public void visit(Factors factors) {
+		assignOpEnumType = Tab.noType;
 		if (factors.getFactorList().obj.getType() != Tab.intType || factors.getFactor().obj.getType() != Tab.intType) {
 			report_error("Invalid " + currentMulOp.getIdent() + " of non-compatible types", factors);
 			factors.obj = Tab.noObj;
@@ -1127,6 +1148,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 
 	@Override
 	public void visit(UMinusFirstTermInList uMinusFirstTermInList) {
+		assignOpEnumType = Tab.noType;
 		Obj termObj = uMinusFirstTermInList.getTerm().obj;
 		if (!termObj.getType().equals(Tab.intType)) {
 			report_error("Unary minus used on non-int type term", uMinusFirstTermInList);
@@ -1139,6 +1161,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 
 	@Override
 	public void visit(Terms terms) {
+		assignOpEnumType = Tab.noType;
 		if (terms.getTermList().obj.getType() != Tab.intType || terms.getTerm().obj.getType() != Tab.intType) {
 			report_error("Invalid " + currentAddOp.getIdent() + " of non-compatible types", terms);
 			terms.obj = Tab.noObj;
@@ -1148,11 +1171,10 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		terms.obj = intObj;
 		currentAddOp = ADDOP.NONE;
 	}
-	
-	
+
 	@Override
 	public void visit(TernaryExpr ternaryExpr) {
-		//TODO TEST MORE
+		// TODO TEST MORE
 		if (!ternaryExpr.getExpr().obj.getType().equals(ternaryExpr.getExpr1().obj.getType())) {
 			report_error("Ternary expression sub-expression types do not match", ternaryExpr);
 			ternaryExpr.obj = Tab.noObj;
@@ -1160,25 +1182,25 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		}
 		ternaryExpr.obj = ternaryExpr.getExpr().obj;
 	}
-	
-	
+
 	@Override
 	public void visit(SimpleCondFact simpleCondFact) {
 		simpleCondFact.obj = simpleCondFact.getTermList().obj;
 	}
-	
+
 	@Override
 	public void visit(RelopCondFact relopCondFact) {
-		Obj leftExpr = relopCondFact.getTermList().obj, rightExpr = relopCondFact.getTermList1().obj; 
+		Obj leftExpr = relopCondFact.getTermList().obj, rightExpr = relopCondFact.getTermList1().obj;
 		if (!leftExpr.getType().compatibleWith(rightExpr.getType())) {
 			report_error("Incompatible type comparison", relopCondFact);
 			relopCondFact.obj = Tab.noObj;
 			currentRelOp = RELOP.NONE;
 			return;
 		}
-		if (leftExpr.getType().isRefType() && rightExpr.getType().isRefType()
-				&& currentRelOp != RELOP.EQUAL && currentRelOp != RELOP.NOTEQUAL) {
-			report_error("Invalid comparison of references (only == and != relational operators are allowed)", relopCondFact);
+		if (leftExpr.getType().isRefType() && rightExpr.getType().isRefType() && currentRelOp != RELOP.EQUAL
+				&& currentRelOp != RELOP.NOTEQUAL) {
+			report_error("Invalid comparison of references (only == and != relational operators are allowed)",
+					relopCondFact);
 			relopCondFact.obj = Tab.noObj;
 			currentRelOp = RELOP.NONE;
 			return;
@@ -1186,118 +1208,131 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		currentRelOp = RELOP.NONE;
 		relopCondFact.obj = boolObj;
 	}
-	
-	
+
 	@Override
 	public void visit(SimpleCondTerm simpleCondTerm) {
 		simpleCondTerm.obj = simpleCondTerm.getCondFact().obj;
 	}
-	
+
 	@Override
 	public void visit(AndCondTerm andCondTerm) {
-		if (andCondTerm.getCondFact().obj.getType() != boolType
-				|| andCondTerm.getCondTerm().obj.getType() != boolType)
+		if (andCondTerm.getCondFact().obj.getType() != boolType || andCondTerm.getCondTerm().obj.getType() != boolType)
 			andCondTerm.obj = Tab.noObj;
 		else
 			andCondTerm.obj = boolObj;
 	}
-	
+
 	@Override
 	public void visit(SimpleCondition simpleCondition) {
 		simpleCondition.obj = simpleCondition.getCondTerm().obj;
 	}
-	
+
 	@Override
 	public void visit(OrCondition orCondition) {
-		if (orCondition.getCondition().obj.getType() != boolType
-				|| orCondition.getCondTerm().obj.getType() != boolType)
+		if (orCondition.getCondition().obj.getType() != boolType || orCondition.getCondTerm().obj.getType() != boolType)
 			orCondition.obj = Tab.noObj;
 		else
 			orCondition.obj = boolObj;
 	}
-	
-	
+
 	private int forLoopDepth = 0;
 	private int switchDepth = 0;
-	
+
 	@Override
 	public void visit(ForCond forCond) {
-		if (forCond.getCondition().obj.getType() != boolType) 
-			report_error("Invalid condition type in for loop", forCond);
+		if (forCond.getCondition().obj.getType() != boolType)
+			report_error("Invalid for loop condition type", forCond);
 	}
-	
+
 	@Override
 	public void visit(ForInterrupt forInterrupt) {
 		forLoopDepth++;
 	}
-	
+
 	@Override
 	public void visit(ForStatement forStatement) {
 		forLoopDepth--;
 	}
-	
+
 	@Override
 	public void visit(IfElseStatement ifElseStatement) {
 		if (ifElseStatement.getCondition().obj.getType() != boolType)
 			report_error("Invalid if condition type", ifElseStatement);
 	}
-	
+
 	@Override
 	public void visit(IfStatement ifStatement) {
 		if (ifStatement.getCondition().obj.getType() != boolType)
 			report_error("Invalid if condition type", ifStatement);
 	}
-	
+
 	@Override
 	public void visit(BreakStatement breakStatement) {
 		if (forLoopDepth == 0 && switchDepth == 0)
 			report_error("Break outside of a for loop or a switch", breakStatement);
 	}
-	
+
 	@Override
 	public void visit(ContinueStatement continueStatement) {
 		if (forLoopDepth == 0)
 			report_error("Continue outside of a for loop", continueStatement);
 	}
-	
+
+	@Override
+	public void visit(SwitchInterrupt switchInterrupt) {
+		switchDepth++;
+	}
+
 	@Override
 	public void visit(SwitchStatement switchStatement) {
 		if (!switchStatement.getExpr().obj.getType().equals(Tab.intType))
 			report_error("Invalid switch expression type", switchStatement);
+		switchDepth--;
 	}
-	
-	//TODO TEST EVERYTHING BELOW
+
+	// TODO TEST EVERYTHING BELOW
+
+	private List<Integer> usedCaseConsts = new ArrayList<>();
+
+	@Override
+	public void visit(EmptyCaseList emptyCaseList) {
+		usedCaseConsts.clear();
+	}
+
+	@Override
+	public void visit(SingleCase singleCase) {
+		int val = singleCase.getVal();
+		if (usedCaseConsts.contains(val))
+			report_error("Case number '" + val + "' reused", singleCase);
+		else
+			usedCaseConsts.add(val);
+	}
+
 	@Override
 	public void visit(PrintStatement printStatement) {
 		Struct exprType = printStatement.getExpr().obj.getType();
-		if (!exprType.equals(Tab.intType) 
-				&& !exprType.equals(boolType)
-				&& !exprType.equals(Tab.charType))
+		if (!exprType.equals(Tab.intType) && !exprType.equals(boolType) && !exprType.equals(Tab.charType))
 			report_error("Invalid print expression type", printStatement);
 	}
-	
-	
+
 	@Override
 	public void visit(NumConstPrintStatement numConstPrintStatement) {
 		Struct exprType = numConstPrintStatement.getExpr().obj.getType();
-		if (!exprType.equals(Tab.intType) 
-				&& !exprType.equals(boolType)
-				&& !exprType.equals(Tab.charType))
+		if (!exprType.equals(Tab.intType) && !exprType.equals(boolType) && !exprType.equals(Tab.charType))
 			report_error("Invalid print expression type", numConstPrintStatement);
 	}
-	
+
 	@Override
 	public void visit(ReadStatement readStatement) {
-		Obj designatorObj = readStatement.getDesignator().obj; 
-		if (designatorObj.getKind() != Obj.Var 
+		Obj designatorObj = readStatement.getDesignator().obj;
+		if (designatorObj.getKind() != Obj.Elem && designatorObj.getKind() != Obj.Var
 				&& designatorObj.getKind() != Obj.Fld)
 			report_error("Read designator is not an array element, variable or a field", readStatement);
-		if (!designatorObj.getType().equals(Tab.intType) 
-				&& !designatorObj.getType().equals(boolType)
+		if (!designatorObj.getType().equals(Tab.intType) && !designatorObj.getType().equals(boolType)
 				&& !designatorObj.getType().equals(Tab.charType))
 			report_error("Invalid read designator type", readStatement);
 	}
-	
+
 	@Override
 	public void visit(VoidReturnStatement voidReturnStatement) {
 		if (currentMeth == Tab.noObj)
@@ -1305,8 +1340,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		if (returnTyped)
 			report_error("Return statement of a non-void method does not return anything", voidReturnStatement);
 	}
-	
-	
+
 	@Override
 	public void visit(TypedReturnStatement typedReturnStatement) {
 		if (currentMeth == Tab.noObj)
@@ -1316,30 +1350,57 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return;
 		}
 		if (!currentMeth.getType().equals(typedReturnStatement.getExpr().obj.getType()))
-			report_error("Return statement expression type does not match the return type of the method", typedReturnStatement);
+			report_error("Return statement expression type does not match the return type of the method",
+					typedReturnStatement);
 	}
-	
-	
+
 	@Override
 	public void visit(DesignatorDec designatorDec) {
 		Obj designatorObj = designatorDec.getDesignator().obj;
-		if (designatorObj.getKind() != Obj.Var 
+		if (designatorObj.getKind() != Obj.Elem && designatorObj.getKind() != Obj.Var
 				&& designatorObj.getKind() != Obj.Fld)
 			report_error("Decrement designator is not an array element, variable or a field", designatorDec);
 		if (!designatorObj.getType().equals(Tab.intType))
 			report_error("Invalid decrement designator type", designatorDec);
 	}
-	
+
 	@Override
 	public void visit(DesignatorInc designatorInc) {
 		Obj designatorObj = designatorInc.getDesignator().obj;
-		if (designatorObj.getKind() != Obj.Var 
+		if (designatorObj.getKind() != Obj.Elem && designatorObj.getKind() != Obj.Var
 				&& designatorObj.getKind() != Obj.Fld)
 			report_error("Increment designator is not an array element, variable or a field", designatorInc);
 		if (!designatorObj.getType().equals(Tab.intType))
 			report_error("Invalid increment designator type", designatorInc);
 	}
-	
-	
-	
+
+	@Override
+	public void visit(DesignatorAssignment designatorAssignment) {
+		Obj designatorObj = designatorAssignment.getDesignator().obj;
+		//TODO REMOVE DEBUG PRINTS
+//		System.out.println("Assignment check '" + designatorObj.getName() + "' on the left is "
+//				+ designatorObj.getKind() + " struct type: " + designatorObj.getType().getKind());
+//		System.out.println("Assignment check '" + designatorAssignment.getExpr().obj.getName() + "' on the right is "
+//				+ designatorAssignment.getExpr().obj.getKind() + " struct type: "
+//				+ designatorAssignment.getExpr().obj.getType().getKind());
+		if (designatorObj.getKind() != Obj.Elem && designatorObj.getKind() != Obj.Var
+				&& designatorObj.getKind() != Obj.Fld) {
+			report_error("Assignment designator is not an array element, variable or a field", designatorAssignment);
+			assignOpEnumType = Tab.noType;
+			return;
+		}
+		if (!assignmentTypeCompatible(designatorObj, designatorAssignment.getExpr().obj))
+			// TODO Debug format
+			report_error("'" + designatorAssignment.getExpr().obj.getName() + "' cannot be assigned to '"
+					+ designatorObj.getName() + "'", designatorAssignment);
+		assignOpEnumType = Tab.noType;
+	}
+
+	@Override
+	public void visit(DesignatorFCall designatorFCall) {
+		if (designatorFCall.getDesignator().obj.getKind() != Obj.Meth)
+			report_error("'" + designatorFCall.getDesignator().obj.getName()
+					+ "' does not represent a method or a global function", designatorFCall);
+	}
+
 }
