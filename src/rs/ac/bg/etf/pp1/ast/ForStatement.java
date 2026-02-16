@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 16/1/2026 2:18:22
+// 16/1/2026 17:31:48
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -9,15 +9,18 @@ public class ForStatement extends Statement {
 
     private ForDesignatorStmnt ForDesignatorStmnt;
     private ForCondition ForCondition;
+    private ForAfterCond ForAfterCond;
     private ForDesignatorStmnt ForDesignatorStmnt1;
     private ForInterrupt ForInterrupt;
     private Statement Statement;
 
-    public ForStatement (ForDesignatorStmnt ForDesignatorStmnt, ForCondition ForCondition, ForDesignatorStmnt ForDesignatorStmnt1, ForInterrupt ForInterrupt, Statement Statement) {
+    public ForStatement (ForDesignatorStmnt ForDesignatorStmnt, ForCondition ForCondition, ForAfterCond ForAfterCond, ForDesignatorStmnt ForDesignatorStmnt1, ForInterrupt ForInterrupt, Statement Statement) {
         this.ForDesignatorStmnt=ForDesignatorStmnt;
         if(ForDesignatorStmnt!=null) ForDesignatorStmnt.setParent(this);
         this.ForCondition=ForCondition;
         if(ForCondition!=null) ForCondition.setParent(this);
+        this.ForAfterCond=ForAfterCond;
+        if(ForAfterCond!=null) ForAfterCond.setParent(this);
         this.ForDesignatorStmnt1=ForDesignatorStmnt1;
         if(ForDesignatorStmnt1!=null) ForDesignatorStmnt1.setParent(this);
         this.ForInterrupt=ForInterrupt;
@@ -40,6 +43,14 @@ public class ForStatement extends Statement {
 
     public void setForCondition(ForCondition ForCondition) {
         this.ForCondition=ForCondition;
+    }
+
+    public ForAfterCond getForAfterCond() {
+        return ForAfterCond;
+    }
+
+    public void setForAfterCond(ForAfterCond ForAfterCond) {
+        this.ForAfterCond=ForAfterCond;
     }
 
     public ForDesignatorStmnt getForDesignatorStmnt1() {
@@ -73,6 +84,7 @@ public class ForStatement extends Statement {
     public void childrenAccept(Visitor visitor) {
         if(ForDesignatorStmnt!=null) ForDesignatorStmnt.accept(visitor);
         if(ForCondition!=null) ForCondition.accept(visitor);
+        if(ForAfterCond!=null) ForAfterCond.accept(visitor);
         if(ForDesignatorStmnt1!=null) ForDesignatorStmnt1.accept(visitor);
         if(ForInterrupt!=null) ForInterrupt.accept(visitor);
         if(Statement!=null) Statement.accept(visitor);
@@ -82,6 +94,7 @@ public class ForStatement extends Statement {
         accept(visitor);
         if(ForDesignatorStmnt!=null) ForDesignatorStmnt.traverseTopDown(visitor);
         if(ForCondition!=null) ForCondition.traverseTopDown(visitor);
+        if(ForAfterCond!=null) ForAfterCond.traverseTopDown(visitor);
         if(ForDesignatorStmnt1!=null) ForDesignatorStmnt1.traverseTopDown(visitor);
         if(ForInterrupt!=null) ForInterrupt.traverseTopDown(visitor);
         if(Statement!=null) Statement.traverseTopDown(visitor);
@@ -90,6 +103,7 @@ public class ForStatement extends Statement {
     public void traverseBottomUp(Visitor visitor) {
         if(ForDesignatorStmnt!=null) ForDesignatorStmnt.traverseBottomUp(visitor);
         if(ForCondition!=null) ForCondition.traverseBottomUp(visitor);
+        if(ForAfterCond!=null) ForAfterCond.traverseBottomUp(visitor);
         if(ForDesignatorStmnt1!=null) ForDesignatorStmnt1.traverseBottomUp(visitor);
         if(ForInterrupt!=null) ForInterrupt.traverseBottomUp(visitor);
         if(Statement!=null) Statement.traverseBottomUp(visitor);
@@ -109,6 +123,12 @@ public class ForStatement extends Statement {
 
         if(ForCondition!=null)
             buffer.append(ForCondition.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(ForAfterCond!=null)
+            buffer.append(ForAfterCond.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

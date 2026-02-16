@@ -1,7 +1,6 @@
 program CodeTestProgram
 
 
-const int y = 10;
 const char c = 'A';
 const bool boolConst = true;
 
@@ -9,20 +8,33 @@ enum Broj { NULA, JEDAN = 1, PET=5, DESET=10}
 
 
 
-int x;
-
-abstract class AbsTest { { abstract void meth(int x, int y, int d, char z);}}
-
-class Test extends AbsTest { { void meth(int x, int y, int d, char z) { print('T'); print('e'); print('s'); print('t'); print(eol);}}}
-
-class TEST extends Test { { void meth(int x, int y, int g, char k) Test t1; { print('T'); print('E'); print('S'); print('T'); print(eol);} } }
+const int x = 5, y = 10;
 
 
 {
 
-	void main() AbsTest t;
+	
+
+	void main() int i;
 	{
-		t = new TEST;
-		t.meth(1,2,3,'z');		
+		for (i = 0; ; i++)
+		{
+			switch(i%100) 
+			{
+				case 0:
+				case 50:
+				case 99:
+					print(i);
+					print(eol);
+					continue;
+			}
+			i++;
+			i--;
+			continue;
+			i++;
+			i--;
+			
+		}
 	}
+	
 }

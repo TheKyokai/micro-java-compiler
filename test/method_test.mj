@@ -1,0 +1,74 @@
+program CodeTestProgram
+
+
+const char c = 'A';
+const bool boolConst = true;
+
+enum Broj { NULA, JEDAN = 1, PET=5, DESET=10}
+
+
+
+const int x = 5, y = 10;
+
+
+class RecMethTest 
+{
+	{
+		void f (int x, char c, RecMethTest rmt) int y;
+		{
+			print(c);
+			print('-');
+			print(x);
+			print(eol);
+			//f(3, 'f', rmt);
+		}
+	}
+}
+
+
+class REX extends RecMethTest 
+{
+	{
+		void f (int x, char c, RecMethTest rmt) int y;
+		{
+			print(c);
+			print('-');
+			print(x);
+			print(' ');
+			print('A');
+			print('j');
+			print('d');
+			print('e');
+			print(eol);
+		}
+	}
+}
+
+
+{
+
+	void g (int x, char c, RecMethTest rmt)
+	{
+		print(c);
+		print('-');
+		print(x);
+		print(eol);
+		rmt.f(15, 'f', rmt);
+		//g(22, 'c', rmt);
+	}
+	
+	RecMethTest mm(RecMethTest rmt, int i)
+	{
+		return rmt;
+	}
+
+	
+
+	void main() REX rex; int i;
+	{
+		rex = new REX;
+		//rex.f(2, 'f', rex);
+		g(4, 'g', mm(mm(rex, i), i));
+	}
+	
+}

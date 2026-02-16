@@ -1,0 +1,47 @@
+program CodeTestProgram
+
+
+const char c = 'A';
+const bool boolConst = true;
+
+enum Broj { NULA, JEDAN = 1, PET=5, DESET=10}
+
+
+
+const int x = 5, y = 10;
+
+
+{
+
+	void main()
+	{
+		switch(x)
+		{	
+			case 0:
+				break;
+			case 5:
+				print(5);
+				switch(y)
+				{
+					case 0:
+						print(0);
+						break;
+					case 1:
+						print(1);
+						break;
+					case 5:
+						print(5);
+						break;
+					case 10:
+						print(10);
+						//break;	
+				}
+				//break;
+			case 10:
+				print(10);
+				break;
+			case 11:
+				print(11);	
+		}
+	}
+}

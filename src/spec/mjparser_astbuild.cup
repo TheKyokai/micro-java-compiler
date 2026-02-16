@@ -125,11 +125,13 @@ nonterminal Statement Statement;
 nonterminal DesignatorStatement DesignatorStatement;
 nonterminal ForDesignatorStmnt ForDesignatorStmnt;
 nonterminal ForCondition ForCondition;
+nonterminal ForAfterCond ForAfterCond;
 nonterminal ForInterrupt ForInterrupt;
+nonterminal IndexInterrupt IndexInterrupt;
 nonterminal SwitchInterrupt SwitchInterrupt;
 nonterminal CaseList CaseList;
 nonterminal SingleCase SingleCase;
-nonterminal IndexInterrupt IndexInterrupt;
+nonterminal CaseNum CaseNum;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Condition, CondTerm, CondFact;
 nonterminal FCallInterrupt FCallInterrupt;
 nonterminal ActualParamList ActualParamList;
@@ -411,11 +413,14 @@ Statement			::= (GeneralDesignatorStatement) DesignatorStatement:D1 SEMI {: RESU
 						|
 						(NumConstPrintStatement) PRINT LPAREN Expr:E1 COMMA NUMCONST:val RPAREN SEMI {: RESULT=new NumConstPrintStatement(E1, val); RESULT.setLine(E1left); :}
 						| 
-						(ForStatement) FOR LPAREN ForDesignatorStmnt:F1 SEMI ForCondition:F2 SEMI ForDesignatorStmnt:F3 ForInterrupt:F4 Statement:S5 {: RESULT=new ForStatement(F1, F2, F3, F4, S5); RESULT.setLine(F1left); :}
+						(ForStatement) FOR LPAREN ForDesignatorStmnt:F1 SEMI ForCondition:F2 ForAfterCond:F3 ForDesignatorStmnt:F4 ForInterrupt:F5 Statement:S6 {: RESULT=new ForStatement(F1, F2, F3, F4, F5, S6); RESULT.setLine(F1left); :}
 						|
 						(StatementBlock) LBRACE StatementList:S1 RBRACE {: RESULT=new StatementBlock(S1); RESULT.setLine(S1left); :}
 						|
 						(SwitchStatement) SWITCH LPAREN Expr:E1 RPAREN SwitchInterrupt:S2 CaseList:C3 RBRACE {: RESULT=new SwitchStatement(E1, S2, C3); RESULT.setLine(E1left); :};
+
+
+ForAfterCond		::= (ForAfterCond) SEMI {: RESULT=new ForAfterCond(); :};
 
 
 ForInterrupt		::= (ForInterrupt) RPAREN {: RESULT=new ForInterrupt(); :};
@@ -434,12 +439,16 @@ ForCondition		::= (ForCond) Condition:C1 {: RESULT=new ForCond(C1); RESULT.setLi
 SwitchInterrupt		::= (SwitchInterrupt) LBRACE {: RESULT=new SwitchInterrupt(); :};
 
 
+
 CaseList			::= (Cases) CaseList:C1 SingleCase:S2 {: RESULT=new Cases(C1, S2); RESULT.setLine(C1left); :} 
 						|
 						(EmptyCaseList) {: RESULT=new EmptyCaseList(); :} /* epsilon */;
 						
 						
-SingleCase			::= (SingleCase) CASE NUMCONST:val COLON StatementList:S1 {: RESULT=new SingleCase(val, S1); RESULT.setLine(valleft); :};	
+SingleCase			::= (SingleCase) CASE CaseNum:C1 COLON StatementList:S2 {: RESULT=new SingleCase(C1, S2); RESULT.setLine(C1left); :};
+
+
+CaseNum				::= (CaseNum) NUMCONST:val {: RESULT=new CaseNum(val); RESULT.setLine(valleft); :};
 						
 						
 					

@@ -9,9 +9,12 @@ import java.util.stream.Collectors;
 
 import rs.ac.bg.etf.pp1.ast.AbsClassName;
 import rs.ac.bg.etf.pp1.ast.ActualParam;
+import rs.ac.bg.etf.pp1.ast.BreakStatement;
+import rs.ac.bg.etf.pp1.ast.CaseNum;
 import rs.ac.bg.etf.pp1.ast.ClassMethodDecl;
 import rs.ac.bg.etf.pp1.ast.ClassMethodName;
 import rs.ac.bg.etf.pp1.ast.ClassName;
+import rs.ac.bg.etf.pp1.ast.ContinueStatement;
 import rs.ac.bg.etf.pp1.ast.Designator;
 import rs.ac.bg.etf.pp1.ast.DesignatorAssignment;
 import rs.ac.bg.etf.pp1.ast.DesignatorChain;
@@ -32,6 +35,9 @@ import rs.ac.bg.etf.pp1.ast.FactorFCall;
 import rs.ac.bg.etf.pp1.ast.FactorNumConst;
 import rs.ac.bg.etf.pp1.ast.FactorTypeInst;
 import rs.ac.bg.etf.pp1.ast.Factors;
+import rs.ac.bg.etf.pp1.ast.ForAfterCond;
+import rs.ac.bg.etf.pp1.ast.ForInterrupt;
+import rs.ac.bg.etf.pp1.ast.ForStatement;
 import rs.ac.bg.etf.pp1.ast.GreaterEqual;
 import rs.ac.bg.etf.pp1.ast.GreaterThan;
 import rs.ac.bg.etf.pp1.ast.LesserThan;
@@ -46,6 +52,9 @@ import rs.ac.bg.etf.pp1.ast.NumConstPrintStatement;
 import rs.ac.bg.etf.pp1.ast.Plus;
 import rs.ac.bg.etf.pp1.ast.PrintStatement;
 import rs.ac.bg.etf.pp1.ast.ReadStatement;
+import rs.ac.bg.etf.pp1.ast.SingleCase;
+import rs.ac.bg.etf.pp1.ast.SwitchInterrupt;
+import rs.ac.bg.etf.pp1.ast.SwitchStatement;
 import rs.ac.bg.etf.pp1.ast.SyntaxNode;
 import rs.ac.bg.etf.pp1.ast.Terms;
 import rs.ac.bg.etf.pp1.ast.TypedReturnStatement;
@@ -66,6 +75,7 @@ public class CodeGenerator extends VisitorAdaptor {
 	private Map<Obj, List<Integer>> vftPointerFixupMap = new HashMap<Obj, List<Integer>>();
 	private Stack<Obj> invokedMethStack = new Stack<Obj>();
 	private Obj currentInvokedMeth = Tab.noObj;
+	
 
 	public CodeGenerator(Obj mainMethObj, int nGlobalVars) {
 		this.mainObj = mainMethObj;
@@ -108,11 +118,35 @@ public class CodeGenerator extends VisitorAdaptor {
 		for (Obj classObj : program.getLocalSymbols().stream()
 				.filter(sym -> sym.getKind() == Obj.Type && sym.getType().getKind() == Struct.Class)
 				.collect(Collectors.toList())) {
-			System.out.println("Checking class " + classObj.getName());
+			// TODO REMOVE
+//			System.out.println("Checking class " + classObj.getName());
 			classObj.setAdr(currentStaticAddr);
 			// Getting all class methods
 			for (Obj meth : classObj.getType().getMembers().stream().filter(sym -> sym.getKind() == Obj.Meth)
 					.collect(Collectors.toList())) {
+				
+				// Address can never be zero for non-abstract method -> method not overridden -> bind to superclass method
+				if (meth.getAdr() == 0 && meth.getFpPos() == -1) {
+					Struct superClass = classObj.getType().getElemType(); 
+					if (superClass == Tab.noType || superClass == null) {
+						System.out.println("Unexpected inconsistant state");
+						break;
+					}
+					Obj superMeth = superClass.getMembersTable().searchKey(meth.getName());
+					if (superMeth.getKind() != Obj.Meth)
+						// Unexpected
+						System.out.println("Unexpected inconsistant state");
+					while (superMeth.getAdr() == 0) {
+						superClass = superClass.getElemType();
+						superMeth = superClass.getMembersTable().searchKey(meth.getName());
+						if (superMeth.getKind() != Obj.Meth)
+							// Unexpected
+							System.out.println("Unexpected inconsistant state");
+					}
+					meth.setAdr(superMeth.getAdr());
+						
+				}
+				
 				for (char c : meth.getName().toCharArray()) {
 					Code.loadConst(c);
 					Code.put(Code.putstatic);
@@ -166,7 +200,8 @@ public class CodeGenerator extends VisitorAdaptor {
 	
 	@Override
 	public void visit(ClassMethodName classMethodName) {
-		System.out.println("Class meth " + classMethodName.obj.getName());
+		//TODO REMOVE
+//		System.out.println("Class meth " + classMethodName.obj.getName());
 		classMethodName.obj.setAdr(Code.pc);
 		// ENTER
 		Code.put(Code.enter);
@@ -282,10 +317,10 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.put(Code.print);
 	}
 
-	// Prerano ucitava element sa adrese za nizove
 	@Override
 	public void visit(DesignatorChainIdent designatorChainIdent) {
-		if (designatorChainIdent.obj.getKind() == Obj.Fld)
+		if (designatorChainIdent.obj.getKind() == Obj.Fld 
+				|| (designatorChainIdent.obj.getKind() == Obj.Meth && designatorChainIdent.obj.getFpPos() != 0))
 			Code.put(Code.load_n);
 	}
 
@@ -380,7 +415,9 @@ public class CodeGenerator extends VisitorAdaptor {
 		// Loading
 		DesignatorChain chain = designatorInc.getDesignatorDst().getDesignatorChain();
 		if (chain instanceof DesignatorChainIdent) {
-			// Must be int variable
+			// Must be int variable or int field in the method of that class
+			if (prevObj.getKind() == Obj.Fld)
+				Code.put(Code.dup);
 			Code.load(prevObj);
 		} else if (chain instanceof DesignatorChainFieldAccess) {
 			// Must be int field -> class var already on exprstack
@@ -397,7 +434,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
 		// Storing
 		if (chain instanceof DesignatorChainIdent)
-			// Must be int variable
+			// Must be int variable or int field in the method of that class
 			Code.store(prevObj);
 		else if (chain instanceof DesignatorChainFieldAccess)
 			// Must be int field -> class var already on exprstack
@@ -415,6 +452,8 @@ public class CodeGenerator extends VisitorAdaptor {
 		DesignatorChain chain = designatorDec.getDesignatorDst().getDesignatorChain();
 		if (chain instanceof DesignatorChainIdent) {
 			// Must be int variable
+			if (prevObj.getKind() == Obj.Fld)
+				Code.put(Code.dup);
 			Code.load(prevObj);
 		} else if (chain instanceof DesignatorChainFieldAccess) {
 			// Must be int field -> class var already on exprstack
@@ -440,33 +479,15 @@ public class CodeGenerator extends VisitorAdaptor {
 			// Must be int elem -> array addr and index already on exprstack
 			Code.put(Code.astore);
 	}
-
+	
+	
+	//TODO Move to Compiler
 	private enum ADDOP {
-		NONE(""), ADD("addition"), SUB("subtraction");
-
-		private final String ident;
-
-		ADDOP(String id) {
-			ident = id;
-		}
-
-		String getIdent() {
-			return ident;
-		}
+		NONE, ADD, SUB;
 	}
 
 	private enum MULOP {
-		NONE(""), MUL("multiplication"), DIV("division"), MOD("mod");
-
-		private final String ident;
-
-		MULOP(String id) {
-			ident = id;
-		}
-
-		String getIdent() {
-			return ident;
-		}
+		NONE, MUL, DIV, MOD
 	}
 
 	private enum RELOP {
@@ -605,5 +626,144 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.put2(0);
 	}
 	
+	
+	// Control structure nesting enum
+	
+	enum CSType {NONE, SWITCH, FOR}
+	
+	private Stack<CSType> csNestingStack = new Stack<CodeGenerator.CSType>();
+	private CSType currentCS = CSType.NONE;
+	
+	
+	// Switch
+	
+	private Stack<List<Integer>> breakNestingStack = new Stack<List<Integer>>();
+	private List<Integer> breakFixupAddresses = null;
+	
+	
+	private Stack<Integer> caseCheckJumpAddrStack = new Stack<Integer>();
+	private int prevCaseCheckJumpAddr = -1;
+	
+	@Override
+	public void visit(SwitchInterrupt switchInterrupt) {
+		// Set current structure
+		csNestingStack.push(currentCS);
+		currentCS = CSType.SWITCH;
+		
+		breakNestingStack.push(breakFixupAddresses);
+		breakFixupAddresses = new ArrayList<Integer>();
+		caseCheckJumpAddrStack.push(prevCaseCheckJumpAddr);
+		prevCaseCheckJumpAddr = -1;
+	}
+	
+	
+	@Override
+	public void visit(SwitchStatement switchStatement) {
+		// Fixup last case condition jump
+		Code.fixup(prevCaseCheckJumpAddr);
+		prevCaseCheckJumpAddr = caseCheckJumpAddrStack.pop();
+		// Fixup all break statements
+		for (int addr: breakFixupAddresses)
+			Code.fixup(addr);
+		breakFixupAddresses = breakNestingStack.pop();
+		currentCS = csNestingStack.pop();
+		Code.put(Code.pop); // Removing extra expression
+	}
+	
+	@Override
+	public void visit(CaseNum caseNum) {
+		if (prevCaseCheckJumpAddr != -1)
+			// Fixup last case mismatch jump
+			Code.fixup(prevCaseCheckJumpAddr);
+		Code.put(Code.dup); // 1 byte
+		Code.put(Code.const_); // 1 byte
+		Code.put4(caseNum.getVal()); // 4 bytes
+		Code.putFalseJump(Code.eq, 0); // 3 bytes
+		prevCaseCheckJumpAddr = Code.pc - 2; // Jmp address
+	}
+	
+	
+	@Override
+	public void visit(SingleCase singleCase) {
+		SyntaxNode grandParent = singleCase.getParent().getParent();
+		if (grandParent instanceof SwitchStatement)
+			return;
+		// Adding a case check skip for fallthrough
+		Code.putJump(Code.pc + 12); // 9 bytes for case check and 3 bytes for the jump itself
+	}
+	
+	
+	@Override
+	public void visit(BreakStatement breakStatement) {
+		Code.putJump(0);
+		breakFixupAddresses.add(Code.pc - 2);
+	}
+	
+	
+	// For loop
+	
+	private Stack<Integer> forBodyJumpStack = new Stack<Integer>();
+	private int forBodyJumpAddress = -1;
+	
+	private Stack<Integer> afterBodyStack = new Stack<Integer>();
+	private int afterBodyAddress = -1;
+	
+	private Stack<List<Integer>> continueAddrStack = new Stack<List<Integer>>();
+	private List<Integer> continueAddresses = null;
+	
+	@Override
+	public void visit(ForAfterCond forAfterCond) {
+		// Preparing for new loop
+		forBodyJumpStack.push(forBodyJumpAddress);
+		afterBodyStack.push(afterBodyAddress);
+		continueAddrStack.push(continueAddresses);
+		breakNestingStack.push(breakFixupAddresses);
+		
+		// New loop initialization
+		Code.putJump(0);
+		forBodyJumpAddress = Code.pc - 2;
+		afterBodyAddress = Code.pc;
+		continueAddresses = new ArrayList<Integer>();
+		breakFixupAddresses = new ArrayList<Integer>();
+	}
+	
+	
+	@Override
+	public void visit(ForStatement forStatement) {
+		// Continue fixup
+		for (int ca: continueAddresses)
+			Code.fixup(ca);
+		Code.putJump(afterBodyAddress);
+		
+		// Break fixup
+		for (int ba: breakFixupAddresses)
+			Code.fixup(ba);
+		
+		// Restoring previous state
+		forBodyJumpAddress = forBodyJumpStack.pop();
+		afterBodyAddress = afterBodyStack.pop();
+		continueAddresses = continueAddrStack.pop();
+		breakFixupAddresses = breakNestingStack.pop();
+		currentCS = csNestingStack.pop();
+	}
+	
+	@Override
+	public void visit(ForInterrupt forInterrupt) {
+		// Set current structure
+		csNestingStack.push(currentCS);
+		currentCS = CSType.FOR;
+		
+		Code.putJump(afterBodyAddress - 3); // Jump to check
+		Code.fixup(forBodyJumpAddress);
+	}
+	
+	@Override
+	public void visit(ContinueStatement continueStatement) {
+		// Adjust for switch -> pop needed
+		if (currentCS == CSType.SWITCH)
+			Code.put(Code.pop);
+		Code.putJump(0);
+		continueAddresses.add(Code.pc - 2);
+	}
 	
 }

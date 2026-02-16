@@ -1,0 +1,61 @@
+program CodeTestProgram
+
+
+const int y = 10;
+const char c = 'A';
+const bool boolConst = true;
+
+enum Broj { NULA, JEDAN = 1, PET=5, DESET=10}
+
+
+
+int x;
+
+abstract class AbsTest { 
+	
+	int printCnt, x;
+	int arr[];
+	
+	{
+		void initArr() { arr = new int[11]; }
+		void setElem(int el, int index) { arr[index] = el; } 
+		void setX(int x) { this.x = x; }
+		abstract void printTest();
+		void meth() { printCnt++; printTest(); } 
+	}
+}
+
+class Test extends AbsTest { {
+	 void printTest() {print('T'); print('e'); print('s'); print('t'); print(' '); print(printCnt); print(eol);}
+}}
+
+class TEST extends Test {
+	{ 
+		void printTest() AbsTest t; 
+		{
+			print('T'); print('E'); print('S'); print('T'); print(' '); print(printCnt); print(eol);
+			t = new Test;
+			t.printTest(); 
+		}
+	}
+}
+
+
+{
+
+	AbsTest newTest() AbsTest tst; 
+	{
+		return new TEST;	
+	}
+
+	void main() AbsTest t;
+	{
+		t = newTest();
+		t.meth();
+		t.meth();
+		t.setX(10);
+		t.initArr();
+		t.setElem(-25, 10);
+		print(t.arr[10]);
+	}
+}

@@ -97,7 +97,8 @@ nonterminal ClassMethods, ExtMethodIntercept, ClassMethodDeclList;
 nonterminal AbsClassDecl, AbsClassMethods, AbsClassMethodList, AbsMethodDecl, AbsMethodName;
 
 nonterminal MethodDeclList, ReturnType, FormalParamList, FormalParams, FormalParam, VarDeclList;
-nonterminal StatementList, Statement, DesignatorStatement, ForDesignatorStmnt, ForCondition, ForInterrupt, SwitchInterrupt, CaseList, SingleCase, IndexInterrupt;
+nonterminal StatementList, Statement, DesignatorStatement, ForDesignatorStmnt, ForCondition, ForAfterCond, ForInterrupt, IndexInterrupt;
+nonterminal SwitchInterrupt, CaseList, SingleCase, CaseNum;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Condition, CondTerm, CondFact;
 nonterminal FCallInterrupt, ActualParamList, MultActualParam;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Expr, Term, TermList, Factor, FactorList;
@@ -374,11 +375,14 @@ Statement			::= (GeneralDesignatorStatement) DesignatorStatement SEMI
 						|
 						(NumConstPrintStatement) PRINT LPAREN Expr COMMA NUMCONST:val RPAREN SEMI
 						| 
-						(ForStatement) FOR LPAREN ForDesignatorStmnt SEMI ForCondition SEMI ForDesignatorStmnt ForInterrupt Statement
+						(ForStatement) FOR LPAREN ForDesignatorStmnt SEMI ForCondition ForAfterCond ForDesignatorStmnt ForInterrupt Statement
 						|
 						(StatementBlock) LBRACE StatementList RBRACE
 						|
 						(SwitchStatement) SWITCH LPAREN Expr RPAREN SwitchInterrupt CaseList RBRACE;
+
+
+ForAfterCond		::= (ForAfterCond) SEMI;
 
 
 ForInterrupt		::= (ForInterrupt) RPAREN;
@@ -397,12 +401,16 @@ ForCondition		::= (ForCond) Condition
 SwitchInterrupt		::= (SwitchInterrupt) LBRACE;
 
 
+
 CaseList			::= (Cases) CaseList SingleCase 
 						|
 						(EmptyCaseList) /* epsilon */;
 						
 						
-SingleCase			::= (SingleCase) CASE NUMCONST:val COLON StatementList;	
+SingleCase			::= (SingleCase) CASE CaseNum COLON StatementList;
+
+
+CaseNum				::= (CaseNum) NUMCONST:val;
 						
 						
 					

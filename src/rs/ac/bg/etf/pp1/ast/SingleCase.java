@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 16/1/2026 2:18:22
+// 16/1/2026 17:31:48
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -9,21 +9,22 @@ public class SingleCase implements SyntaxNode {
 
     private SyntaxNode parent;
     private int line;
-    private Integer val;
+    private CaseNum CaseNum;
     private StatementList StatementList;
 
-    public SingleCase (Integer val, StatementList StatementList) {
-        this.val=val;
+    public SingleCase (CaseNum CaseNum, StatementList StatementList) {
+        this.CaseNum=CaseNum;
+        if(CaseNum!=null) CaseNum.setParent(this);
         this.StatementList=StatementList;
         if(StatementList!=null) StatementList.setParent(this);
     }
 
-    public Integer getVal() {
-        return val;
+    public CaseNum getCaseNum() {
+        return CaseNum;
     }
 
-    public void setVal(Integer val) {
-        this.val=val;
+    public void setCaseNum(CaseNum CaseNum) {
+        this.CaseNum=CaseNum;
     }
 
     public StatementList getStatementList() {
@@ -55,15 +56,18 @@ public class SingleCase implements SyntaxNode {
     }
 
     public void childrenAccept(Visitor visitor) {
+        if(CaseNum!=null) CaseNum.accept(visitor);
         if(StatementList!=null) StatementList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
+        if(CaseNum!=null) CaseNum.traverseTopDown(visitor);
         if(StatementList!=null) StatementList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
+        if(CaseNum!=null) CaseNum.traverseBottomUp(visitor);
         if(StatementList!=null) StatementList.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -73,7 +77,10 @@ public class SingleCase implements SyntaxNode {
         buffer.append(tab);
         buffer.append("SingleCase(\n");
 
-        buffer.append(" "+tab+val);
+        if(CaseNum!=null)
+            buffer.append(CaseNum.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
         buffer.append("\n");
 
         if(StatementList!=null)
