@@ -1,53 +1,53 @@
 // generated with ast extension for cup
 // version 0.8
-// 13/1/2026 20:3:49
+// 16/1/2026 2:18:22
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public abstract class VisitorAdaptor implements Visitor { 
 
-    public void visit(ReturnType ReturnType) { }
-    public void visit(Mulop Mulop) { }
-    public void visit(MultActualParam MultActualParam) { }
-    public void visit(Relop Relop) { }
-    public void visit(Assignop Assignop) { }
-    public void visit(TermList TermList) { }
-    public void visit(MultConstDecl MultConstDecl) { }
-    public void visit(FieldDeclList FieldDeclList) { }
-    public void visit(ClassMethodDeclList ClassMethodDeclList) { }
-    public void visit(StatementList StatementList) { }
-    public void visit(FactorList FactorList) { }
-    public void visit(Addop Addop) { }
-    public void visit(ForCondition ForCondition) { }
-    public void visit(EnumDeclList EnumDeclList) { }
     public void visit(Factor Factor) { }
+    public void visit(Statement Statement) { }
+    public void visit(MultActualParam MultActualParam) { }
+    public void visit(ClassMethods ClassMethods) { }
+    public void visit(FieldDeclList FieldDeclList) { }
+    public void visit(EnumDeclList EnumDeclList) { }
+    public void visit(AbsClassMethodList AbsClassMethodList) { }
+    public void visit(Relop Relop) { }
+    public void visit(FormalParamList FormalParamList) { }
+    public void visit(CaseList CaseList) { }
+    public void visit(GlobalDecl GlobalDecl) { }
+    public void visit(NumConstAssign NumConstAssign) { }
+    public void visit(Expr Expr) { }
+    public void visit(FactorList FactorList) { }
+    public void visit(ClassMethodDeclList ClassMethodDeclList) { }
+    public void visit(DesignatorChain DesignatorChain) { }
+    public void visit(MultVarDecl MultVarDecl) { }
+    public void visit(ForCondition ForCondition) { }
+    public void visit(MultConstDecl MultConstDecl) { }
+    public void visit(ActualParamList ActualParamList) { }
+    public void visit(AbsClassMethods AbsClassMethods) { }
+    public void visit(GlobalDeclList GlobalDeclList) { }
+    public void visit(Condition Condition) { }
+    public void visit(Mulop Mulop) { }
+    public void visit(DesignatorStatement DesignatorStatement) { }
+    public void visit(ArrayDecl ArrayDecl) { }
+    public void visit(Addop Addop) { }
+    public void visit(StatementList StatementList) { }
+    public void visit(Assignop Assignop) { }
+    public void visit(ReturnType ReturnType) { }
+    public void visit(FormalParam FormalParam) { }
     public void visit(CondTerm CondTerm) { }
     public void visit(FieldDecl FieldDecl) { }
-    public void visit(NumConstAssign NumConstAssign) { }
-    public void visit(Condition Condition) { }
-    public void visit(DesignatorChain DesignatorChain) { }
-    public void visit(CaseList CaseList) { }
-    public void visit(ActualParamList ActualParamList) { }
-    public void visit(FormalParam FormalParam) { }
-    public void visit(ArrayDecl ArrayDecl) { }
-    public void visit(GlobalDeclList GlobalDeclList) { }
+    public void visit(MethodDeclList MethodDeclList) { }
+    public void visit(FormalParams FormalParams) { }
+    public void visit(TermList TermList) { }
     public void visit(ForDesignatorStmnt ForDesignatorStmnt) { }
     public void visit(VarDeclList VarDeclList) { }
-    public void visit(FormalParamList FormalParamList) { }
-    public void visit(ConstVal ConstVal) { }
-    public void visit(Expr Expr) { }
-    public void visit(FormalParams FormalParams) { }
-    public void visit(ClassExtension ClassExtension) { }
-    public void visit(AbsClassMethodList AbsClassMethodList) { }
-    public void visit(DesignatorStatement DesignatorStatement) { }
-    public void visit(AbsClassMethods AbsClassMethods) { }
-    public void visit(Statement Statement) { }
-    public void visit(MultVarDecl MultVarDecl) { }
     public void visit(CondFact CondFact) { }
-    public void visit(MethodDeclList MethodDeclList) { }
-    public void visit(GlobalDecl GlobalDecl) { }
-    public void visit(ClassMethods ClassMethods) { }
+    public void visit(ClassExtension ClassExtension) { }
+    public void visit(ConstVal ConstVal) { }
     public void visit(Mod Mod) { visit(); }
     public void visit(Div Div) { visit(); }
     public void visit(Mul Mul) { visit(); }
@@ -60,6 +60,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(NotEqual NotEqual) { visit(); }
     public void visit(Equal Equal) { visit(); }
     public void visit(Assign Assign) { visit(); }
+    public void visit(FCallInterrupt FCallInterrupt) { visit(); }
     public void visit(FactorExpr FactorExpr) { visit(); }
     public void visit(FactorArrayInst FactorArrayInst) { visit(); }
     public void visit(FactorTypeInst FactorTypeInst) { visit(); }
@@ -87,10 +88,12 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(MultActualParams MultActualParams) { visit(); }
     public void visit(EmptyActualParamList EmptyActualParamList) { visit(); }
     public void visit(ActualParams ActualParams) { visit(); }
+    public void visit(IndexInterrupt IndexInterrupt) { visit(); }
     public void visit(DesignatorChainIdent DesignatorChainIdent) { visit(); }
     public void visit(DesignatorChainFieldAccess DesignatorChainFieldAccess) { visit(); }
     public void visit(DesignatorChainIndexAccess DesignatorChainIndexAccess) { visit(); }
     public void visit(Designator Designator) { visit(); }
+    public void visit(DesignatorDst DesignatorDst) { visit(); }
     public void visit(DesignatorDec DesignatorDec) { visit(); }
     public void visit(DesignatorInc DesignatorInc) { visit(); }
     public void visit(DesignatorFCall DesignatorFCall) { visit(); }

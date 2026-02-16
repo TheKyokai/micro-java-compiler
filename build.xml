@@ -16,6 +16,7 @@
 				<exclude name="util/ExpandedDumpSymbolTableVisitor.java"/>
 				<exclude name="Compiler.java"/>
 				<exclude name="SemanticAnalyzer.java"/>
+				<exclude name="CodeGenerator.java"/>
 			</fileset>
 		</delete>
 		<delete>
@@ -72,8 +73,38 @@
 				<pathelement path="./lib/cup_v10k.jar"/>
 				<pathelement path="./lib/log4j-1.2.17.jar"/>
 				<pathelement path="./lib/symboltable-1-1.jar"/>
+				<pathelement path="./lib/mj-runtime-1.1.jar"/>
 			</classpath>
 		</javac>
+	</target>
+	
+	
+	<target name="disasm">
+		<java classname="rs.etf.pp1.mj.runtime.disasm">
+			<arg value="${basedir}/test/code_test.obj"/>
+			<classpath>
+				<pathelement path="./lib/mj-runtime-1.1.jar"/>
+			</classpath>
+		</java>
+	</target>
+
+	<target name="runObj" depends="disasm" >
+		<java classname="rs.etf.pp1.mj.runtime.Run">
+			<arg value="${basedir}/test/code_test.obj"/>
+			<classpath>
+				<pathelement path="./lib/mj-runtime-1.1.jar"/>
+			</classpath>
+		</java>
+	</target>
+	
+	<target name="runObjDebug" depends="disasm" >
+		<java classname="rs.etf.pp1.mj.runtime.Run">
+			<arg value="${basedir}/test/code_test.obj"/>
+			<arg value="-debug"/>
+			<classpath>
+				<pathelement path="./lib/mj-runtime-1.1.jar"/>
+			</classpath>
+		</java>
 	</target>
 
 </project>

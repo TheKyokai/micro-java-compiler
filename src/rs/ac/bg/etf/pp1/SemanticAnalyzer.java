@@ -6,103 +6,11 @@ import java.util.Optional;
 
 import org.apache.log4j.Logger;
 
-import rs.ac.bg.etf.pp1.ast.AbsClassDecl;
-import rs.ac.bg.etf.pp1.ast.AbsClassName;
-import rs.ac.bg.etf.pp1.ast.AbsMethodDecl;
-import rs.ac.bg.etf.pp1.ast.AbsMethodName;
-import rs.ac.bg.etf.pp1.ast.Addop;
-import rs.ac.bg.etf.pp1.ast.AndCondTerm;
-import rs.ac.bg.etf.pp1.ast.BoolConstVal;
-import rs.ac.bg.etf.pp1.ast.BreakStatement;
-import rs.ac.bg.etf.pp1.ast.CExtension;
-import rs.ac.bg.etf.pp1.ast.Cases;
-import rs.ac.bg.etf.pp1.ast.CharConstVal;
-import rs.ac.bg.etf.pp1.ast.ClassDecl;
-import rs.ac.bg.etf.pp1.ast.ClassMethodDecl;
-import rs.ac.bg.etf.pp1.ast.ClassMethodName;
-import rs.ac.bg.etf.pp1.ast.ClassName;
-import rs.ac.bg.etf.pp1.ast.ConstDecl;
-import rs.ac.bg.etf.pp1.ast.ContinueStatement;
-import rs.ac.bg.etf.pp1.ast.Designator;
-import rs.ac.bg.etf.pp1.ast.DesignatorAssignment;
-import rs.ac.bg.etf.pp1.ast.DesignatorChainFieldAccess;
-import rs.ac.bg.etf.pp1.ast.DesignatorChainIdent;
-import rs.ac.bg.etf.pp1.ast.DesignatorChainIndexAccess;
-import rs.ac.bg.etf.pp1.ast.DesignatorDec;
-import rs.ac.bg.etf.pp1.ast.DesignatorFCall;
-import rs.ac.bg.etf.pp1.ast.DesignatorInc;
-import rs.ac.bg.etf.pp1.ast.Div;
-import rs.ac.bg.etf.pp1.ast.EmptyCaseList;
-import rs.ac.bg.etf.pp1.ast.EnumDecl;
-import rs.ac.bg.etf.pp1.ast.EnumName;
-import rs.ac.bg.etf.pp1.ast.EnumNumConstAssign;
-import rs.ac.bg.etf.pp1.ast.Equal;
-import rs.ac.bg.etf.pp1.ast.ExtFieldIntercept;
-import rs.ac.bg.etf.pp1.ast.ExtMethodIntercept;
-import rs.ac.bg.etf.pp1.ast.FactorArrayInst;
-import rs.ac.bg.etf.pp1.ast.FactorBoolConst;
-import rs.ac.bg.etf.pp1.ast.FactorCharConst;
-import rs.ac.bg.etf.pp1.ast.FactorDesignator;
-import rs.ac.bg.etf.pp1.ast.FactorExpr;
-import rs.ac.bg.etf.pp1.ast.FactorFCall;
-import rs.ac.bg.etf.pp1.ast.FactorNumConst;
-import rs.ac.bg.etf.pp1.ast.FactorTypeInst;
-import rs.ac.bg.etf.pp1.ast.Factors;
-import rs.ac.bg.etf.pp1.ast.FirstFactorInList;
-import rs.ac.bg.etf.pp1.ast.FirstTermInList;
-import rs.ac.bg.etf.pp1.ast.ForCond;
-import rs.ac.bg.etf.pp1.ast.ForInterrupt;
-import rs.ac.bg.etf.pp1.ast.ForStatement;
-import rs.ac.bg.etf.pp1.ast.GreaterEqual;
-import rs.ac.bg.etf.pp1.ast.GreaterThan;
-import rs.ac.bg.etf.pp1.ast.IfElseStatement;
-import rs.ac.bg.etf.pp1.ast.IfStatement;
-import rs.ac.bg.etf.pp1.ast.IsArray;
-import rs.ac.bg.etf.pp1.ast.LesserThan;
-import rs.ac.bg.etf.pp1.ast.LesserThanEqual;
-import rs.ac.bg.etf.pp1.ast.MethodDecl;
-import rs.ac.bg.etf.pp1.ast.MethodName;
-import rs.ac.bg.etf.pp1.ast.Minus;
-import rs.ac.bg.etf.pp1.ast.Mod;
-import rs.ac.bg.etf.pp1.ast.Mul;
-import rs.ac.bg.etf.pp1.ast.NoAbsClassMethods;
-import rs.ac.bg.etf.pp1.ast.NoCExtension;
-import rs.ac.bg.etf.pp1.ast.NoClassMethods;
-import rs.ac.bg.etf.pp1.ast.NotEqual;
-import rs.ac.bg.etf.pp1.ast.NumConstPrintStatement;
-import rs.ac.bg.etf.pp1.ast.NumConstVal;
-import rs.ac.bg.etf.pp1.ast.OrCondition;
-import rs.ac.bg.etf.pp1.ast.Plus;
-import rs.ac.bg.etf.pp1.ast.PrintStatement;
-import rs.ac.bg.etf.pp1.ast.Program;
-import rs.ac.bg.etf.pp1.ast.ProgramName;
-import rs.ac.bg.etf.pp1.ast.ReadStatement;
-import rs.ac.bg.etf.pp1.ast.RelopCondFact;
-import rs.ac.bg.etf.pp1.ast.SimpleCondFact;
-import rs.ac.bg.etf.pp1.ast.SimpleCondTerm;
-import rs.ac.bg.etf.pp1.ast.SimpleCondition;
-import rs.ac.bg.etf.pp1.ast.SimpleExpr;
-import rs.ac.bg.etf.pp1.ast.SingleCase;
-import rs.ac.bg.etf.pp1.ast.SingleConstDecl;
-import rs.ac.bg.etf.pp1.ast.SingleFormalParam;
-import rs.ac.bg.etf.pp1.ast.SingleIdentEnumDecl;
-import rs.ac.bg.etf.pp1.ast.SingleVarDecl;
-import rs.ac.bg.etf.pp1.ast.SwitchInterrupt;
-import rs.ac.bg.etf.pp1.ast.SwitchStatement;
-import rs.ac.bg.etf.pp1.ast.SyntaxNode;
-import rs.ac.bg.etf.pp1.ast.Term;
-import rs.ac.bg.etf.pp1.ast.Terms;
-import rs.ac.bg.etf.pp1.ast.TernaryExpr;
-import rs.ac.bg.etf.pp1.ast.Type;
-import rs.ac.bg.etf.pp1.ast.TypeReturn;
-import rs.ac.bg.etf.pp1.ast.TypedReturnStatement;
-import rs.ac.bg.etf.pp1.ast.UMinusFirstTermInList;
-import rs.ac.bg.etf.pp1.ast.VarDecl;
-import rs.ac.bg.etf.pp1.ast.VisitorAdaptor;
-import rs.ac.bg.etf.pp1.ast.VoidReturn;
-import rs.ac.bg.etf.pp1.ast.VoidReturnStatement;
+import rs.ac.bg.etf.pp1.ast.*;
+import rs.ac.bg.etf.pp1.util.ExpandedDumpSymbolTableVisitor;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.*;
+import rs.etf.pp1.symboltable.visitors.SymbolTableVisitor;
 
 public class SemanticAnalyzer extends VisitorAdaptor {
 
@@ -158,8 +66,9 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 				&& currentSearchScope.getOuter().getOuter() != null) {
 			currentSearchScope = currentSearchScope.getOuter(); // Looking for program scope
 		}
+		System.out.println("Checking types for creation");
 		Optional<Obj> typeObjOpt = currentSearchScope.getLocals().symbols().stream()
-				.filter(sym -> sym.getKind() == Obj.Type && sym.getType().equals(type)).findFirst();
+				.filter(sym -> sym.getKind() == Obj.Type && sym.getType() == type).findFirst();
 		if (!typeObjOpt.isPresent()) {
 			return Tab.noObj;
 		}
@@ -167,21 +76,26 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	}
 
 	private boolean assignmentTypeCompatible(Obj dst, Obj src) {
+		System.out.println("Assignment check");
 		if (dst.getType().getKind() == Struct.Enum) {
 			// Enum variable or array element
 			if (src.getType().getKind() == Struct.Enum && (src.getKind() == Obj.Var || src.getKind() == Obj.Elem))
 				return dst.getType() == src.getType();
 			if (src.getType() != Tab.intType)
-				return false;			
+				return false;
 			return dst.getType() == assignOpEnumType;
 		}
 		if (dst.getType().isRefType() && src.getType() == Tab.nullType)
 			return true;
 		if (isSuperClass(dst.getType(), src.getType()))
 			return true;
+		if (dst.getType().getKind() == Struct.Int && src.getType().getKind() == Struct.Enum
+				&& (src.getKind() == Obj.Var || src.getKind() == Obj.Fld || src.getKind() == Obj.Elem))
+			return true;
 		return dst.getType().equals(src.getType());
 	}
 
+	int nGlobalVars;
 	private Struct currentType; // Type currently used for declaration of variables or method returns
 	private int nextConstVal; // Next value to be assigned to a constant
 
@@ -194,24 +108,39 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 																// superclass
 	private int currentFpPos = 0; // Current formal parameter position
 
+	Obj mainMeth = Tab.noObj;
+
 	public SemanticAnalyzer(Struct boolType) {
 		this.boolType = boolType;
 		this.intObj = Tab.find("int");
 		this.chrObj = Tab.find("char");
 		this.boolObj = Tab.find("bool");
-
-		if (chrObj == Tab.noObj)
-			System.out.println("Nema char");
-		if (intObj == Tab.noObj)
-			System.out.println("Nema int");
-		if (boolObj == Tab.noObj)
-			System.out.println("Nema bool");
 	}
 
 	@Override
 	public void visit(Program program) {
+		nGlobalVars = Tab.currentScope.getnVars();
 		Tab.chainLocalSymbols(program.getProgramName().obj);
 		Tab.closeScope();
+		Optional<Obj> optMain = program.getProgramName().obj.getLocalSymbols().stream()
+				.filter(sym -> sym.getName().equals("main")).findFirst();
+		if (!optMain.isPresent()) {
+			report_error("Global function 'main' not found", null);
+			return;
+		}
+		mainMeth = optMain.get();
+		if (mainMeth.getKind() != Obj.Meth) {
+			report_error("Name 'main' does not represent a global function", null);
+			return;
+		}
+		if (mainMeth.getType() != Tab.noType) {
+			report_error("Function 'main' is not void", null);
+			return;
+		}
+		if (mainMeth.getLevel() != 0) {
+			report_error("Function 'main' has formal parameters ", null);
+			return;
+		}
 	}
 
 	@Override
@@ -276,6 +205,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			cVar = Tab.insert(Obj.Var, name, varType);
 		if (classDeclInitialized && currentMeth != Tab.noObj)
 			cVar.setLevel(2);
+		cVar.setFpPos(-1); // Used as a parameter flag
 	}
 
 	// ConstDecl
@@ -384,6 +314,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		currentClassObj = Tab.insert(Obj.Type, name, currentClassType);
 		currentClassObj.setFpPos(0);
 		Tab.openScope();
+		className.obj = currentClassObj;
 	}
 
 	@Override
@@ -412,6 +343,10 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return;
 		Tab.chainLocalSymbols(currentClassType);
 		Tab.closeScope();
+		// Adjusting for VFTP
+		currentClassType.getMembers().stream().filter(sym -> sym.getKind() == Obj.Fld)
+				.forEach(field -> field.setAdr(field.getAdr() + 1));
+
 		currentClassType = Tab.noType;
 		currentClassObj = Tab.noObj;
 		classDeclInitialized = false;
@@ -494,6 +429,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		if (overMeth == null) {
 			overridingMeth = Tab.noObj;
 			currentMeth = Tab.insert(Obj.Meth, classMethodName.getName(), currentType);
+			currentMeth.setFpPos(-1);
+			classMethodName.obj = currentMeth;
 			Tab.openScope();
 			Obj thisObj = Tab.insert(Obj.Var, "this", currentClassType);
 			thisObj.setLevel(2);
@@ -570,10 +507,12 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			currentMeth = overMeth;
 			currentMeth.setFpPos(0);
 		}
+		currentMeth.setFpPos(-1);
 		Tab.openScope();
 		Obj thisObj = Tab.insert(Obj.Var, "this", currentClassType);
 		thisObj.setLevel(2);
 		thisObj.setFpPos(currentFpPos++);
+		classMethodName.obj = currentMeth;
 	}
 
 	@Override
@@ -584,11 +523,13 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			report_error("Not all parameters were provided for overriding of method '" + currentMeth.getName() + "'",
 					classMethodDecl);
 		}
+		classMethodDecl.obj = currentMeth;
 		currentMeth.setLevel(currentFpPos);
 		Tab.chainLocalSymbols(currentMeth);
 		Tab.closeScope();
 		currentMeth = Tab.noObj;
 		overridingMeth = Tab.noObj;
+		
 	}
 
 	@Override
@@ -638,6 +579,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		currentClassObj = Tab.insert(Obj.Type, name, currentClassType);
 		currentClassObj.setFpPos(1);
 		Tab.openScope();
+		absClassName.obj = currentClassObj;
 	}
 
 	@Override
@@ -646,6 +588,10 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return;
 		Tab.chainLocalSymbols(currentClassType);
 		Tab.closeScope();
+		// Adjusting for VFTP
+		currentClassType.getMembers().stream().filter(sym -> sym.getKind() == Obj.Fld)
+				.forEach(field -> field.setAdr(field.getAdr() + 1));
+
 		currentClassType = Tab.noType;
 		currentClassObj = Tab.noObj;
 		classDeclInitialized = false;
@@ -811,6 +757,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		}
 		currentMeth = Tab.insert(Obj.Meth, methodName.getName(), currentType);
 		Tab.openScope();
+		methodName.obj = currentMeth;
 	}
 
 	@Override
@@ -820,13 +767,13 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		currentMeth.setLevel(currentFpPos);
 		Tab.chainLocalSymbols(currentMeth);
 		Tab.closeScope();
+		methodDecl.obj = methodDecl.getMethodName().obj;
 		currentMeth = Tab.noObj;
 		overridingMeth = Tab.noObj;
 	}
 
 	// Expressions and conditions
 
-	// USELESS -> Probably needed for code generation
 	private enum ADDOP {
 		NONE(""), PLUS("addition"), MINUS("subtraction");
 
@@ -920,6 +867,10 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 
 	private Struct assignOpEnumType = Tab.noType; // Enum assignment
 	private Obj lastVisitedDesignator = Tab.noObj; // Actual parameter checking
+	private Obj invokedMethod = Tab.noObj;
+	private boolean globalMethod = false;
+	private String foundDesignatorName = "";
+	private String nameOfIndexedArray = "";
 
 	@Override
 	public void visit(Designator designator) {
@@ -927,15 +878,22 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	}
 
 	@Override
+	public void visit(DesignatorDst designatorDst) {
+		// TODO Test more
+		lastVisitedDesignator = designatorDst.obj = designatorDst.getDesignatorChain().obj;
+	}
+
+	@Override
 	public void visit(DesignatorChainIdent designatorChainIdent) {
 		assignOpEnumType = Tab.noType;
+		globalMethod = true;
 		Obj foundSymbol = Tab.find(designatorChainIdent.getName());
 		if (foundSymbol == Tab.noObj) {
 			report_error("Unknown name '" + designatorChainIdent.getName() + "'", designatorChainIdent);
 			designatorChainIdent.obj = Tab.noObj;
 			return;
 		}
-		// TODO REMOVE THE MEGA OVERKILL
+		// TODO Test
 		if (foundSymbol.getKind() == Obj.Type && foundSymbol.getType().getKind() != Struct.Enum) {
 			report_error("Name '" + designatorChainIdent.getName()
 					+ "' does not represent an enum, a constant, a method nor a variable reachable from the current scope",
@@ -944,13 +902,20 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return;
 		}
 		designatorChainIdent.obj = foundSymbol;
-		assignOpEnumType = Tab.noType;
+		foundDesignatorName = foundSymbol.getName();
+		if (foundSymbol.getKind() != Obj.Type) {
+			// TODO SPEC
+			report_info("Found (" + foundDesignatorName + "):  OBJ MISSING", designatorChainIdent);
+		}
 	}
 
 	@Override
 	public void visit(DesignatorChainFieldAccess designatorChainFieldAccess) {
-		if (designatorChainFieldAccess.getDesignatorChain().obj == Tab.noObj)
+		globalMethod = false;
+		if (designatorChainFieldAccess.getDesignatorChain().obj == Tab.noObj) {
+			designatorChainFieldAccess.obj = Tab.noObj;
 			return;
+		}
 		if (designatorChainFieldAccess.getDesignatorChain().obj.getKind() == Obj.Meth) {
 			report_error("Invalid acccess for method '" + designatorChainFieldAccess.getDesignatorChain().obj.getName()
 					+ "'", designatorChainFieldAccess);
@@ -969,7 +934,10 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 				designatorChainFieldAccess.obj = Tab.noObj;
 				return;
 			}
-			designatorChainFieldAccess.obj = intObj;
+			// TODO CHECK
+			designatorChainFieldAccess.obj = new Obj(Obj.Type, "array_length_wrapper", Tab.intType); // Type kind to
+																										// disable
+																										// assignment
 			break;
 		case Struct.Enum:
 			if (designatorChainFieldAccess.getDesignatorChain().obj.getKind() != Obj.Type) {
@@ -986,13 +954,20 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 				return;
 			}
 			assignOpEnumType = designatorChainFieldAccess.getDesignatorChain().obj.getType();
-			designatorChainFieldAccess.obj = intObj;
+			designatorChainFieldAccess.obj = enumConstOpt.get(); // TODO CHECK
+			foundDesignatorName += "." + accessName;
+			// TODO SPEC
+			report_info("Found (" + foundDesignatorName + "):  OBJ MISSING", designatorChainFieldAccess);
 			break;
 		case Struct.Class:
+			if (designatorChainFieldAccess.getDesignatorChain().obj.getKind() == Obj.Type) {
+				report_error("Invalid class field/method access", designatorChainFieldAccess);
+				designatorChainFieldAccess.obj = Tab.noObj;
+				return;
+			}
 			Optional<Obj> classFieldOpt;
 			// Current class struct has not yet been chained
-			if (designatorChainFieldAccess.getDesignatorChain().obj.getName().equals("this")
-					|| designatorChainFieldAccess.getDesignatorChain().obj.getType().equals(currentClassType))
+			if (designatorChainFieldAccess.getDesignatorChain().obj.getType().equals(currentClassType))
 				classFieldOpt = Tab.currentScope.getOuter().getLocals().symbols().stream()
 						.filter(sym -> sym.getName().equals(accessName)).findFirst();
 			else
@@ -1005,16 +980,20 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 				return;
 			}
 			designatorChainFieldAccess.obj = classFieldOpt.get();
-
+			foundDesignatorName += "." + accessName;
+			// TODO SPEC
+			report_info("Found (" + foundDesignatorName + "):  OBJ MISSING", designatorChainFieldAccess);
 		}
 
 	}
 
 	@Override
 	public void visit(DesignatorChainIndexAccess designatorChainIndexAccess) {
-		if (designatorChainIndexAccess.getDesignatorChain().obj == Tab.noObj)
+		if (designatorChainIndexAccess.getDesignatorChain().obj == Tab.noObj) {
+			designatorChainIndexAccess.obj = Tab.noObj;
 			return;
-		if (designatorChainIndexAccess.getDesignatorChain().obj.getKind() != Obj.Var) {
+		}
+		if (designatorChainIndexAccess.getDesignatorChain().obj.getKind() != Obj.Var && designatorChainIndexAccess.getDesignatorChain().obj.getKind() != Obj.Fld) {
 			report_error("Indexed access of non-variable", designatorChainIndexAccess);
 			designatorChainIndexAccess.obj = Tab.noObj;
 			return;
@@ -1026,6 +1005,9 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		}
 		// TODO TEST
 		Obj indexExpr = designatorChainIndexAccess.getExpr().obj;
+		if (indexExpr.getType().getKind() == Struct.Enum
+				&& (indexExpr.getKind() == Obj.Var || indexExpr.getKind() == Obj.Elem))
+			indexExpr = intObj;
 		if (indexExpr == null || indexExpr == Tab.noObj || !indexExpr.getType().equals(Tab.intType)) {
 			report_error("Array cannot be indexed using expressions not resulting in int type",
 					designatorChainIndexAccess);
@@ -1035,6 +1017,11 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		Obj arrayElemObj = new Obj(Obj.Elem, "array_elem_wrapper",
 				designatorChainIndexAccess.getDesignatorChain().obj.getType().getElemType());
 		designatorChainIndexAccess.obj = arrayElemObj;
+	}
+
+	@Override
+	public void visit(IndexInterrupt indexInterrupt) {
+		nameOfIndexedArray = foundDesignatorName;
 	}
 
 	@Override
@@ -1061,24 +1048,30 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		// System.out.println("Found type '" + methRetObj.getName() + "' for method '" +
 		// methObj.getName() + "'");
 		factorFCall.obj = methRetObj;
+		invokedMethod = Tab.noObj;
+		globalMethod = false;
 	}
 
 	@Override
 	public void visit(FactorNumConst factorNumConst) {
 		assignOpEnumType = Tab.noType;
-		factorNumConst.obj = intObj;
+		factorNumConst.obj = new Obj(Obj.Con, "num_const_wrapper", Tab.intType);
+		factorNumConst.obj.setAdr(factorNumConst.getVal());
 	}
 
 	@Override
 	public void visit(FactorCharConst factorCharConst) {
 		assignOpEnumType = Tab.noType;
-		factorCharConst.obj = chrObj;
+		factorCharConst.obj = new Obj(Obj.Con, "char_const_wrapper", Tab.charType);
+		factorCharConst.obj.setAdr(factorCharConst.getVal());
 	}
 
 	@Override
 	public void visit(FactorBoolConst factorBoolConst) {
 		assignOpEnumType = Tab.noType;
 		factorBoolConst.obj = boolObj;
+		factorBoolConst.obj = new Obj(Obj.Con, "bool_const_wrapper", boolType);
+		factorBoolConst.obj.setAdr(factorBoolConst.getVal() ? 1 : 0);
 	}
 
 	@Override
@@ -1098,6 +1091,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return;
 		}
 		factorTypeInst.obj = new Obj(Obj.Var, classTypeObj.getName() + " inst_wrapper", classTypeObj.getType());
+		report_info("Found (" + classTypeObj.getName() + "):  OBJ MISSING", factorTypeInst);
 	}
 
 	@Override
@@ -1126,6 +1120,13 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	@Override
 	public void visit(Factors factors) {
 		assignOpEnumType = Tab.noType;
+		if (factors.getFactorList().obj.getType().getKind() == Struct.Enum
+				&& (factors.getFactorList().obj.getKind() == Obj.Var
+						|| factors.getFactorList().obj.getKind() == Obj.Elem))
+			factors.getFactorList().obj = intObj;
+		if (factors.getFactor().obj.getType().getKind() == Struct.Enum
+				&& (factors.getFactor().obj.getKind() == Obj.Var || factors.getFactor().obj.getKind() == Obj.Elem))
+			factors.getFactor().obj = intObj;
 		if (factors.getFactorList().obj.getType() != Tab.intType || factors.getFactor().obj.getType() != Tab.intType) {
 			report_error("Invalid " + currentMulOp.getIdent() + " of non-compatible types", factors);
 			factors.obj = Tab.noObj;
@@ -1162,6 +1163,12 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	@Override
 	public void visit(Terms terms) {
 		assignOpEnumType = Tab.noType;
+		if (terms.getTermList().obj.getType().getKind() == Struct.Enum
+				&& (terms.getTermList().obj.getKind() == Obj.Var || terms.getTermList().obj.getKind() == Obj.Elem))
+			terms.getTermList().obj = intObj;
+		if (terms.getTerm().obj.getType().getKind() == Struct.Enum
+				&& (terms.getTerm().obj.getKind() == Obj.Var || terms.getTerm().obj.getKind() == Obj.Elem))
+			terms.getTerm().obj = intObj;
 		if (terms.getTermList().obj.getType() != Tab.intType || terms.getTerm().obj.getType() != Tab.intType) {
 			report_error("Invalid " + currentAddOp.getIdent() + " of non-compatible types", terms);
 			terms.obj = Tab.noObj;
@@ -1311,20 +1318,30 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	@Override
 	public void visit(PrintStatement printStatement) {
 		Struct exprType = printStatement.getExpr().obj.getType();
-		if (!exprType.equals(Tab.intType) && !exprType.equals(boolType) && !exprType.equals(Tab.charType))
+		System.out.println(printStatement.getExpr().obj.getName());
+		System.out.println(exprType == Tab.nullType);
+		if (!exprType.equals(Tab.intType) && !exprType.equals(boolType) && !exprType.equals(Tab.charType)
+				&& !(exprType.getKind() == Struct.Enum && (printStatement.getExpr().obj.getKind() == Obj.Var
+						|| printStatement.getExpr().obj.getKind() == Obj.Fld
+						|| printStatement.getExpr().obj.getKind() == Obj.Elem))
+				&& !exprType.isRefType())
 			report_error("Invalid print expression type", printStatement);
 	}
 
 	@Override
 	public void visit(NumConstPrintStatement numConstPrintStatement) {
 		Struct exprType = numConstPrintStatement.getExpr().obj.getType();
-		if (!exprType.equals(Tab.intType) && !exprType.equals(boolType) && !exprType.equals(Tab.charType))
+		if (!exprType.equals(Tab.intType) && !exprType.equals(boolType) && !exprType.equals(Tab.charType)
+				&& !(exprType.getKind() == Struct.Enum && (numConstPrintStatement.getExpr().obj.getKind() == Obj.Var
+						|| numConstPrintStatement.getExpr().obj.getKind() == Obj.Fld
+						|| numConstPrintStatement.getExpr().obj.getKind() == Obj.Elem))
+				&& !exprType.isRefType())
 			report_error("Invalid print expression type", numConstPrintStatement);
 	}
 
 	@Override
 	public void visit(ReadStatement readStatement) {
-		Obj designatorObj = readStatement.getDesignator().obj;
+		Obj designatorObj = readStatement.getDesignatorDst().obj;
 		if (designatorObj.getKind() != Obj.Elem && designatorObj.getKind() != Obj.Var
 				&& designatorObj.getKind() != Obj.Fld)
 			report_error("Read designator is not an array element, variable or a field", readStatement);
@@ -1349,6 +1366,9 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			report_error("Return statement of a void method returns something", typedReturnStatement);
 			return;
 		}
+		// Null return for ref types
+		if (currentMeth.getType().isRefType() && typedReturnStatement.getExpr().obj.getType() == Tab.nullType)
+			return;
 		if (!currentMeth.getType().equals(typedReturnStatement.getExpr().obj.getType()))
 			report_error("Return statement expression type does not match the return type of the method",
 					typedReturnStatement);
@@ -1356,7 +1376,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 
 	@Override
 	public void visit(DesignatorDec designatorDec) {
-		Obj designatorObj = designatorDec.getDesignator().obj;
+		Obj designatorObj = designatorDec.getDesignatorDst().obj;
 		if (designatorObj.getKind() != Obj.Elem && designatorObj.getKind() != Obj.Var
 				&& designatorObj.getKind() != Obj.Fld)
 			report_error("Decrement designator is not an array element, variable or a field", designatorDec);
@@ -1366,7 +1386,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 
 	@Override
 	public void visit(DesignatorInc designatorInc) {
-		Obj designatorObj = designatorInc.getDesignator().obj;
+		Obj designatorObj = designatorInc.getDesignatorDst().obj;
 		if (designatorObj.getKind() != Obj.Elem && designatorObj.getKind() != Obj.Var
 				&& designatorObj.getKind() != Obj.Fld)
 			report_error("Increment designator is not an array element, variable or a field", designatorInc);
@@ -1376,8 +1396,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 
 	@Override
 	public void visit(DesignatorAssignment designatorAssignment) {
-		Obj designatorObj = designatorAssignment.getDesignator().obj;
-		//TODO REMOVE DEBUG PRINTS
+		Obj designatorObj = designatorAssignment.getDesignatorDst().obj;
+		// TODO REMOVE DEBUG PRINTS
 //		System.out.println("Assignment check '" + designatorObj.getName() + "' on the left is "
 //				+ designatorObj.getKind() + " struct type: " + designatorObj.getType().getKind());
 //		System.out.println("Assignment check '" + designatorAssignment.getExpr().obj.getName() + "' on the right is "
@@ -1398,9 +1418,86 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 
 	@Override
 	public void visit(DesignatorFCall designatorFCall) {
-		if (designatorFCall.getDesignator().obj.getKind() != Obj.Meth)
+		if (designatorFCall.getDesignator().obj.getKind() != Obj.Meth) {
 			report_error("'" + designatorFCall.getDesignator().obj.getName()
 					+ "' does not represent a method or a global function", designatorFCall);
+			invokedMethod = Tab.noObj;
+			globalMethod = false;
+			return;
+		}
+		invokedMethod = Tab.noObj;
+		globalMethod = false;
+	}
+
+	@Override
+	public void visit(FCallInterrupt fCallInterrupt) {
+		if (lastVisitedDesignator == Tab.noObj) {
+			invokedMethod = Tab.noObj;
+			return;
+		}
+		if (lastVisitedDesignator.getKind() != Obj.Meth) {
+			invokedMethod = Tab.noObj;
+			return;
+		}
+		// Adjusting for methods called without using this.{methodName}
+		if (lastVisitedDesignator.getLevel() > 0) {
+			Obj firstParam = lastVisitedDesignator.getLocalSymbols().stream().findFirst().get();
+			if (firstParam.getName().equals("this") && firstParam.getType() == currentClassType)
+				globalMethod = false;
+		}
+		invokedMethod = lastVisitedDesignator;
+		currentApPos = globalMethod ? 0 : 1; // Adjusting for this in class methods
+	}
+
+	private int currentApPos = 0;
+
+	@Override
+	public void visit(EmptyActualParamList emptyActualParamList) {
+		if (invokedMethod == Tab.noObj)
+			return;
+		if (invokedMethod.getLevel() != currentApPos)
+			report_error("Method argument number and formal parameten number mismatch. Required "
+					+ invokedMethod.getLevel() + " but " + currentApPos + " were provided",
+					emptyActualParamList.getParent()); // GetParent only there for error info
+	}
+
+	@Override
+	public void visit(ActualParams actualParams) {
+		if (invokedMethod == Tab.noObj)
+			return;
+		if (invokedMethod.getLevel() != currentApPos)
+			report_error("Method argument number and formal parameten number mismatch. Required "
+					+ invokedMethod.getLevel() + " but " + currentApPos + " were provided", actualParams);
+	}
+
+	@Override
+	public void visit(ActualParam actualParam) {
+		if (invokedMethod == Tab.noObj)
+			return;
+		if (invokedMethod.getLevel() <= currentApPos) {
+			// TOO MANY PARAMS
+			currentApPos++;
+			return;
+		}
+		Obj exprObj = actualParam.getExpr().obj;
+		Optional<Obj> optParamObj = invokedMethod.getLocalSymbols().stream()
+				.filter(sym -> sym.getFpPos() == currentApPos).findFirst();
+		if (!optParamObj.isPresent()) {
+			// IRREGULAR SITUATION
+			report_error("Fomral param not found IRREGULAR ERROR", actualParam);
+			return;
+		}
+		// Test
+		currentApPos++;
+		Obj paramObj = optParamObj.get();
+		if (paramObj.getType().getKind() == Struct.Array && paramObj.getType().getElemType() == Tab.noType
+				&& exprObj.getType().getKind() == Struct.Array)
+			return;
+		if (!assignmentTypeCompatible(paramObj, exprObj)) {
+			report_error("Invalid argument type for method call. Parameter '" + paramObj.getName() + "', position "
+					+ (globalMethod ? currentApPos + 1 : currentApPos), actualParam);
+		}
+
 	}
 
 }

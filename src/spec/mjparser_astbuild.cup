@@ -101,27 +101,21 @@ nonterminal EnumDeclList EnumDeclList;
 nonterminal SingleIdentEnumDecl SingleIdentEnumDecl;
 nonterminal NumConstAssign NumConstAssign;						        /* Enumeration related nonterminals */	
 nonterminal ClassDecl ClassDecl;
-nonterminal ClassName ClassName;
 nonterminal ClassExtension ClassExtension;
 nonterminal ExtFieldIntercept ExtFieldIntercept;
 nonterminal FieldDeclList FieldDeclList;
 nonterminal FieldDecl FieldDecl;
 nonterminal ClassMethods ClassMethods;
 nonterminal ExtMethodIntercept ExtMethodIntercept;
-nonterminal ClassMethodDeclList ClassMethodDeclList;
-nonterminal ClassMethodDecl ClassMethodDecl;
-nonterminal ClassMethodName ClassMethodName; 	
+nonterminal ClassMethodDeclList ClassMethodDeclList; 	
 nonterminal AbsClassDecl AbsClassDecl;
-nonterminal AbsClassName AbsClassName;
 nonterminal AbsClassMethods AbsClassMethods;
 nonterminal AbsClassMethodList AbsClassMethodList;
 nonterminal AbsMethodDecl AbsMethodDecl;
 nonterminal AbsMethodName AbsMethodName;
 
 nonterminal MethodDeclList MethodDeclList;
-nonterminal MethodDecl MethodDecl;
 nonterminal ReturnType ReturnType;
-nonterminal MethodName MethodName;
 nonterminal FormalParamList FormalParamList;
 nonterminal FormalParams FormalParams;
 nonterminal FormalParam FormalParam;
@@ -135,7 +129,9 @@ nonterminal ForInterrupt ForInterrupt;
 nonterminal SwitchInterrupt SwitchInterrupt;
 nonterminal CaseList CaseList;
 nonterminal SingleCase SingleCase;
+nonterminal IndexInterrupt IndexInterrupt;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Condition, CondTerm, CondFact;
+nonterminal FCallInterrupt FCallInterrupt;
 nonterminal ActualParamList ActualParamList;
 nonterminal MultActualParam MultActualParam;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Expr, Term, TermList, Factor, FactorList;
@@ -148,8 +144,10 @@ nonterminal Mulop Mulop;
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName, EnumName, Type;
 nonterminal rs.etf.pp1.symboltable.concepts.Struct ConstVal;
-nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator,  DesignatorChain;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj Designator, DesignatorChain, DesignatorDst;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ActualParam;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj MethodName, MethodDecl, ClassMethodName, ClassMethodDecl;
+nonterminal rs.etf.pp1.symboltable.concepts.Obj ClassName, AbsClassName;
 
 
 /*------------------------- TERMINALS AND NONTERMINALS END -------------------------*/
@@ -407,7 +405,7 @@ Statement			::= (GeneralDesignatorStatement) DesignatorStatement:D1 SEMI {: RESU
 						| 
 						(TypedReturnStatement)RETURN Expr:E1 SEMI {: RESULT=new TypedReturnStatement(E1); RESULT.setLine(E1left); :}		/* typed function return */
 						|
-						(ReadStatement) READ LPAREN Designator:D1 RPAREN SEMI {: RESULT=new ReadStatement(D1); RESULT.setLine(D1left); :}
+						(ReadStatement) READ LPAREN DesignatorDst:D1 RPAREN SEMI {: RESULT=new ReadStatement(D1); RESULT.setLine(D1left); :}
 						|
 						(PrintStatement) PRINT LPAREN Expr:E1 RPAREN SEMI {: RESULT=new PrintStatement(E1); RESULT.setLine(E1left); :}
 						|
@@ -445,23 +443,29 @@ SingleCase			::= (SingleCase) CASE NUMCONST:val COLON StatementList:S1 {: RESULT
 						
 						
 					
-DesignatorStatement	::= (DesignatorAssignment) Designator:D1 Assignop:A2 Expr:E3 {: RESULT=new DesignatorAssignment(D1, A2, E3); RESULT.setLine(D1left); :}
+DesignatorStatement	::= (DesignatorAssignment) DesignatorDst:D1 Assignop:A2 Expr:E3 {: RESULT=new DesignatorAssignment(D1, A2, E3); RESULT.setLine(D1left); :}
 						|
-						(DesignatorFCall) Designator:D1 LPAREN ActualParamList:A2 RPAREN {: RESULT=new DesignatorFCall(D1, A2); RESULT.setLine(D1left); :}
+						(DesignatorFCall) Designator:D1 FCallInterrupt:F2 ActualParamList:A3 RPAREN {: RESULT=new DesignatorFCall(D1, F2, A3); RESULT.setLine(D1left); :}
 						|
-						(DesignatorInc) Designator:D1 INC {: RESULT=new DesignatorInc(D1); RESULT.setLine(D1left); :}
+						(DesignatorInc) DesignatorDst:D1 INC {: RESULT=new DesignatorInc(D1); RESULT.setLine(D1left); :}
 						|
-						(DesignatorDec) Designator:D1 DEC {: RESULT=new DesignatorDec(D1); RESULT.setLine(D1left); :};
+						(DesignatorDec) DesignatorDst:D1 DEC {: RESULT=new DesignatorDec(D1); RESULT.setLine(D1left); :};
 						
+
+DesignatorDst		::=	(DesignatorDst) DesignatorChain:D1 {: RESULT=new DesignatorDst(D1); RESULT.setLine(D1left); :};
+
 
 Designator			::= (Designator) DesignatorChain:D1 {: RESULT=new Designator(D1); RESULT.setLine(D1left); :};
 
 
-DesignatorChain		::= (DesignatorChainIndexAccess) DesignatorChain:prevDesignator LBRACKET Expr:E1 RBRACKET {: RESULT=new DesignatorChainIndexAccess(prevDesignator, E1); RESULT.setLine(prevDesignatorleft); :} 
+DesignatorChain		::= (DesignatorChainIndexAccess) DesignatorChain:prevDesignator IndexInterrupt:I1 Expr:E2 RBRACKET {: RESULT=new DesignatorChainIndexAccess(prevDesignator, I1, E2); RESULT.setLine(prevDesignatorleft); :} 
 						|
 						(DesignatorChainFieldAccess) DesignatorChain:prevDeisgnator DOT IDENT:fieldName {: RESULT=new DesignatorChainFieldAccess(prevDeisgnator, fieldName); RESULT.setLine(prevDeisgnatorleft); :}
 						|
 						(DesignatorChainIdent) IDENT:name {: RESULT=new DesignatorChainIdent(name); RESULT.setLine(nameleft); :};
+
+
+IndexInterrupt		::=	(IndexInterrupt) LBRACKET {: RESULT=new IndexInterrupt(); :};
 
 
 ActualParamList		::= (ActualParams)  MultActualParam:M1 {: RESULT=new ActualParams(M1); RESULT.setLine(M1left); :}
@@ -514,7 +518,7 @@ FactorList			::= (Factors) FactorList:F1 Mulop:M2 Factor:F3 {: RESULT=new Factor
 						
 Factor				::= (FactorDesignator) Designator:D1 {: RESULT=new FactorDesignator(D1); RESULT.setLine(D1left); :}
 						|
-						(FactorFCall) Designator:D1 LPAREN ActualParamList:A2 RPAREN {: RESULT=new FactorFCall(D1, A2); RESULT.setLine(D1left); :}
+						(FactorFCall) Designator:D1 FCallInterrupt:F2 ActualParamList:A3 RPAREN {: RESULT=new FactorFCall(D1, F2, A3); RESULT.setLine(D1left); :}
 						|
 						(FactorNumConst) NUMCONST:val {: RESULT=new FactorNumConst(val); RESULT.setLine(valleft); :}
 						|
@@ -529,6 +533,7 @@ Factor				::= (FactorDesignator) Designator:D1 {: RESULT=new FactorDesignator(D1
 						(FactorExpr) LPAREN Expr:E1 RPAREN {: RESULT=new FactorExpr(E1); RESULT.setLine(E1left); :};
 
 
+FCallInterrupt		::= (FCallInterrupt) LPAREN {: RESULT=new FCallInterrupt(); :};
 
 /*------------------------- Operators -------------------------*/
 

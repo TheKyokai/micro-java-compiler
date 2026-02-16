@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 13/1/2026 20:3:49
+// 16/1/2026 2:18:22
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,11 +8,14 @@ package rs.ac.bg.etf.pp1.ast;
 public class DesignatorChainIndexAccess extends DesignatorChain {
 
     private DesignatorChain DesignatorChain;
+    private IndexInterrupt IndexInterrupt;
     private Expr Expr;
 
-    public DesignatorChainIndexAccess (DesignatorChain DesignatorChain, Expr Expr) {
+    public DesignatorChainIndexAccess (DesignatorChain DesignatorChain, IndexInterrupt IndexInterrupt, Expr Expr) {
         this.DesignatorChain=DesignatorChain;
         if(DesignatorChain!=null) DesignatorChain.setParent(this);
+        this.IndexInterrupt=IndexInterrupt;
+        if(IndexInterrupt!=null) IndexInterrupt.setParent(this);
         this.Expr=Expr;
         if(Expr!=null) Expr.setParent(this);
     }
@@ -23,6 +26,14 @@ public class DesignatorChainIndexAccess extends DesignatorChain {
 
     public void setDesignatorChain(DesignatorChain DesignatorChain) {
         this.DesignatorChain=DesignatorChain;
+    }
+
+    public IndexInterrupt getIndexInterrupt() {
+        return IndexInterrupt;
+    }
+
+    public void setIndexInterrupt(IndexInterrupt IndexInterrupt) {
+        this.IndexInterrupt=IndexInterrupt;
     }
 
     public Expr getExpr() {
@@ -39,17 +50,20 @@ public class DesignatorChainIndexAccess extends DesignatorChain {
 
     public void childrenAccept(Visitor visitor) {
         if(DesignatorChain!=null) DesignatorChain.accept(visitor);
+        if(IndexInterrupt!=null) IndexInterrupt.accept(visitor);
         if(Expr!=null) Expr.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(DesignatorChain!=null) DesignatorChain.traverseTopDown(visitor);
+        if(IndexInterrupt!=null) IndexInterrupt.traverseTopDown(visitor);
         if(Expr!=null) Expr.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(DesignatorChain!=null) DesignatorChain.traverseBottomUp(visitor);
+        if(IndexInterrupt!=null) IndexInterrupt.traverseBottomUp(visitor);
         if(Expr!=null) Expr.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -61,6 +75,12 @@ public class DesignatorChainIndexAccess extends DesignatorChain {
 
         if(DesignatorChain!=null)
             buffer.append(DesignatorChain.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(IndexInterrupt!=null)
+            buffer.append(IndexInterrupt.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

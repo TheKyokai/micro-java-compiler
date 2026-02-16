@@ -1,25 +1,25 @@
 // generated with ast extension for cup
 // version 0.8
-// 13/1/2026 20:3:49
+// 16/1/2026 2:18:22
 
 
 package rs.ac.bg.etf.pp1.ast;
 
 public class DesignatorInc extends DesignatorStatement {
 
-    private Designator Designator;
+    private DesignatorDst DesignatorDst;
 
-    public DesignatorInc (Designator Designator) {
-        this.Designator=Designator;
-        if(Designator!=null) Designator.setParent(this);
+    public DesignatorInc (DesignatorDst DesignatorDst) {
+        this.DesignatorDst=DesignatorDst;
+        if(DesignatorDst!=null) DesignatorDst.setParent(this);
     }
 
-    public Designator getDesignator() {
-        return Designator;
+    public DesignatorDst getDesignatorDst() {
+        return DesignatorDst;
     }
 
-    public void setDesignator(Designator Designator) {
-        this.Designator=Designator;
+    public void setDesignatorDst(DesignatorDst DesignatorDst) {
+        this.DesignatorDst=DesignatorDst;
     }
 
     public void accept(Visitor visitor) {
@@ -27,16 +27,16 @@ public class DesignatorInc extends DesignatorStatement {
     }
 
     public void childrenAccept(Visitor visitor) {
-        if(Designator!=null) Designator.accept(visitor);
+        if(DesignatorDst!=null) DesignatorDst.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
-        if(Designator!=null) Designator.traverseTopDown(visitor);
+        if(DesignatorDst!=null) DesignatorDst.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
-        if(Designator!=null) Designator.traverseBottomUp(visitor);
+        if(DesignatorDst!=null) DesignatorDst.traverseBottomUp(visitor);
         accept(visitor);
     }
 
@@ -45,8 +45,8 @@ public class DesignatorInc extends DesignatorStatement {
         buffer.append(tab);
         buffer.append("DesignatorInc(\n");
 
-        if(Designator!=null)
-            buffer.append(Designator.toString("  "+tab));
+        if(DesignatorDst!=null)
+            buffer.append(DesignatorDst.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

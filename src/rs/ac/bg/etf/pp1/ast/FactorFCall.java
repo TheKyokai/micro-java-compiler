@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 13/1/2026 20:3:49
+// 16/1/2026 2:18:22
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,11 +8,14 @@ package rs.ac.bg.etf.pp1.ast;
 public class FactorFCall extends Factor {
 
     private Designator Designator;
+    private FCallInterrupt FCallInterrupt;
     private ActualParamList ActualParamList;
 
-    public FactorFCall (Designator Designator, ActualParamList ActualParamList) {
+    public FactorFCall (Designator Designator, FCallInterrupt FCallInterrupt, ActualParamList ActualParamList) {
         this.Designator=Designator;
         if(Designator!=null) Designator.setParent(this);
+        this.FCallInterrupt=FCallInterrupt;
+        if(FCallInterrupt!=null) FCallInterrupt.setParent(this);
         this.ActualParamList=ActualParamList;
         if(ActualParamList!=null) ActualParamList.setParent(this);
     }
@@ -23,6 +26,14 @@ public class FactorFCall extends Factor {
 
     public void setDesignator(Designator Designator) {
         this.Designator=Designator;
+    }
+
+    public FCallInterrupt getFCallInterrupt() {
+        return FCallInterrupt;
+    }
+
+    public void setFCallInterrupt(FCallInterrupt FCallInterrupt) {
+        this.FCallInterrupt=FCallInterrupt;
     }
 
     public ActualParamList getActualParamList() {
@@ -39,17 +50,20 @@ public class FactorFCall extends Factor {
 
     public void childrenAccept(Visitor visitor) {
         if(Designator!=null) Designator.accept(visitor);
+        if(FCallInterrupt!=null) FCallInterrupt.accept(visitor);
         if(ActualParamList!=null) ActualParamList.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(Designator!=null) Designator.traverseTopDown(visitor);
+        if(FCallInterrupt!=null) FCallInterrupt.traverseTopDown(visitor);
         if(ActualParamList!=null) ActualParamList.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(Designator!=null) Designator.traverseBottomUp(visitor);
+        if(FCallInterrupt!=null) FCallInterrupt.traverseBottomUp(visitor);
         if(ActualParamList!=null) ActualParamList.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -61,6 +75,12 @@ public class FactorFCall extends Factor {
 
         if(Designator!=null)
             buffer.append(Designator.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(FCallInterrupt!=null)
+            buffer.append(FCallInterrupt.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");

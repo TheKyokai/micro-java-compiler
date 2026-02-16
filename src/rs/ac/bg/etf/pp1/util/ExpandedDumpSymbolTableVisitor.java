@@ -43,7 +43,7 @@ public class ExpandedDumpSymbolTableVisitor extends DumpSymbolTableVisitor {
 			output.append(classType.getName());
 		}
 		else 
-			if ((objToVisit.getKind() == Obj.Meth || objToVisit.getKind() == Obj.Var) && (objToVisit.getType().getKind() == Struct.Class) || objToVisit.getType().getKind() == Struct.Enum) {
+			if ((objToVisit.getKind() == Obj.Meth || objToVisit.getKind() == Obj.Var || objToVisit.getKind() == Obj.Fld) && (objToVisit.getType().getKind() == Struct.Class) || objToVisit.getType().getKind() == Struct.Enum) {
 				Obj classType = program.getLocalSymbols().stream().filter(sym -> sym.getKind() == Obj.Type && sym.getType() == objToVisit.getType()).collect(Collectors.toList()).get(0);
 				output.append(classType.getName());
 			} else

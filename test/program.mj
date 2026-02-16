@@ -13,19 +13,21 @@ enum Broj { NULA, JEDAN = 1, PET=5, DESET=10}
 class ret { bool ret_field; { int retMeth(){}}}
 
 
-class k1 { int k1_field; {  k1 meth(ret ret_fp, int num, k1 c[]){}	} }
+abstract class k1 { int k1_field; ret field_2; { abstract k1 meth(ret ret_fp, int num, k1 c[]);	} }
 
 
-class k2 extends k1 { char k2_field; {	k2 meth(ret retSuper_fp, int x, k1 c[]){}  }}
+class k2 extends k1 { char k2_field; { k2 meth(ret retSuper_fp, int x, k1 c[]){}  }}
 
 
 k1 k1_ref;
 k2 k2_ref;
 
 {
-	ret function() {}
+	ret function(int act_par) Broj sth_var; {act_par = 1; return null;} 
+	
+	void argument_check(k1 k1_formal_param, k2 k2_formal_param) {}
 		
-	void main() int x[]; ret ret_arr[]; Broj br, br_arr[];
+	void main() int x[]; ret ret_arr[]; Broj br, br_arr[]; ret retVar;
 	{
 		x[0] = Broj.NULA;				
 		x = new int[10];				
@@ -46,7 +48,7 @@ k2 k2_ref;
 		for (;;) break;					
 		//switch('c') {}				// FAIL
 		
-		function();						
+		function(1);						
 		//x();							// FAIL
 		switch(Broj.NULA) {
 			case 11:
@@ -72,5 +74,19 @@ k2 k2_ref;
 		//br = -Broj.JEDAN;   			// FAIL
 		br = br_arr[100];
 		//br = 0;						// FAIL
+		
+		// FAIL
+		//function(1, 2);
+		//function();
+		//function('c', null);
+		
+		//argument_check(null, 1);
+		ret_arr[1].retMeth();
+		// \FAIL
+		
+		retVar.retMeth();
+		retVar = new ret;
+		
+		
 	}
 }
