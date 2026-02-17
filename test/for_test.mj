@@ -1,0 +1,29 @@
+program CodeTestProgram
+
+
+const char c = 'A';
+const bool boolConst = true;
+
+enum Broj { NULA, JEDAN = 1, PET=5, DESET=10}
+
+
+
+const int x = 5, y = 10;
+
+
+{
+	
+	bool call1() {print('C');print(1);print(eol); return true;}
+	bool call2() {print('C');print(2);print(eol); return false;}	
+
+	void main() int i, arr[];
+	{
+		for (i = 0; arr != null && call2() && call1() || i < 10 ; i++)
+		{
+			print(i);
+			print(eol);
+			continue;		
+		}
+	}
+	
+}

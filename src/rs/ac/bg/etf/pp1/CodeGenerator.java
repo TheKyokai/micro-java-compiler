@@ -26,6 +26,7 @@ import rs.ac.bg.etf.pp1.ast.DesignatorDst;
 import rs.ac.bg.etf.pp1.ast.DesignatorFCall;
 import rs.ac.bg.etf.pp1.ast.DesignatorInc;
 import rs.ac.bg.etf.pp1.ast.Div;
+import rs.ac.bg.etf.pp1.ast.ElseInterrupt;
 import rs.ac.bg.etf.pp1.ast.Equal;
 import rs.ac.bg.etf.pp1.ast.FCallInterrupt;
 import rs.ac.bg.etf.pp1.ast.FactorArrayInst;
@@ -36,10 +37,15 @@ import rs.ac.bg.etf.pp1.ast.FactorNumConst;
 import rs.ac.bg.etf.pp1.ast.FactorTypeInst;
 import rs.ac.bg.etf.pp1.ast.Factors;
 import rs.ac.bg.etf.pp1.ast.ForAfterCond;
+import rs.ac.bg.etf.pp1.ast.ForBeforeCond;
 import rs.ac.bg.etf.pp1.ast.ForInterrupt;
 import rs.ac.bg.etf.pp1.ast.ForStatement;
 import rs.ac.bg.etf.pp1.ast.GreaterEqual;
 import rs.ac.bg.etf.pp1.ast.GreaterThan;
+import rs.ac.bg.etf.pp1.ast.IfAfterCond;
+import rs.ac.bg.etf.pp1.ast.IfBeforeCond;
+import rs.ac.bg.etf.pp1.ast.IfElseStatement;
+import rs.ac.bg.etf.pp1.ast.IfStatement;
 import rs.ac.bg.etf.pp1.ast.LesserThan;
 import rs.ac.bg.etf.pp1.ast.LesserThanEqual;
 import rs.ac.bg.etf.pp1.ast.MethodDecl;
@@ -49,14 +55,20 @@ import rs.ac.bg.etf.pp1.ast.Mod;
 import rs.ac.bg.etf.pp1.ast.Mul;
 import rs.ac.bg.etf.pp1.ast.NotEqual;
 import rs.ac.bg.etf.pp1.ast.NumConstPrintStatement;
+import rs.ac.bg.etf.pp1.ast.OrInterrupt;
 import rs.ac.bg.etf.pp1.ast.Plus;
 import rs.ac.bg.etf.pp1.ast.PrintStatement;
 import rs.ac.bg.etf.pp1.ast.ReadStatement;
+import rs.ac.bg.etf.pp1.ast.RelopCondFact;
+import rs.ac.bg.etf.pp1.ast.SimpleCondFact;
 import rs.ac.bg.etf.pp1.ast.SingleCase;
 import rs.ac.bg.etf.pp1.ast.SwitchInterrupt;
 import rs.ac.bg.etf.pp1.ast.SwitchStatement;
 import rs.ac.bg.etf.pp1.ast.SyntaxNode;
 import rs.ac.bg.etf.pp1.ast.Terms;
+import rs.ac.bg.etf.pp1.ast.TernaryElse;
+import rs.ac.bg.etf.pp1.ast.TernaryExpr;
+import rs.ac.bg.etf.pp1.ast.TernaryInterrupt;
 import rs.ac.bg.etf.pp1.ast.TypedReturnStatement;
 import rs.ac.bg.etf.pp1.ast.UMinusFirstTermInList;
 import rs.ac.bg.etf.pp1.ast.VisitorAdaptor;
@@ -75,7 +87,6 @@ public class CodeGenerator extends VisitorAdaptor {
 	private Map<Obj, List<Integer>> vftPointerFixupMap = new HashMap<Obj, List<Integer>>();
 	private Stack<Obj> invokedMethStack = new Stack<Obj>();
 	private Obj currentInvokedMeth = Tab.noObj;
-	
 
 	public CodeGenerator(Obj mainMethObj, int nGlobalVars) {
 		this.mainObj = mainMethObj;
@@ -124,10 +135,11 @@ public class CodeGenerator extends VisitorAdaptor {
 			// Getting all class methods
 			for (Obj meth : classObj.getType().getMembers().stream().filter(sym -> sym.getKind() == Obj.Meth)
 					.collect(Collectors.toList())) {
-				
-				// Address can never be zero for non-abstract method -> method not overridden -> bind to superclass method
+
+				// Address can never be zero for non-abstract method -> method not overridden ->
+				// bind to superclass method
 				if (meth.getAdr() == 0 && meth.getFpPos() == -1) {
-					Struct superClass = classObj.getType().getElemType(); 
+					Struct superClass = classObj.getType().getElemType();
 					if (superClass == Tab.noType || superClass == null) {
 						System.out.println("Unexpected inconsistant state");
 						break;
@@ -144,9 +156,9 @@ public class CodeGenerator extends VisitorAdaptor {
 							System.out.println("Unexpected inconsistant state");
 					}
 					meth.setAdr(superMeth.getAdr());
-						
+
 				}
-				
+
 				for (char c : meth.getName().toCharArray()) {
 					Code.loadConst(c);
 					Code.put(Code.putstatic);
@@ -196,11 +208,10 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.put(1);
 		}
 	}
-	
-	
+
 	@Override
 	public void visit(ClassMethodName classMethodName) {
-		//TODO REMOVE
+		// TODO REMOVE
 //		System.out.println("Class meth " + classMethodName.obj.getName());
 		classMethodName.obj.setAdr(Code.pc);
 		// ENTER
@@ -208,7 +219,7 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.put(classMethodName.obj.getLevel()); // Formal parameter count
 		Code.put(classMethodName.obj.getLocalSymbols().size()); // Formal parameter count + Local variable count
 	}
-	
+
 	@Override
 	public void visit(ClassMethodDecl classMethodDecl) {
 		if (classMethodDecl.obj.getType() == Tab.noType) {
@@ -233,21 +244,20 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.put(Code.exit);
 		Code.put(Code.return_);
 	}
-	
-	
+
 	@Override
 	public void visit(FCallInterrupt fCallInterrupt) {
 		invokedMethStack.push(currentInvokedMeth);
 		SyntaxNode parent = fCallInterrupt.getParent();
-		if (parent instanceof DesignatorFCall) 
-			currentInvokedMeth = ((DesignatorFCall)parent).getDesignator().obj;
-		else if (parent instanceof FactorFCall) 
-			currentInvokedMeth = ((FactorFCall)parent).getDesignator().obj;
+		if (parent instanceof DesignatorFCall)
+			currentInvokedMeth = ((DesignatorFCall) parent).getDesignator().obj;
+		else if (parent instanceof FactorFCall)
+			currentInvokedMeth = ((FactorFCall) parent).getDesignator().obj;
 		if (currentInvokedMeth.getFpPos() != 0)
 			// Creating a duplicate for VFTP retrieval
 			Code.put(Code.dup);
 	}
-	
+
 	@Override
 	public void visit(ActualParam actualParam) {
 		// Pushing the duplicate to the top
@@ -256,12 +266,11 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.put(Code.pop);
 		}
 	}
-	
-	
+
 	@Override
 	public void visit(DesignatorFCall designatorFCall) {
 		currentInvokedMeth = invokedMethStack.pop();
-		Obj methObj = designatorFCall.getDesignator().obj; 
+		Obj methObj = designatorFCall.getDesignator().obj;
 		if (methObj.getFpPos() == 0) {
 			// Global function
 			Code.put(Code.call);
@@ -272,7 +281,7 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.put(Code.getfield);
 		Code.put2(0);
 		Code.put(Code.invokevirtual);
-		for (char c:methObj.getName().toCharArray())
+		for (char c : methObj.getName().toCharArray())
 			Code.put4(c);
 		Code.put4(-1);
 	}
@@ -280,8 +289,21 @@ public class CodeGenerator extends VisitorAdaptor {
 	@Override
 	public void visit(FactorFCall factorFCall) {
 		currentInvokedMeth = invokedMethStack.pop();
-		Code.put(Code.call);
-		Code.put2(factorFCall.getDesignator().obj.getAdr() - Code.pc + 1); // Accounting for call byte
+		Obj methObj = factorFCall.getDesignator().obj;
+		if (methObj.getFpPos() == 0) {
+			// Global function
+			Code.put(Code.call);
+			Code.put2(factorFCall.getDesignator().obj.getAdr() - Code.pc + 1); // Accounting for call byte
+			return;
+		}
+		// Class method
+		Code.put(Code.getfield);
+		Code.put2(0);
+		Code.put(Code.invokevirtual);
+		for (char c : methObj.getName().toCharArray())
+			Code.put4(c);
+		Code.put4(-1);
+		
 	}
 
 	@Override
@@ -319,7 +341,7 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	@Override
 	public void visit(DesignatorChainIdent designatorChainIdent) {
-		if (designatorChainIdent.obj.getKind() == Obj.Fld 
+		if (designatorChainIdent.obj.getKind() == Obj.Fld
 				|| (designatorChainIdent.obj.getKind() == Obj.Meth && designatorChainIdent.obj.getFpPos() != 0))
 			Code.put(Code.load_n);
 	}
@@ -335,11 +357,11 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.load(prevObj); // Loading array on stack for length later
 			return;
 		}
-		
+
 		if (prevObj.getType().getKind() == Struct.Class) {
 			// In case of chaining class fields load now
 			Code.load(prevObj);
-			
+
 		}
 
 	}
@@ -347,10 +369,10 @@ public class CodeGenerator extends VisitorAdaptor {
 	@Override
 	public void visit(DesignatorChainIndexAccess designatorChainIndexAccess) {
 		// Must be and array var or fld
-		Obj prevObj = designatorChainIndexAccess.getDesignatorChain().obj; 
+		Obj prevObj = designatorChainIndexAccess.getDesignatorChain().obj;
 		if (prevObj.getKind() == Obj.Fld) {
 			Code.put(Code.dup_x1); // adr expr -> expr adr expr
-			Code.put(Code.pop);  // expr adr expr -> expr adr
+			Code.put(Code.pop); // expr adr expr -> expr adr
 		}
 		Code.load(designatorChainIndexAccess.getDesignatorChain().obj);
 		Code.put(Code.dup_x1); // Expression already on exprstack -> array addr must be below
@@ -386,10 +408,10 @@ public class CodeGenerator extends VisitorAdaptor {
 		else
 			Code.put(Code.aload);
 	}
-	
+
 	@Override
 	public void visit(DesignatorDst designatorDst) {
-		
+
 	}
 
 	@Override
@@ -479,9 +501,8 @@ public class CodeGenerator extends VisitorAdaptor {
 			// Must be int elem -> array addr and index already on exprstack
 			Code.put(Code.astore);
 	}
-	
-	
-	//TODO Move to Compiler
+
+	// TODO Move to Compiler
 	private enum ADDOP {
 		NONE, ADD, SUB;
 	}
@@ -493,33 +514,41 @@ public class CodeGenerator extends VisitorAdaptor {
 	private enum RELOP {
 		NONE, EQUAL, NOTEQUAL, GREATER, GREATEREQ, LESSER, LESSEREQ
 	}
-
+	
+	private Stack<ADDOP> addopStack = new Stack<CodeGenerator.ADDOP>();
+	private Stack<MULOP> mulopStack = new Stack<CodeGenerator.MULOP>();
+	
 	private ADDOP currentAddOp = ADDOP.NONE;
 	private MULOP currentMulOp = MULOP.NONE;
-	private RELOP currentRelOp = RELOP.NONE;
+	private RELOP currentRelOp = RELOP.NONE; // No need for stack -> will remain last visited
 
 	@Override
 	public void visit(Plus Plus) {
+		addopStack.push(currentAddOp);
 		currentAddOp = ADDOP.ADD;
 	}
 
 	@Override
 	public void visit(Minus Minus) {
+		addopStack.push(currentAddOp);
 		currentAddOp = ADDOP.SUB;
 	}
 
 	@Override
 	public void visit(Div Div) {
+		mulopStack.push(currentMulOp);
 		currentMulOp = MULOP.DIV;
 	}
 
 	@Override
 	public void visit(Mul Mul) {
+		mulopStack.push(currentMulOp);
 		currentMulOp = MULOP.MUL;
 	}
 
 	@Override
 	public void visit(Mod Mod) {
+		mulopStack.push(currentMulOp);
 		currentMulOp = MULOP.MOD;
 	}
 
@@ -568,6 +597,7 @@ public class CodeGenerator extends VisitorAdaptor {
 		default:
 			// Never happening
 		}
+		currentMulOp = mulopStack.pop();
 	}
 
 	@Override
@@ -582,6 +612,7 @@ public class CodeGenerator extends VisitorAdaptor {
 		default:
 			// Never happening
 		}
+		currentAddOp = addopStack.pop();
 	}
 
 	@Override
@@ -610,66 +641,67 @@ public class CodeGenerator extends VisitorAdaptor {
 	public void visit(AbsClassName absClassName) {
 		vftPointerFixupMap.put(absClassName.obj, new ArrayList<Integer>());
 	}
-	
+
 	@Override
 	public void visit(FactorTypeInst factorTypeInst) {
 		Code.put(Code.new_);
-		Code.put2((factorTypeInst.obj.getType().getNumberOfFields() + 1) * 4); // If s represents words, x4 for bytes -> Will test
+		Code.put2((factorTypeInst.obj.getType().getNumberOfFields() + 1) * 4); // If s represents words, x4 for bytes ->
+																				// Will test
 		// Will exist so no check needed
-		Obj classObj = program.getLocalSymbols().stream().filter(sym -> sym.getKind() == Obj.Type && sym.getType() == factorTypeInst.obj.getType()).findFirst().get();
+		Obj classObj = program.getLocalSymbols().stream()
+				.filter(sym -> sym.getKind() == Obj.Type && sym.getType() == factorTypeInst.obj.getType()).findFirst()
+				.get();
 		Code.put(Code.dup);
 		Code.put(Code.const_);
-		if (currentStaticAddr == -1) 
+		if (currentStaticAddr == -1)
 			vftPointerFixupMap.get(classObj).add(Code.pc);
 		Code.put4(classObj.getAdr());
 		Code.put(Code.putfield);
 		Code.put2(0);
 	}
-	
-	
+
 	// Control structure nesting enum
-	
-	enum CSType {NONE, SWITCH, FOR}
-	
+
+	enum CSType {
+		NONE, SWITCH, FOR
+	}
+
 	private Stack<CSType> csNestingStack = new Stack<CodeGenerator.CSType>();
 	private CSType currentCS = CSType.NONE;
-	
-	
+
 	// Switch
-	
+
 	private Stack<List<Integer>> breakNestingStack = new Stack<List<Integer>>();
 	private List<Integer> breakFixupAddresses = null;
-	
-	
+
 	private Stack<Integer> caseCheckJumpAddrStack = new Stack<Integer>();
 	private int prevCaseCheckJumpAddr = -1;
-	
+
 	@Override
 	public void visit(SwitchInterrupt switchInterrupt) {
 		// Set current structure
 		csNestingStack.push(currentCS);
 		currentCS = CSType.SWITCH;
-		
+
 		breakNestingStack.push(breakFixupAddresses);
 		breakFixupAddresses = new ArrayList<Integer>();
 		caseCheckJumpAddrStack.push(prevCaseCheckJumpAddr);
 		prevCaseCheckJumpAddr = -1;
 	}
-	
-	
+
 	@Override
 	public void visit(SwitchStatement switchStatement) {
 		// Fixup last case condition jump
 		Code.fixup(prevCaseCheckJumpAddr);
 		prevCaseCheckJumpAddr = caseCheckJumpAddrStack.pop();
 		// Fixup all break statements
-		for (int addr: breakFixupAddresses)
+		for (int addr : breakFixupAddresses)
 			Code.fixup(addr);
 		breakFixupAddresses = breakNestingStack.pop();
 		currentCS = csNestingStack.pop();
 		Code.put(Code.pop); // Removing extra expression
 	}
-	
+
 	@Override
 	public void visit(CaseNum caseNum) {
 		if (prevCaseCheckJumpAddr != -1)
@@ -681,8 +713,7 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.putFalseJump(Code.eq, 0); // 3 bytes
 		prevCaseCheckJumpAddr = Code.pc - 2; // Jmp address
 	}
-	
-	
+
 	@Override
 	public void visit(SingleCase singleCase) {
 		SyntaxNode grandParent = singleCase.getParent().getParent();
@@ -691,34 +722,113 @@ public class CodeGenerator extends VisitorAdaptor {
 		// Adding a case check skip for fallthrough
 		Code.putJump(Code.pc + 12); // 9 bytes for case check and 3 bytes for the jump itself
 	}
-	
-	
+
 	@Override
 	public void visit(BreakStatement breakStatement) {
 		Code.putJump(0);
 		breakFixupAddresses.add(Code.pc - 2);
 	}
-	
-	
+
+	// Condition
+	private Stack<List<Integer>> falseConditionAddrStack = new Stack<List<Integer>>();
+	private List<Integer> falseConditionAddrs = null;
+
+	private Stack<List<Integer>> trueConditionAddrStack = new Stack<List<Integer>>();
+	private List<Integer> trueConditionAddrs = null;
+
+	private boolean conditionStart = true;
+	// Conditions are responsible for keeping the previous jump fixup addresses on
+	// stacks
+	// if, for and ternary restore the state in case of nesting
+
+	@Override
+	public void visit(SimpleCondFact simpleCondFact) {
+		if (conditionStart) {
+			conditionStart = false;
+			falseConditionAddrStack.push(falseConditionAddrs);
+			trueConditionAddrStack.push(trueConditionAddrs);
+
+			falseConditionAddrs = new ArrayList<Integer>();
+			trueConditionAddrs = new ArrayList<Integer>();
+		}
+		Code.put(Code.const_1); // Check if true/1
+		Code.putFalseJump(Code.eq, 0); // Jump on neq
+		falseConditionAddrs.add(Code.pc - 2);
+	}
+
+	@Override
+	public void visit(RelopCondFact relopCondFact) {
+		if (conditionStart) {
+			conditionStart = false;
+			falseConditionAddrStack.push(falseConditionAddrs);
+			trueConditionAddrStack.push(trueConditionAddrs);
+
+			falseConditionAddrs = new ArrayList<Integer>();
+			trueConditionAddrs = new ArrayList<Integer>();
+		}
+		switch (currentRelOp) {
+		case EQUAL:
+			Code.putFalseJump(Code.eq, 0);
+			break;
+		case NOTEQUAL:
+			Code.putFalseJump(Code.ne, 0);
+			break;
+		case GREATER:
+			Code.putFalseJump(Code.gt, 0);
+			break;
+		case GREATEREQ:
+			Code.putFalseJump(Code.ge, 0);
+			break;
+		case LESSER:
+			Code.putFalseJump(Code.lt, 0);
+			break;
+		case LESSEREQ:
+			Code.putFalseJump(Code.le, 0);
+			break;
+		default:
+			// Never happening
+		}
+		falseConditionAddrs.add(Code.pc - 2);
+	}
+
+	@Override
+	public void visit(OrInterrupt orInterrupt) {
+		// Unconditional jump for control that made it to ||
+		Code.putJump(0);
+		trueConditionAddrs.add(Code.pc - 2);
+		// Fixup to redirect unsuccessful control to other CondTerm
+		for (int fca : falseConditionAddrs)
+			Code.fixup(fca);
+		falseConditionAddrs.clear();
+	}
+
 	// For loop
-	
+
 	private Stack<Integer> forBodyJumpStack = new Stack<Integer>();
-	private int forBodyJumpAddress = -1;
-	
+	private int forBodyJumpAddress = -1; // Addr where the body start will be written
+
 	private Stack<Integer> afterBodyStack = new Stack<Integer>();
 	private int afterBodyAddress = -1;
-	
+
 	private Stack<List<Integer>> continueAddrStack = new Stack<List<Integer>>();
 	private List<Integer> continueAddresses = null;
-	
+
+	private int forCondCheckAddr = -1;
+
 	@Override
-	public void visit(ForAfterCond forAfterCond) {
+	public void visit(ForBeforeCond forBeforeCond) {
 		// Preparing for new loop
 		forBodyJumpStack.push(forBodyJumpAddress);
 		afterBodyStack.push(afterBodyAddress);
 		continueAddrStack.push(continueAddresses);
 		breakNestingStack.push(breakFixupAddresses);
-		
+
+		forCondCheckAddr = Code.pc;
+	}
+
+	@Override
+	public void visit(ForAfterCond forAfterCond) {
+		conditionStart = true;
 		// New loop initialization
 		Code.putJump(0);
 		forBodyJumpAddress = Code.pc - 2;
@@ -726,37 +836,45 @@ public class CodeGenerator extends VisitorAdaptor {
 		continueAddresses = new ArrayList<Integer>();
 		breakFixupAddresses = new ArrayList<Integer>();
 	}
-	
-	
+
 	@Override
 	public void visit(ForStatement forStatement) {
-		// Continue fixup
-		for (int ca: continueAddresses)
+		// Continue fixup -> end up at the post designatorStmt block
+		for (int ca : continueAddresses)
 			Code.fixup(ca);
+
 		Code.putJump(afterBodyAddress);
-		
+
 		// Break fixup
-		for (int ba: breakFixupAddresses)
+		for (int ba : breakFixupAddresses)
 			Code.fixup(ba);
-		
+
+		for (int fca : falseConditionAddrs)
+			Code.fixup(fca);
+
 		// Restoring previous state
 		forBodyJumpAddress = forBodyJumpStack.pop();
 		afterBodyAddress = afterBodyStack.pop();
 		continueAddresses = continueAddrStack.pop();
 		breakFixupAddresses = breakNestingStack.pop();
 		currentCS = csNestingStack.pop();
+
+		falseConditionAddrs = falseConditionAddrStack.pop();
+		trueConditionAddrs = trueConditionAddrStack.pop();
 	}
-	
+
 	@Override
 	public void visit(ForInterrupt forInterrupt) {
 		// Set current structure
 		csNestingStack.push(currentCS);
 		currentCS = CSType.FOR;
-		
-		Code.putJump(afterBodyAddress - 3); // Jump to check
+
+		Code.putJump(forCondCheckAddr); // Jump to check
 		Code.fixup(forBodyJumpAddress);
+		for (int tca : trueConditionAddrs)
+			Code.fixup(tca);
 	}
-	
+
 	@Override
 	public void visit(ContinueStatement continueStatement) {
 		// Adjust for switch -> pop needed
@@ -765,5 +883,89 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.putJump(0);
 		continueAddresses.add(Code.pc - 2);
 	}
-	
+
+	// If branching
+
+	private Stack<Integer> elseSkipAddrStack = new Stack<Integer>();
+	private int elseSkipAddr = -1;
+
+	@Override
+	public void visit(IfBeforeCond ifBeforeCond) {
+		// For if-else purpose
+		elseSkipAddrStack.push(elseSkipAddr);
+	}
+
+	@Override
+	public void visit(IfAfterCond ifAfterCond) {
+		conditionStart = true;
+		// Successful controls to end up at the body
+		for (int tca : trueConditionAddrs)
+			Code.fixup(tca);
+	}
+
+	@Override
+	public void visit(IfStatement ifStatement) {
+		// Unsuccessful controls to end up at the end
+		for (int fca : falseConditionAddrs)
+			Code.fixup(fca);
+		falseConditionAddrs = falseConditionAddrStack.pop();
+		trueConditionAddrs = trueConditionAddrStack.pop();
+
+		// For if-else purpose
+		elseSkipAddr = elseSkipAddrStack.pop();
+	}
+
+	@Override
+	public void visit(ElseInterrupt elseInterrupt) {
+		// Else skip for successful controls
+		Code.putJump(0);
+		elseSkipAddr = Code.pc - 2;
+		// Unsuccessful controls to end up at else
+		for (int fca : falseConditionAddrs)
+			Code.fixup(fca);
+	}
+
+	@Override
+	public void visit(IfElseStatement ifElseStatement) {
+		Code.fixup(elseSkipAddr);
+
+		falseConditionAddrs = falseConditionAddrStack.pop();
+		trueConditionAddrs = trueConditionAddrStack.pop();
+
+		// For if-else purpose
+		elseSkipAddr = elseSkipAddrStack.pop();
+	}
+
+	// Ternary expression
+
+	@Override
+	public void visit(TernaryInterrupt ternaryInterrupt) {
+		elseSkipAddrStack.push(elseSkipAddr);
+		conditionStart = true;
+		// Successful controls to end up at the body
+		for (int tca : trueConditionAddrs)
+			Code.fixup(tca);
+	}
+
+	@Override
+	public void visit(TernaryElse ternaryElse) {
+		// Else skip for successful controls
+		Code.putJump(0);
+		elseSkipAddr = Code.pc - 2;
+		// Unsuccessful controls to end up at else
+		for (int fca : falseConditionAddrs)
+			Code.fixup(fca);
+	}
+
+	@Override
+	public void visit(TernaryExpr ternaryExpr) {
+		Code.fixup(elseSkipAddr);
+
+		falseConditionAddrs = falseConditionAddrStack.pop();
+		trueConditionAddrs = trueConditionAddrStack.pop();
+
+		// For if-else purpose
+		elseSkipAddr = elseSkipAddrStack.pop();
+	}
+
 }

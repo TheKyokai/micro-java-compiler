@@ -1,0 +1,1084 @@
+Buildfile: C:\Users\dulek\Fakultet\PP1\project-workspace\project\build.xml
+
+disasm:
+     [java] codeSize=3824
+     [java] dataSize=299
+     [java] mainPC=508
+     [java] 0: enter 1 1
+     [java] 3: load_0
+     [java] 4: exit
+     [java] 5: return
+     [java] 6: enter 1 1
+     [java] 9: load_0
+     [java] 10: exit
+     [java] 11: return
+     [java] 12: enter 1 1
+     [java] 15: load_0
+     [java] 16: arraylength
+     [java] 17: exit
+     [java] 18: return
+     [java] 19: enter 2 2
+     [java] 22: load_0
+     [java] 23: load_1
+     [java] 24: putfield 1
+     [java] 27: exit
+     [java] 28: return
+     [java] 29: enter 1 1
+     [java] 32: load_0
+     [java] 33: read
+     [java] 34: putfield 1
+     [java] 37: exit
+     [java] 38: return
+     [java] 39: enter 1 1
+     [java] 42: const_0
+     [java] 43: exit
+     [java] 44: return
+     [java] 45: trap 1
+     [java] 47: enter 1 1
+     [java] 50: load_0
+     [java] 51: dup
+     [java] 52: getfield 0
+     [java] 55: invokevirtual zapremina
+     [java] 96: load_0
+     [java] 97: getfield 1
+     [java] 100: mul
+     [java] 101: exit
+     [java] 102: return
+     [java] 103: trap 1
+     [java] 105: enter 2 2
+     [java] 108: load_0
+     [java] 109: load_1
+     [java] 110: putfield 2
+     [java] 113: exit
+     [java] 114: return
+     [java] 115: enter 1 1
+     [java] 118: load_0
+     [java] 119: getfield 2
+     [java] 122: exit
+     [java] 123: return
+     [java] 124: trap 1
+     [java] 126: enter 1 1
+     [java] 129: load_0
+     [java] 130: getfield 1
+     [java] 133: exit
+     [java] 134: return
+     [java] 135: trap 1
+     [java] 137: enter 2 2
+     [java] 140: load_0
+     [java] 141: load_1
+     [java] 142: putfield 1
+     [java] 145: load_0
+     [java] 146: const 115
+     [java] 151: putfield 2
+     [java] 154: exit
+     [java] 155: return
+     [java] 156: enter 2 2
+     [java] 159: load_0
+     [java] 160: load_1
+     [java] 161: putfield 3
+     [java] 164: load_0
+     [java] 165: dup
+     [java] 166: const 115
+     [java] 171: dup_x1
+     [java] 172: pop
+     [java] 173: getfield 0
+     [java] 176: invokevirtual postaviVrstu
+     [java] 229: exit
+     [java] 230: return
+     [java] 231: enter 1 2
+     [java] 234: const_4
+     [java] 235: store_1
+     [java] 236: load_1
+     [java] 237: load_0
+     [java] 238: getfield 3
+     [java] 241: const_3
+     [java] 242: div
+     [java] 243: mul
+     [java] 244: exit
+     [java] 245: return
+     [java] 246: trap 1
+     [java] 248: enter 2 2
+     [java] 251: load_0
+     [java] 252: load_1
+     [java] 253: putfield 1
+     [java] 256: load_0
+     [java] 257: const 107
+     [java] 262: putfield 2
+     [java] 265: exit
+     [java] 266: return
+     [java] 267: enter 4 4
+     [java] 270: load_0
+     [java] 271: load_1
+     [java] 272: putfield 3
+     [java] 275: load_0
+     [java] 276: load_2
+     [java] 277: putfield 4
+     [java] 280: load_0
+     [java] 281: load_3
+     [java] 282: putfield 5
+     [java] 285: load_0
+     [java] 286: const 107
+     [java] 291: putfield 2
+     [java] 294: exit
+     [java] 295: return
+     [java] 296: enter 1 2
+     [java] 299: load_0
+     [java] 300: getfield 3
+     [java] 303: load_0
+     [java] 304: getfield 4
+     [java] 307: mul
+     [java] 308: load_0
+     [java] 309: getfield 5
+     [java] 312: mul
+     [java] 313: store_1
+     [java] 314: load_1
+     [java] 315: exit
+     [java] 316: return
+     [java] 317: trap 1
+     [java] 319: enter 1 1
+     [java] 322: load_0
+     [java] 323: dup
+     [java] 324: getfield 0
+     [java] 327: invokevirtual dohvVrstu
+     [java] 368: const 115
+     [java] 373: jne 13 (=386)
+     [java] 376: const 83
+     [java] 381: const_0
+     [java] 382: bprint
+     [java] 383: jmp 64 (=447)
+     [java] 386: load_0
+     [java] 387: dup
+     [java] 388: getfield 0
+     [java] 391: invokevirtual dohvVrstu
+     [java] 432: const 107
+     [java] 437: jne 10 (=447)
+     [java] 440: const 75
+     [java] 445: const_0
+     [java] 446: bprint
+     [java] 447: const 10
+     [java] 452: const_0
+     [java] 453: bprint
+     [java] 454: load_0
+     [java] 455: dup
+     [java] 456: getfield 0
+     [java] 459: invokevirtual dohvTezinu
+     [java] 504: const_0
+     [java] 505: print
+     [java] 506: exit
+     [java] 507: return
+     [java] 508: const 122
+     [java] 513: putstatic 4
+     [java] 516: const 97
+     [java] 521: putstatic 5
+     [java] 524: const 112
+     [java] 529: putstatic 6
+     [java] 532: const 114
+     [java] 537: putstatic 7
+     [java] 540: const 101
+     [java] 545: putstatic 8
+     [java] 548: const 109
+     [java] 553: putstatic 9
+     [java] 556: const 105
+     [java] 561: putstatic 10
+     [java] 564: const 110
+     [java] 569: putstatic 11
+     [java] 572: const 97
+     [java] 577: putstatic 12
+     [java] 580: const_m1
+     [java] 581: putstatic 13
+     [java] 584: const_0
+     [java] 585: putstatic 14
+     [java] 588: const 81
+     [java] 593: putstatic 15
+     [java] 596: const_m1
+     [java] 597: putstatic 16
+     [java] 600: const_0
+     [java] 601: putstatic 17
+     [java] 604: const -2
+     [java] 609: putstatic 18
+     [java] 612: const 122
+     [java] 617: putstatic 19
+     [java] 620: const 97
+     [java] 625: putstatic 20
+     [java] 628: const 112
+     [java] 633: putstatic 21
+     [java] 636: const 114
+     [java] 641: putstatic 22
+     [java] 644: const 101
+     [java] 649: putstatic 23
+     [java] 652: const 109
+     [java] 657: putstatic 24
+     [java] 660: const 105
+     [java] 665: putstatic 25
+     [java] 668: const 110
+     [java] 673: putstatic 26
+     [java] 676: const 97
+     [java] 681: putstatic 27
+     [java] 684: const_m1
+     [java] 685: putstatic 28
+     [java] 688: const 39
+     [java] 693: putstatic 29
+     [java] 696: const 81
+     [java] 701: putstatic 30
+     [java] 704: const_m1
+     [java] 705: putstatic 31
+     [java] 708: const 47
+     [java] 713: putstatic 32
+     [java] 716: const 112
+     [java] 721: putstatic 33
+     [java] 724: const 111
+     [java] 729: putstatic 34
+     [java] 732: const 115
+     [java] 737: putstatic 35
+     [java] 740: const 116
+     [java] 745: putstatic 36
+     [java] 748: const 97
+     [java] 753: putstatic 37
+     [java] 756: const 118
+     [java] 761: putstatic 38
+     [java] 764: const 105
+     [java] 769: putstatic 39
+     [java] 772: const 84
+     [java] 777: putstatic 40
+     [java] 780: const 101
+     [java] 785: putstatic 41
+     [java] 788: const 122
+     [java] 793: putstatic 42
+     [java] 796: const 105
+     [java] 801: putstatic 43
+     [java] 804: const 110
+     [java] 809: putstatic 44
+     [java] 812: const 117
+     [java] 817: putstatic 45
+     [java] 820: const_m1
+     [java] 821: putstatic 46
+     [java] 824: const 19
+     [java] 829: putstatic 47
+     [java] 832: const 117
+     [java] 837: putstatic 48
+     [java] 840: const 99
+     [java] 845: putstatic 49
+     [java] 848: const 105
+     [java] 853: putstatic 50
+     [java] 856: const 116
+     [java] 861: putstatic 51
+     [java] 864: const 97
+     [java] 869: putstatic 52
+     [java] 872: const 106
+     [java] 877: putstatic 53
+     [java] 880: const 84
+     [java] 885: putstatic 54
+     [java] 888: const 101
+     [java] 893: putstatic 55
+     [java] 896: const 122
+     [java] 901: putstatic 56
+     [java] 904: const 105
+     [java] 909: putstatic 57
+     [java] 912: const 110
+     [java] 917: putstatic 58
+     [java] 920: const 117
+     [java] 925: putstatic 59
+     [java] 928: const_m1
+     [java] 929: putstatic 60
+     [java] 932: const 29
+     [java] 937: putstatic 61
+     [java] 940: const 112
+     [java] 945: putstatic 62
+     [java] 948: const 111
+     [java] 953: putstatic 63
+     [java] 956: const 115
+     [java] 961: putstatic 64
+     [java] 964: const 116
+     [java] 969: putstatic 65
+     [java] 972: const 97
+     [java] 977: putstatic 66
+     [java] 980: const 118
+     [java] 985: putstatic 67
+     [java] 988: const 105
+     [java] 993: putstatic 68
+     [java] 996: const 86
+     [java] 1001: putstatic 69
+     [java] 1004: const 114
+     [java] 1009: putstatic 70
+     [java] 1012: const 115
+     [java] 1017: putstatic 71
+     [java] 1020: const 116
+     [java] 1025: putstatic 72
+     [java] 1028: const 117
+     [java] 1033: putstatic 73
+     [java] 1036: const_m1
+     [java] 1037: putstatic 74
+     [java] 1040: const 105
+     [java] 1045: putstatic 75
+     [java] 1048: const 100
+     [java] 1053: putstatic 76
+     [java] 1056: const 111
+     [java] 1061: putstatic 77
+     [java] 1064: const 104
+     [java] 1069: putstatic 78
+     [java] 1072: const 118
+     [java] 1077: putstatic 79
+     [java] 1080: const 86
+     [java] 1085: putstatic 80
+     [java] 1088: const 114
+     [java] 1093: putstatic 81
+     [java] 1096: const 115
+     [java] 1101: putstatic 82
+     [java] 1104: const 116
+     [java] 1109: putstatic 83
+     [java] 1112: const 117
+     [java] 1117: putstatic 84
+     [java] 1120: const_m1
+     [java] 1121: putstatic 85
+     [java] 1124: const 115
+     [java] 1129: putstatic 86
+     [java] 1132: const 100
+     [java] 1137: putstatic 87
+     [java] 1140: const 111
+     [java] 1145: putstatic 88
+     [java] 1148: const 104
+     [java] 1153: putstatic 89
+     [java] 1156: const 118
+     [java] 1161: putstatic 90
+     [java] 1164: const 84
+     [java] 1169: putstatic 91
+     [java] 1172: const 101
+     [java] 1177: putstatic 92
+     [java] 1180: const 122
+     [java] 1185: putstatic 93
+     [java] 1188: const 105
+     [java] 1193: putstatic 94
+     [java] 1196: const 110
+     [java] 1201: putstatic 95
+     [java] 1204: const 117
+     [java] 1209: putstatic 96
+     [java] 1212: const_m1
+     [java] 1213: putstatic 97
+     [java] 1216: const 126
+     [java] 1221: putstatic 98
+     [java] 1224: const -2
+     [java] 1229: putstatic 99
+     [java] 1232: const 122
+     [java] 1237: putstatic 100
+     [java] 1240: const 97
+     [java] 1245: putstatic 101
+     [java] 1248: const 112
+     [java] 1253: putstatic 102
+     [java] 1256: const 114
+     [java] 1261: putstatic 103
+     [java] 1264: const 101
+     [java] 1269: putstatic 104
+     [java] 1272: const 109
+     [java] 1277: putstatic 105
+     [java] 1280: const 105
+     [java] 1285: putstatic 106
+     [java] 1288: const 110
+     [java] 1293: putstatic 107
+     [java] 1296: const 97
+     [java] 1301: putstatic 108
+     [java] 1304: const_m1
+     [java] 1305: putstatic 109
+     [java] 1308: const 231
+     [java] 1313: putstatic 110
+     [java] 1316: const 81
+     [java] 1321: putstatic 111
+     [java] 1324: const_m1
+     [java] 1325: putstatic 112
+     [java] 1328: const 47
+     [java] 1333: putstatic 113
+     [java] 1336: const 112
+     [java] 1341: putstatic 114
+     [java] 1344: const 111
+     [java] 1349: putstatic 115
+     [java] 1352: const 115
+     [java] 1357: putstatic 116
+     [java] 1360: const 116
+     [java] 1365: putstatic 117
+     [java] 1368: const 97
+     [java] 1373: putstatic 118
+     [java] 1376: const 118
+     [java] 1381: putstatic 119
+     [java] 1384: const 105
+     [java] 1389: putstatic 120
+     [java] 1392: const 84
+     [java] 1397: putstatic 121
+     [java] 1400: const 101
+     [java] 1405: putstatic 122
+     [java] 1408: const 122
+     [java] 1413: putstatic 123
+     [java] 1416: const 105
+     [java] 1421: putstatic 124
+     [java] 1424: const 110
+     [java] 1429: putstatic 125
+     [java] 1432: const 117
+     [java] 1437: putstatic 126
+     [java] 1440: const_m1
+     [java] 1441: putstatic 127
+     [java] 1444: const 137
+     [java] 1449: putstatic 128
+     [java] 1452: const 117
+     [java] 1457: putstatic 129
+     [java] 1460: const 99
+     [java] 1465: putstatic 130
+     [java] 1468: const 105
+     [java] 1473: putstatic 131
+     [java] 1476: const 116
+     [java] 1481: putstatic 132
+     [java] 1484: const 97
+     [java] 1489: putstatic 133
+     [java] 1492: const 106
+     [java] 1497: putstatic 134
+     [java] 1500: const 84
+     [java] 1505: putstatic 135
+     [java] 1508: const 101
+     [java] 1513: putstatic 136
+     [java] 1516: const 122
+     [java] 1521: putstatic 137
+     [java] 1524: const 105
+     [java] 1529: putstatic 138
+     [java] 1532: const 110
+     [java] 1537: putstatic 139
+     [java] 1540: const 117
+     [java] 1545: putstatic 140
+     [java] 1548: const_m1
+     [java] 1549: putstatic 141
+     [java] 1552: const 29
+     [java] 1557: putstatic 142
+     [java] 1560: const 112
+     [java] 1565: putstatic 143
+     [java] 1568: const 111
+     [java] 1573: putstatic 144
+     [java] 1576: const 115
+     [java] 1581: putstatic 145
+     [java] 1584: const 116
+     [java] 1589: putstatic 146
+     [java] 1592: const 97
+     [java] 1597: putstatic 147
+     [java] 1600: const 118
+     [java] 1605: putstatic 148
+     [java] 1608: const 105
+     [java] 1613: putstatic 149
+     [java] 1616: const 86
+     [java] 1621: putstatic 150
+     [java] 1624: const 114
+     [java] 1629: putstatic 151
+     [java] 1632: const 115
+     [java] 1637: putstatic 152
+     [java] 1640: const 116
+     [java] 1645: putstatic 153
+     [java] 1648: const 117
+     [java] 1653: putstatic 154
+     [java] 1656: const_m1
+     [java] 1657: putstatic 155
+     [java] 1660: const 105
+     [java] 1665: putstatic 156
+     [java] 1668: const 100
+     [java] 1673: putstatic 157
+     [java] 1676: const 111
+     [java] 1681: putstatic 158
+     [java] 1684: const 104
+     [java] 1689: putstatic 159
+     [java] 1692: const 118
+     [java] 1697: putstatic 160
+     [java] 1700: const 86
+     [java] 1705: putstatic 161
+     [java] 1708: const 114
+     [java] 1713: putstatic 162
+     [java] 1716: const 115
+     [java] 1721: putstatic 163
+     [java] 1724: const 116
+     [java] 1729: putstatic 164
+     [java] 1732: const 117
+     [java] 1737: putstatic 165
+     [java] 1740: const_m1
+     [java] 1741: putstatic 166
+     [java] 1744: const 115
+     [java] 1749: putstatic 167
+     [java] 1752: const 100
+     [java] 1757: putstatic 168
+     [java] 1760: const 111
+     [java] 1765: putstatic 169
+     [java] 1768: const 104
+     [java] 1773: putstatic 170
+     [java] 1776: const 118
+     [java] 1781: putstatic 171
+     [java] 1784: const 84
+     [java] 1789: putstatic 172
+     [java] 1792: const 101
+     [java] 1797: putstatic 173
+     [java] 1800: const 122
+     [java] 1805: putstatic 174
+     [java] 1808: const 105
+     [java] 1813: putstatic 175
+     [java] 1816: const 110
+     [java] 1821: putstatic 176
+     [java] 1824: const 117
+     [java] 1829: putstatic 177
+     [java] 1832: const_m1
+     [java] 1833: putstatic 178
+     [java] 1836: const 126
+     [java] 1841: putstatic 179
+     [java] 1844: const 112
+     [java] 1849: putstatic 180
+     [java] 1852: const 111
+     [java] 1857: putstatic 181
+     [java] 1860: const 115
+     [java] 1865: putstatic 182
+     [java] 1868: const 116
+     [java] 1873: putstatic 183
+     [java] 1876: const 97
+     [java] 1881: putstatic 184
+     [java] 1884: const 118
+     [java] 1889: putstatic 185
+     [java] 1892: const 105
+     [java] 1897: putstatic 186
+     [java] 1900: const 80
+     [java] 1905: putstatic 187
+     [java] 1908: const 111
+     [java] 1913: putstatic 188
+     [java] 1916: const 108
+     [java] 1921: putstatic 189
+     [java] 1924: const 117
+     [java] 1929: putstatic 190
+     [java] 1932: const 112
+     [java] 1937: putstatic 191
+     [java] 1940: const 114
+     [java] 1945: putstatic 192
+     [java] 1948: const 101
+     [java] 1953: putstatic 193
+     [java] 1956: const 99
+     [java] 1961: putstatic 194
+     [java] 1964: const 110
+     [java] 1969: putstatic 195
+     [java] 1972: const 105
+     [java] 1977: putstatic 196
+     [java] 1980: const 107
+     [java] 1985: putstatic 197
+     [java] 1988: const_m1
+     [java] 1989: putstatic 198
+     [java] 1992: const 156
+     [java] 1997: putstatic 199
+     [java] 2000: const -2
+     [java] 2005: putstatic 200
+     [java] 2008: const 122
+     [java] 2013: putstatic 201
+     [java] 2016: const 97
+     [java] 2021: putstatic 202
+     [java] 2024: const 112
+     [java] 2029: putstatic 203
+     [java] 2032: const 114
+     [java] 2037: putstatic 204
+     [java] 2040: const 101
+     [java] 2045: putstatic 205
+     [java] 2048: const 109
+     [java] 2053: putstatic 206
+     [java] 2056: const 105
+     [java] 2061: putstatic 207
+     [java] 2064: const 110
+     [java] 2069: putstatic 208
+     [java] 2072: const 97
+     [java] 2077: putstatic 209
+     [java] 2080: const_m1
+     [java] 2081: putstatic 210
+     [java] 2084: const 296
+     [java] 2089: putstatic 211
+     [java] 2092: const 81
+     [java] 2097: putstatic 212
+     [java] 2100: const_m1
+     [java] 2101: putstatic 213
+     [java] 2104: const 47
+     [java] 2109: putstatic 214
+     [java] 2112: const 112
+     [java] 2117: putstatic 215
+     [java] 2120: const 111
+     [java] 2125: putstatic 216
+     [java] 2128: const 115
+     [java] 2133: putstatic 217
+     [java] 2136: const 116
+     [java] 2141: putstatic 218
+     [java] 2144: const 97
+     [java] 2149: putstatic 219
+     [java] 2152: const 118
+     [java] 2157: putstatic 220
+     [java] 2160: const 105
+     [java] 2165: putstatic 221
+     [java] 2168: const 84
+     [java] 2173: putstatic 222
+     [java] 2176: const 101
+     [java] 2181: putstatic 223
+     [java] 2184: const 122
+     [java] 2189: putstatic 224
+     [java] 2192: const 105
+     [java] 2197: putstatic 225
+     [java] 2200: const 110
+     [java] 2205: putstatic 226
+     [java] 2208: const 117
+     [java] 2213: putstatic 227
+     [java] 2216: const_m1
+     [java] 2217: putstatic 228
+     [java] 2220: const 248
+     [java] 2225: putstatic 229
+     [java] 2228: const 117
+     [java] 2233: putstatic 230
+     [java] 2236: const 99
+     [java] 2241: putstatic 231
+     [java] 2244: const 105
+     [java] 2249: putstatic 232
+     [java] 2252: const 116
+     [java] 2257: putstatic 233
+     [java] 2260: const 97
+     [java] 2265: putstatic 234
+     [java] 2268: const 106
+     [java] 2273: putstatic 235
+     [java] 2276: const 84
+     [java] 2281: putstatic 236
+     [java] 2284: const 101
+     [java] 2289: putstatic 237
+     [java] 2292: const 122
+     [java] 2297: putstatic 238
+     [java] 2300: const 105
+     [java] 2305: putstatic 239
+     [java] 2308: const 110
+     [java] 2313: putstatic 240
+     [java] 2316: const 117
+     [java] 2321: putstatic 241
+     [java] 2324: const_m1
+     [java] 2325: putstatic 242
+     [java] 2328: const 29
+     [java] 2333: putstatic 243
+     [java] 2336: const 112
+     [java] 2341: putstatic 244
+     [java] 2344: const 111
+     [java] 2349: putstatic 245
+     [java] 2352: const 115
+     [java] 2357: putstatic 246
+     [java] 2360: const 116
+     [java] 2365: putstatic 247
+     [java] 2368: const 97
+     [java] 2373: putstatic 248
+     [java] 2376: const 118
+     [java] 2381: putstatic 249
+     [java] 2384: const 105
+     [java] 2389: putstatic 250
+     [java] 2392: const 86
+     [java] 2397: putstatic 251
+     [java] 2400: const 114
+     [java] 2405: putstatic 252
+     [java] 2408: const 115
+     [java] 2413: putstatic 253
+     [java] 2416: const 116
+     [java] 2421: putstatic 254
+     [java] 2424: const 117
+     [java] 2429: putstatic 255
+     [java] 2432: const_m1
+     [java] 2433: putstatic 256
+     [java] 2436: const 105
+     [java] 2441: putstatic 257
+     [java] 2444: const 100
+     [java] 2449: putstatic 258
+     [java] 2452: const 111
+     [java] 2457: putstatic 259
+     [java] 2460: const 104
+     [java] 2465: putstatic 260
+     [java] 2468: const 118
+     [java] 2473: putstatic 261
+     [java] 2476: const 86
+     [java] 2481: putstatic 262
+     [java] 2484: const 114
+     [java] 2489: putstatic 263
+     [java] 2492: const 115
+     [java] 2497: putstatic 264
+     [java] 2500: const 116
+     [java] 2505: putstatic 265
+     [java] 2508: const 117
+     [java] 2513: putstatic 266
+     [java] 2516: const_m1
+     [java] 2517: putstatic 267
+     [java] 2520: const 115
+     [java] 2525: putstatic 268
+     [java] 2528: const 100
+     [java] 2533: putstatic 269
+     [java] 2536: const 111
+     [java] 2541: putstatic 270
+     [java] 2544: const 104
+     [java] 2549: putstatic 271
+     [java] 2552: const 118
+     [java] 2557: putstatic 272
+     [java] 2560: const 84
+     [java] 2565: putstatic 273
+     [java] 2568: const 101
+     [java] 2573: putstatic 274
+     [java] 2576: const 122
+     [java] 2581: putstatic 275
+     [java] 2584: const 105
+     [java] 2589: putstatic 276
+     [java] 2592: const 110
+     [java] 2597: putstatic 277
+     [java] 2600: const 117
+     [java] 2605: putstatic 278
+     [java] 2608: const_m1
+     [java] 2609: putstatic 279
+     [java] 2612: const 126
+     [java] 2617: putstatic 280
+     [java] 2620: const 112
+     [java] 2625: putstatic 281
+     [java] 2628: const 111
+     [java] 2633: putstatic 282
+     [java] 2636: const 115
+     [java] 2641: putstatic 283
+     [java] 2644: const 116
+     [java] 2649: putstatic 284
+     [java] 2652: const 97
+     [java] 2657: putstatic 285
+     [java] 2660: const 118
+     [java] 2665: putstatic 286
+     [java] 2668: const 105
+     [java] 2673: putstatic 287
+     [java] 2676: const 83
+     [java] 2681: putstatic 288
+     [java] 2684: const 116
+     [java] 2689: putstatic 289
+     [java] 2692: const 114
+     [java] 2697: putstatic 290
+     [java] 2700: const 97
+     [java] 2705: putstatic 291
+     [java] 2708: const 110
+     [java] 2713: putstatic 292
+     [java] 2716: const 105
+     [java] 2721: putstatic 293
+     [java] 2724: const 99
+     [java] 2729: putstatic 294
+     [java] 2732: const 101
+     [java] 2737: putstatic 295
+     [java] 2740: const_m1
+     [java] 2741: putstatic 296
+     [java] 2744: const 267
+     [java] 2749: putstatic 297
+     [java] 2752: const -2
+     [java] 2757: putstatic 298
+     [java] 2760: enter 0 10
+     [java] 2763: const 6
+     [java] 2768: newarray 1
+     [java] 2770: store_0
+     [java] 2771: const 6
+     [java] 2776: newarray 1
+     [java] 2778: store_1
+     [java] 2779: new 16
+     [java] 2782: dup
+     [java] 2783: const 100
+     [java] 2788: putfield 0
+     [java] 2791: store_3
+     [java] 2792: new 16
+     [java] 2795: dup
+     [java] 2796: const 100
+     [java] 2801: putfield 0
+     [java] 2804: store 4
+     [java] 2806: new 16
+     [java] 2809: dup
+     [java] 2810: const 100
+     [java] 2815: putfield 0
+     [java] 2818: store 5
+     [java] 2820: new 24
+     [java] 2823: dup
+     [java] 2824: const 201
+     [java] 2829: putfield 0
+     [java] 2832: store 6
+     [java] 2834: new 24
+     [java] 2837: dup
+     [java] 2838: const 201
+     [java] 2843: putfield 0
+     [java] 2846: store 7
+     [java] 2848: new 24
+     [java] 2851: dup
+     [java] 2852: const 201
+     [java] 2857: putfield 0
+     [java] 2860: store 8
+     [java] 2862: load_3
+     [java] 2863: dup
+     [java] 2864: const_1
+     [java] 2865: dup_x1
+     [java] 2866: pop
+     [java] 2867: getfield 0
+     [java] 2870: invokevirtual postaviPoluprecnik
+     [java] 2947: load 4
+     [java] 2949: dup
+     [java] 2950: const_2
+     [java] 2951: dup_x1
+     [java] 2952: pop
+     [java] 2953: getfield 0
+     [java] 2956: invokevirtual postaviPoluprecnik
+     [java] 3033: load 5
+     [java] 3035: dup
+     [java] 3036: const_3
+     [java] 3037: dup_x1
+     [java] 3038: pop
+     [java] 3039: getfield 0
+     [java] 3042: invokevirtual postaviPoluprecnik
+     [java] 3119: load 6
+     [java] 3121: dup
+     [java] 3122: const_1
+     [java] 3123: dup_x1
+     [java] 3124: pop
+     [java] 3125: const_2
+     [java] 3126: dup_x1
+     [java] 3127: pop
+     [java] 3128: const_3
+     [java] 3129: dup_x1
+     [java] 3130: pop
+     [java] 3131: getfield 0
+     [java] 3134: invokevirtual postaviStranice
+     [java] 3199: load 7
+     [java] 3201: dup
+     [java] 3202: const_2
+     [java] 3203: dup_x1
+     [java] 3204: pop
+     [java] 3205: const_3
+     [java] 3206: dup_x1
+     [java] 3207: pop
+     [java] 3208: const_4
+     [java] 3209: dup_x1
+     [java] 3210: pop
+     [java] 3211: getfield 0
+     [java] 3214: invokevirtual postaviStranice
+     [java] 3279: load 8
+     [java] 3281: dup
+     [java] 3282: const_3
+     [java] 3283: dup_x1
+     [java] 3284: pop
+     [java] 3285: const_4
+     [java] 3286: dup_x1
+     [java] 3287: pop
+     [java] 3288: const_5
+     [java] 3289: dup_x1
+     [java] 3290: pop
+     [java] 3291: getfield 0
+     [java] 3294: invokevirtual postaviStranice
+     [java] 3359: const_0
+     [java] 3360: load_0
+     [java] 3361: dup_x1
+     [java] 3362: pop
+     [java] 3363: load_3
+     [java] 3364: astore
+     [java] 3365: const_2
+     [java] 3366: load_0
+     [java] 3367: dup_x1
+     [java] 3368: pop
+     [java] 3369: load 4
+     [java] 3371: astore
+     [java] 3372: const_4
+     [java] 3373: load_0
+     [java] 3374: dup_x1
+     [java] 3375: pop
+     [java] 3376: load 5
+     [java] 3378: astore
+     [java] 3379: const_1
+     [java] 3380: load_0
+     [java] 3381: dup_x1
+     [java] 3382: pop
+     [java] 3383: load 6
+     [java] 3385: astore
+     [java] 3386: const_3
+     [java] 3387: load_0
+     [java] 3388: dup_x1
+     [java] 3389: pop
+     [java] 3390: load 7
+     [java] 3392: astore
+     [java] 3393: const_5
+     [java] 3394: load_0
+     [java] 3395: dup_x1
+     [java] 3396: pop
+     [java] 3397: load 8
+     [java] 3399: astore
+     [java] 3400: const_4
+     [java] 3401: store 9
+     [java] 3403: const_0
+     [java] 3404: store_2
+     [java] 3405: load_2
+     [java] 3406: load_1
+     [java] 3407: arraylength
+     [java] 3408: jge 96 (=3504)
+     [java] 3411: jmp 10 (=3421)
+     [java] 3414: load_2
+     [java] 3415: const_1
+     [java] 3416: add
+     [java] 3417: store_2
+     [java] 3418: jmp -13 (=3405)
+     [java] 3421: load_2
+     [java] 3422: load_0
+     [java] 3423: dup_x1
+     [java] 3424: pop
+     [java] 3425: aload
+     [java] 3426: dup
+     [java] 3427: load 9
+     [java] 3429: dup_x1
+     [java] 3430: pop
+     [java] 3431: getfield 0
+     [java] 3434: invokevirtual postaviTezinu
+     [java] 3491: load_2
+     [java] 3492: load_1
+     [java] 3493: dup_x1
+     [java] 3494: pop
+     [java] 3495: load_2
+     [java] 3496: load_0
+     [java] 3497: dup_x1
+     [java] 3498: pop
+     [java] 3499: aload
+     [java] 3500: astore
+     [java] 3501: jmp -87 (=3414)
+     [java] 3504: const_0
+     [java] 3505: putstatic 1
+     [java] 3508: const_0
+     [java] 3509: putstatic 3
+     [java] 3512: const_1
+     [java] 3513: store_2
+     [java] 3514: load_2
+     [java] 3515: load_1
+     [java] 3516: arraylength
+     [java] 3517: jgt 122 (=3639)
+     [java] 3520: jmp 10 (=3530)
+     [java] 3523: load_2
+     [java] 3524: const_1
+     [java] 3525: add
+     [java] 3526: store_2
+     [java] 3527: jmp -13 (=3514)
+     [java] 3530: load_2
+     [java] 3531: const_2
+     [java] 3532: rem
+     [java] 3533: const_0
+     [java] 3534: jne 6 (=3540)
+     [java] 3537: jmp 99 (=3636)
+     [java] 3540: getstatic 1
+     [java] 3543: load_2
+     [java] 3544: const_1
+     [java] 3545: sub
+     [java] 3546: load_1
+     [java] 3547: dup_x1
+     [java] 3548: pop
+     [java] 3549: aload
+     [java] 3550: dup
+     [java] 3551: getfield 0
+     [java] 3554: invokevirtual zapremina
+     [java] 3595: add
+     [java] 3596: putstatic 1
+     [java] 3599: getstatic 3
+     [java] 3602: load_2
+     [java] 3603: const_1
+     [java] 3604: sub
+     [java] 3605: load_1
+     [java] 3606: dup_x1
+     [java] 3607: pop
+     [java] 3608: aload
+     [java] 3609: dup
+     [java] 3610: getfield 0
+     [java] 3613: invokevirtual Q
+     [java] 3622: add
+     [java] 3623: putstatic 3
+     [java] 3626: load_2
+     [java] 3627: const_1
+     [java] 3628: sub
+     [java] 3629: load_0
+     [java] 3630: dup_x1
+     [java] 3631: pop
+     [java] 3632: aload
+     [java] 3633: call -3314 (=319)
+     [java] 3636: jmp -113 (=3523)
+     [java] 3639: const_0
+     [java] 3640: putstatic 0
+     [java] 3643: const_0
+     [java] 3644: putstatic 2
+     [java] 3647: const_1
+     [java] 3648: store_2
+     [java] 3649: load_2
+     [java] 3650: load_1
+     [java] 3651: arraylength
+     [java] 3652: jgt 122 (=3774)
+     [java] 3655: jmp 10 (=3665)
+     [java] 3658: load_2
+     [java] 3659: const_1
+     [java] 3660: add
+     [java] 3661: store_2
+     [java] 3662: jmp -13 (=3649)
+     [java] 3665: load_2
+     [java] 3666: const_2
+     [java] 3667: rem
+     [java] 3668: const_1
+     [java] 3669: jne 6 (=3675)
+     [java] 3672: jmp 99 (=3771)
+     [java] 3675: getstatic 0
+     [java] 3678: load_2
+     [java] 3679: const_1
+     [java] 3680: sub
+     [java] 3681: load_0
+     [java] 3682: dup_x1
+     [java] 3683: pop
+     [java] 3684: aload
+     [java] 3685: dup
+     [java] 3686: getfield 0
+     [java] 3689: invokevirtual zapremina
+     [java] 3730: add
+     [java] 3731: putstatic 0
+     [java] 3734: getstatic 2
+     [java] 3737: load_2
+     [java] 3738: const_1
+     [java] 3739: sub
+     [java] 3740: load_0
+     [java] 3741: dup_x1
+     [java] 3742: pop
+     [java] 3743: aload
+     [java] 3744: dup
+     [java] 3745: getfield 0
+     [java] 3748: invokevirtual Q
+     [java] 3757: add
+     [java] 3758: putstatic 2
+     [java] 3761: load_2
+     [java] 3762: const_1
+     [java] 3763: sub
+     [java] 3764: load_0
+     [java] 3765: dup_x1
+     [java] 3766: pop
+     [java] 3767: aload
+     [java] 3768: call -3449 (=319)
+     [java] 3771: jmp -113 (=3658)
+     [java] 3774: getstatic 1
+     [java] 3777: const_0
+     [java] 3778: print
+     [java] 3779: const 10
+     [java] 3784: const_0
+     [java] 3785: bprint
+     [java] 3786: getstatic 0
+     [java] 3789: const_0
+     [java] 3790: print
+     [java] 3791: const 10
+     [java] 3796: const_0
+     [java] 3797: bprint
+     [java] 3798: getstatic 3
+     [java] 3801: const_0
+     [java] 3802: print
+     [java] 3803: const 10
+     [java] 3808: const_0
+     [java] 3809: bprint
+     [java] 3810: getstatic 2
+     [java] 3813: const_0
+     [java] 3814: print
+     [java] 3815: const 10
+     [java] 3820: const_0
+     [java] 3821: bprint
+     [java] 3822: exit
+     [java] 3823: return
+
+runObj:
+     [java] S
+     [java] 4S
+     [java] 4S
+     [java] 4K
+     [java] 4K
+     [java] 4K
+     [java] 44
+     [java] 90
+     [java] 16
+     [java] 360
+     [java] 
+     [java] Completion took 2 ms
+
+BUILD SUCCESSFUL
+Total time: 0 seconds

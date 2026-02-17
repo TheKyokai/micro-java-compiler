@@ -124,6 +124,7 @@ nonterminal StatementList StatementList;
 nonterminal Statement Statement;
 nonterminal DesignatorStatement DesignatorStatement;
 nonterminal ForDesignatorStmnt ForDesignatorStmnt;
+nonterminal ForBeforeCond ForBeforeCond;
 nonterminal ForCondition ForCondition;
 nonterminal ForAfterCond ForAfterCond;
 nonterminal ForInterrupt ForInterrupt;
@@ -137,11 +138,17 @@ nonterminal FCallInterrupt FCallInterrupt;
 nonterminal ActualParamList ActualParamList;
 nonterminal MultActualParam MultActualParam;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Expr, Term, TermList, Factor, FactorList;
+nonterminal IfBeforeCond IfBeforeCond;
+nonterminal IfAfterCond IfAfterCond;
+nonterminal ElseInterrupt ElseInterrupt;
+nonterminal TernaryInterrupt TernaryInterrupt;
+nonterminal TernaryElse TernaryElse;
 
 nonterminal Assignop Assignop;
 nonterminal Relop Relop;
 nonterminal Addop Addop;
 nonterminal Mulop Mulop;
+nonterminal OrInterrupt OrInterrupt;
 
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName, EnumName, Type;
@@ -389,9 +396,9 @@ Type				::= (Type) IDENT:typeName {: RESULT=new Type(typeName); RESULT.setLine(t
 
 Statement			::= (GeneralDesignatorStatement) DesignatorStatement:D1 SEMI {: RESULT=new GeneralDesignatorStatement(D1); RESULT.setLine(D1left); :}
 						|
-						(IfStatement) IF LPAREN Condition:C1 RPAREN Statement:S2 {: RESULT=new IfStatement(C1, S2); RESULT.setLine(C1left); :}
+						(IfStatement) IF IfBeforeCond:I1 Condition:C2 IfAfterCond:I3 Statement:S4 {: RESULT=new IfStatement(I1, C2, I3, S4); RESULT.setLine(I1left); :}
 						|
-						(IfElseStatement) IF LPAREN Condition:C1 RPAREN Statement:S2 ELSE Statement:S3 {: RESULT=new IfElseStatement(C1, S2, S3); RESULT.setLine(C1left); :}
+						(IfElseStatement) IF IfBeforeCond:I1 Condition:C2 IfAfterCond:I3 Statement:S4 ElseInterrupt:E5 Statement:S6 {: RESULT=new IfElseStatement(I1, C2, I3, S4, E5, S6); RESULT.setLine(I1left); :}
 						|
 						(IfStatementError) IF LPAREN error RPAREN Statement:e 
 							{: parser.report_error("Invalid IF condition on line " + eleft, null); :} {: RESULT=new IfStatementError(e); RESULT.setLine(eleft); :}
@@ -413,11 +420,23 @@ Statement			::= (GeneralDesignatorStatement) DesignatorStatement:D1 SEMI {: RESU
 						|
 						(NumConstPrintStatement) PRINT LPAREN Expr:E1 COMMA NUMCONST:val RPAREN SEMI {: RESULT=new NumConstPrintStatement(E1, val); RESULT.setLine(E1left); :}
 						| 
-						(ForStatement) FOR LPAREN ForDesignatorStmnt:F1 SEMI ForCondition:F2 ForAfterCond:F3 ForDesignatorStmnt:F4 ForInterrupt:F5 Statement:S6 {: RESULT=new ForStatement(F1, F2, F3, F4, F5, S6); RESULT.setLine(F1left); :}
+						(ForStatement) FOR LPAREN ForDesignatorStmnt:F1 ForBeforeCond:F2 ForCondition:F3 ForAfterCond:F4 ForDesignatorStmnt:F5 ForInterrupt:F6 Statement:S7 {: RESULT=new ForStatement(F1, F2, F3, F4, F5, F6, S7); RESULT.setLine(F1left); :}
 						|
 						(StatementBlock) LBRACE StatementList:S1 RBRACE {: RESULT=new StatementBlock(S1); RESULT.setLine(S1left); :}
 						|
 						(SwitchStatement) SWITCH LPAREN Expr:E1 RPAREN SwitchInterrupt:S2 CaseList:C3 RBRACE {: RESULT=new SwitchStatement(E1, S2, C3); RESULT.setLine(E1left); :};
+
+
+IfBeforeCond		::= (IfBeforeCond) LPAREN {: RESULT=new IfBeforeCond(); :};
+
+
+IfAfterCond			::= (IfAfterCond) RPAREN {: RESULT=new IfAfterCond(); :};
+
+
+ElseInterrupt		::= (ElseInterrupt) ELSE {: RESULT=new ElseInterrupt(); :}; 
+
+
+ForBeforeCond		::= (ForBeforeCond) SEMI {: RESULT=new ForBeforeCond(); :};
 
 
 ForAfterCond		::= (ForAfterCond) SEMI {: RESULT=new ForAfterCond(); :};
@@ -492,7 +511,10 @@ ActualParam			::= (ActualParam) Expr:E1 {: RESULT=new ActualParam(E1); RESULT.se
 
 Condition			::= (SimpleCondition) CondTerm:C1 {: RESULT=new SimpleCondition(C1); RESULT.setLine(C1left); :} 
 						|
-						(OrCondition) Condition:C1 OR CondTerm:C2 {: RESULT=new OrCondition(C1, C2); RESULT.setLine(C1left); :};
+						(OrCondition) Condition:C1 OrInterrupt:O2 CondTerm:C3 {: RESULT=new OrCondition(C1, O2, C3); RESULT.setLine(C1left); :};
+
+
+OrInterrupt			::= (OrInterrupt) OR {: RESULT=new OrInterrupt(); :};
 
 
 CondTerm			::= (SimpleCondTerm) CondFact:C1 {: RESULT=new SimpleCondTerm(C1); RESULT.setLine(C1left); :}
@@ -507,7 +529,13 @@ CondFact			::= (SimpleCondFact) TermList:T1 {: RESULT=new SimpleCondFact(T1); RE
 						
 Expr				::= (SimpleExpr) TermList:T1 {: RESULT=new SimpleExpr(T1); RESULT.setLine(T1left); :}
 						|
-						(TernaryExpr) Condition:C1 QMARK Expr:trueExpr COLON Expr:falseExpr {: RESULT=new TernaryExpr(C1, trueExpr, falseExpr); RESULT.setLine(C1left); :};
+						(TernaryExpr) Condition:C1 TernaryInterrupt:T2 Expr:trueExpr TernaryElse:T3 Expr:falseExpr {: RESULT=new TernaryExpr(C1, T2, trueExpr, T3, falseExpr); RESULT.setLine(C1left); :};
+						
+						
+TernaryInterrupt	::= (TernaryInterrupt) QMARK {: RESULT=new TernaryInterrupt(); :};
+
+
+TernaryElse			::= (TernaryElse) COLON {: RESULT=new TernaryElse(); :};
 						
 						
 TermList			::= (Terms) TermList:T1 Addop:A2 Term:T3 {: RESULT=new Terms(T1, A2, T3); RESULT.setLine(T1left); :}

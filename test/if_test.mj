@@ -1,0 +1,50 @@
+program CodeTestProgram
+
+
+const char c = 'A';
+const bool boolConst = true;
+
+enum Broj { NULA, JEDAN = 1, PET=5, DESET=10}
+
+
+
+const int x = 55, y = 10;
+
+
+{
+	
+	void printInt(int num) 
+	{
+		print('I');
+		print('n');
+		print('t');
+		print(':'); 
+		print(num, 4);
+		print(eol);
+	}
+		
+
+	void main() int i, arr[];
+	{
+		//arr = new int[10];
+		
+		for (i=0; i <= 10; i++)
+		{
+			printInt(i);
+			if (true && arr == null || i % 2 == 1)
+			{
+				arr = new int[i];
+				if (y == 5 || i < 4)
+					printInt(100);
+				else
+					printInt(300);
+			}
+			else
+				if (len(arr) != y - 5)
+					printInt(200);
+				else
+					printInt(400);
+		}
+	}
+	
+}

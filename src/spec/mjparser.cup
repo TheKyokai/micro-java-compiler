@@ -97,13 +97,15 @@ nonterminal ClassMethods, ExtMethodIntercept, ClassMethodDeclList;
 nonterminal AbsClassDecl, AbsClassMethods, AbsClassMethodList, AbsMethodDecl, AbsMethodName;
 
 nonterminal MethodDeclList, ReturnType, FormalParamList, FormalParams, FormalParam, VarDeclList;
-nonterminal StatementList, Statement, DesignatorStatement, ForDesignatorStmnt, ForCondition, ForAfterCond, ForInterrupt, IndexInterrupt;
+nonterminal StatementList, Statement, DesignatorStatement, ForDesignatorStmnt, ForBeforeCond, ForCondition, ForAfterCond, ForInterrupt, IndexInterrupt;
 nonterminal SwitchInterrupt, CaseList, SingleCase, CaseNum;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Condition, CondTerm, CondFact;
 nonterminal FCallInterrupt, ActualParamList, MultActualParam;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Expr, Term, TermList, Factor, FactorList;
+nonterminal IfBeforeCond, IfAfterCond, ElseInterrupt;
+nonterminal TernaryInterrupt, TernaryElse;
 
-nonterminal Assignop, Relop, Addop, Mulop;
+nonterminal Assignop, Relop, Addop, Mulop, OrInterrupt;
 
 
 nonterminal rs.etf.pp1.symboltable.concepts.Obj ProgramName, EnumName, Type;
@@ -351,9 +353,9 @@ Type				::= (Type) IDENT:typeName;
 
 Statement			::= (GeneralDesignatorStatement) DesignatorStatement SEMI
 						|
-						(IfStatement) IF LPAREN Condition RPAREN Statement
+						(IfStatement) IF IfBeforeCond Condition IfAfterCond Statement
 						|
-						(IfElseStatement) IF LPAREN Condition RPAREN Statement ELSE Statement
+						(IfElseStatement) IF IfBeforeCond Condition IfAfterCond Statement ElseInterrupt Statement
 						|
 						(IfStatementError) IF LPAREN error RPAREN Statement:e 
 							{: parser.report_error("Invalid IF condition on line " + eleft, null); :}
@@ -375,11 +377,23 @@ Statement			::= (GeneralDesignatorStatement) DesignatorStatement SEMI
 						|
 						(NumConstPrintStatement) PRINT LPAREN Expr COMMA NUMCONST:val RPAREN SEMI
 						| 
-						(ForStatement) FOR LPAREN ForDesignatorStmnt SEMI ForCondition ForAfterCond ForDesignatorStmnt ForInterrupt Statement
+						(ForStatement) FOR LPAREN ForDesignatorStmnt ForBeforeCond ForCondition ForAfterCond ForDesignatorStmnt ForInterrupt Statement
 						|
 						(StatementBlock) LBRACE StatementList RBRACE
 						|
 						(SwitchStatement) SWITCH LPAREN Expr RPAREN SwitchInterrupt CaseList RBRACE;
+
+
+IfBeforeCond		::= (IfBeforeCond) LPAREN;
+
+
+IfAfterCond			::= (IfAfterCond) RPAREN;
+
+
+ElseInterrupt		::= (ElseInterrupt) ELSE; 
+
+
+ForBeforeCond		::= (ForBeforeCond) SEMI;
 
 
 ForAfterCond		::= (ForAfterCond) SEMI;
@@ -454,7 +468,10 @@ ActualParam			::= (ActualParam) Expr;
 
 Condition			::= (SimpleCondition) CondTerm 
 						|
-						(OrCondition) Condition OR CondTerm;
+						(OrCondition) Condition OrInterrupt CondTerm;
+
+
+OrInterrupt			::= (OrInterrupt) OR;
 
 
 CondTerm			::= (SimpleCondTerm) CondFact
@@ -469,7 +486,13 @@ CondFact			::= (SimpleCondFact) TermList
 						
 Expr				::= (SimpleExpr) TermList
 						|
-						(TernaryExpr) Condition QMARK Expr:trueExpr COLON Expr:falseExpr;
+						(TernaryExpr) Condition TernaryInterrupt Expr:trueExpr TernaryElse Expr:falseExpr;
+						
+						
+TernaryInterrupt	::= (TernaryInterrupt) QMARK;
+
+
+TernaryElse			::= (TernaryElse) COLON;
 						
 						
 TermList			::= (Terms) TermList Addop Term

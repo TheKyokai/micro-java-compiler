@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 16/1/2026 17:31:48
+// 16/1/2026 23:34:31
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -75,12 +75,15 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(FirstTermInList FirstTermInList) { visit(); }
     public void visit(UMinusFirstTermInList UMinusFirstTermInList) { visit(); }
     public void visit(Terms Terms) { visit(); }
+    public void visit(TernaryElse TernaryElse) { visit(); }
+    public void visit(TernaryInterrupt TernaryInterrupt) { visit(); }
     public void visit(TernaryExpr TernaryExpr) { visit(); }
     public void visit(SimpleExpr SimpleExpr) { visit(); }
     public void visit(RelopCondFact RelopCondFact) { visit(); }
     public void visit(SimpleCondFact SimpleCondFact) { visit(); }
     public void visit(AndCondTerm AndCondTerm) { visit(); }
     public void visit(SimpleCondTerm SimpleCondTerm) { visit(); }
+    public void visit(OrInterrupt OrInterrupt) { visit(); }
     public void visit(OrCondition OrCondition) { visit(); }
     public void visit(SimpleCondition SimpleCondition) { visit(); }
     public void visit(ActualParam ActualParam) { visit(); }
@@ -109,6 +112,10 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(ForDesignatorStatement ForDesignatorStatement) { visit(); }
     public void visit(ForInterrupt ForInterrupt) { visit(); }
     public void visit(ForAfterCond ForAfterCond) { visit(); }
+    public void visit(ForBeforeCond ForBeforeCond) { visit(); }
+    public void visit(ElseInterrupt ElseInterrupt) { visit(); }
+    public void visit(IfAfterCond IfAfterCond) { visit(); }
+    public void visit(IfBeforeCond IfBeforeCond) { visit(); }
     public void visit(SwitchStatement SwitchStatement) { visit(); }
     public void visit(StatementBlock StatementBlock) { visit(); }
     public void visit(ForStatement ForStatement) { visit(); }

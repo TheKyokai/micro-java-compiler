@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 16/1/2026 17:31:48
+// 16/1/2026 23:34:31
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -8,11 +8,14 @@ package rs.ac.bg.etf.pp1.ast;
 public class OrCondition extends Condition {
 
     private Condition Condition;
+    private OrInterrupt OrInterrupt;
     private CondTerm CondTerm;
 
-    public OrCondition (Condition Condition, CondTerm CondTerm) {
+    public OrCondition (Condition Condition, OrInterrupt OrInterrupt, CondTerm CondTerm) {
         this.Condition=Condition;
         if(Condition!=null) Condition.setParent(this);
+        this.OrInterrupt=OrInterrupt;
+        if(OrInterrupt!=null) OrInterrupt.setParent(this);
         this.CondTerm=CondTerm;
         if(CondTerm!=null) CondTerm.setParent(this);
     }
@@ -23,6 +26,14 @@ public class OrCondition extends Condition {
 
     public void setCondition(Condition Condition) {
         this.Condition=Condition;
+    }
+
+    public OrInterrupt getOrInterrupt() {
+        return OrInterrupt;
+    }
+
+    public void setOrInterrupt(OrInterrupt OrInterrupt) {
+        this.OrInterrupt=OrInterrupt;
     }
 
     public CondTerm getCondTerm() {
@@ -39,17 +50,20 @@ public class OrCondition extends Condition {
 
     public void childrenAccept(Visitor visitor) {
         if(Condition!=null) Condition.accept(visitor);
+        if(OrInterrupt!=null) OrInterrupt.accept(visitor);
         if(CondTerm!=null) CondTerm.accept(visitor);
     }
 
     public void traverseTopDown(Visitor visitor) {
         accept(visitor);
         if(Condition!=null) Condition.traverseTopDown(visitor);
+        if(OrInterrupt!=null) OrInterrupt.traverseTopDown(visitor);
         if(CondTerm!=null) CondTerm.traverseTopDown(visitor);
     }
 
     public void traverseBottomUp(Visitor visitor) {
         if(Condition!=null) Condition.traverseBottomUp(visitor);
+        if(OrInterrupt!=null) OrInterrupt.traverseBottomUp(visitor);
         if(CondTerm!=null) CondTerm.traverseBottomUp(visitor);
         accept(visitor);
     }
@@ -61,6 +75,12 @@ public class OrCondition extends Condition {
 
         if(Condition!=null)
             buffer.append(Condition.toString("  "+tab));
+        else
+            buffer.append(tab+"  null");
+        buffer.append("\n");
+
+        if(OrInterrupt!=null)
+            buffer.append(OrInterrupt.toString("  "+tab));
         else
             buffer.append(tab+"  null");
         buffer.append("\n");
