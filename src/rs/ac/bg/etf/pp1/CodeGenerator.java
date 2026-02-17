@@ -234,7 +234,7 @@ public class CodeGenerator extends VisitorAdaptor {
 		for (char c : methObj.getName().toCharArray())
 			Code.put4(c);
 		Code.put4(-1);
-		
+
 	}
 
 	@Override
@@ -443,10 +443,10 @@ public class CodeGenerator extends VisitorAdaptor {
 	private enum RELOP {
 		NONE, EQUAL, NOTEQUAL, GREATER, GREATEREQ, LESSER, LESSEREQ
 	}
-	
+
 	private Stack<ADDOP> addopStack = new Stack<CodeGenerator.ADDOP>();
 	private Stack<MULOP> mulopStack = new Stack<CodeGenerator.MULOP>();
-	
+
 	private ADDOP currentAddOp = ADDOP.NONE;
 	private MULOP currentMulOp = MULOP.NONE;
 	private RELOP currentRelOp = RELOP.NONE; // No need for stack -> will remain last visited
@@ -665,6 +665,7 @@ public class CodeGenerator extends VisitorAdaptor {
 	private Stack<List<Integer>> trueConditionAddrStack = new Stack<List<Integer>>();
 	private List<Integer> trueConditionAddrs = null;
 
+	private Stack<Boolean> condStartStack = new Stack<Boolean>(); 
 	private boolean conditionStart = true;
 	// Conditions are responsible for keeping the previous jump fixup addresses on
 	// stacks
@@ -799,9 +800,18 @@ public class CodeGenerator extends VisitorAdaptor {
 		currentCS = CSType.FOR;
 
 		Code.putJump(forCondCheckAddr); // Jump to check
-		Code.fixup(forBodyJumpAddress);
+		Code.fixup(forBodyJumpAddress);	
 		for (int tca : trueConditionAddrs)
 			Code.fixup(tca);
+	}
+	
+	@Override
+	public void visit(NoForCond noForCond) {
+		falseConditionAddrStack.push(falseConditionAddrs);
+		trueConditionAddrStack.push(trueConditionAddrs);
+
+		falseConditionAddrs = new ArrayList<Integer>();
+		trueConditionAddrs = new ArrayList<Integer>();
 	}
 
 	@Override
@@ -895,6 +905,18 @@ public class CodeGenerator extends VisitorAdaptor {
 
 		// For if-else purpose
 		elseSkipAddr = elseSkipAddrStack.pop();
+	}
+
+	@Override
+	public void visit(FactorExprStartIntr factorExprStartIntr) {
+		// In case of ternary operators in conditions
+		condStartStack.push(conditionStart);
+		conditionStart = true;
+	}
+
+	@Override
+	public void visit(FactorExprEndIntr factorExprEndIntr) {
+		conditionStart = condStartStack.pop();
 	}
 
 }

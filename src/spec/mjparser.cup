@@ -106,6 +106,7 @@ nonterminal FCallInterrupt, ActualParamList, MultActualParam;
 nonterminal rs.etf.pp1.symboltable.concepts.Obj Expr, Term, TermList, Factor, FactorList;
 nonterminal IfBeforeCond, IfAfterCond, ElseInterrupt;
 nonterminal TernaryInterrupt, TernaryElse;
+nonterminal FactorExprStartIntr, FactorExprEndIntr;
 
 nonterminal Assignop, Relop, Addop, Mulop, OrInterrupt;
 
@@ -370,7 +371,7 @@ Type				::= (Type) IDENT:typeName;
 Statement			::= (GeneralDesignatorStatement) DesignatorStatement SEMI
 						|
 						(GeneralDesignatorStatementError) error SEMI:e
-							{: parser.report_error("Invalid assignmentq on line " + eleft, null); :}
+							{: parser.report_error("Invalid assignment on line " + eleft, null); :}
 						|
 						(IfStatement) IF IfBeforeCond Condition IfAfterCond Statement
 						|
@@ -543,7 +544,13 @@ Factor				::= (FactorDesignator) Designator
 						|
 						(FactorArrayInst) NEW Type LBRACKET Expr RBRACKET
 						|
-						(FactorExpr) LPAREN Expr RPAREN;
+						(FactorExpr) FactorExprStartIntr Expr FactorExprEndIntr;
+						
+
+FactorExprStartIntr	::= (FactorExprStartIntr) LPAREN;
+
+
+FactorExprEndIntr	::= (FactorExprEndIntr) RPAREN;
 
 
 FCallInterrupt		::= (FCallInterrupt) LPAREN;

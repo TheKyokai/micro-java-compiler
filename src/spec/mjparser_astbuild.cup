@@ -147,6 +147,8 @@ nonterminal IfAfterCond IfAfterCond;
 nonterminal ElseInterrupt ElseInterrupt;
 nonterminal TernaryInterrupt TernaryInterrupt;
 nonterminal TernaryElse TernaryElse;
+nonterminal FactorExprStartIntr FactorExprStartIntr;
+nonterminal FactorExprEndIntr FactorExprEndIntr;
 
 nonterminal Assignop Assignop;
 nonterminal Relop Relop;
@@ -415,7 +417,7 @@ Type				::= (Type) IDENT:typeName {: RESULT=new Type(typeName); RESULT.setLine(t
 Statement			::= (GeneralDesignatorStatement) DesignatorStatement:D1 SEMI {: RESULT=new GeneralDesignatorStatement(D1); RESULT.setLine(D1left); :}
 						|
 						(GeneralDesignatorStatementError) error SEMI:e
-							{: parser.report_error("Invalid assignmentq on line " + eleft, null); :} {: RESULT=new GeneralDesignatorStatementError(); :}
+							{: parser.report_error("Invalid assignment on line " + eleft, null); :} {: RESULT=new GeneralDesignatorStatementError(); :}
 						|
 						(IfStatement) IF IfBeforeCond:I1 Condition:C2 IfAfterCond:I3 Statement:S4 {: RESULT=new IfStatement(I1, C2, I3, S4); RESULT.setLine(I1left); :}
 						|
@@ -588,7 +590,13 @@ Factor				::= (FactorDesignator) Designator:D1 {: RESULT=new FactorDesignator(D1
 						|
 						(FactorArrayInst) NEW Type:T1 LBRACKET Expr:E2 RBRACKET {: RESULT=new FactorArrayInst(T1, E2); RESULT.setLine(T1left); :}
 						|
-						(FactorExpr) LPAREN Expr:E1 RPAREN {: RESULT=new FactorExpr(E1); RESULT.setLine(E1left); :};
+						(FactorExpr) FactorExprStartIntr:F1 Expr:E2 FactorExprEndIntr:F3 {: RESULT=new FactorExpr(F1, E2, F3); RESULT.setLine(F1left); :};
+						
+
+FactorExprStartIntr	::= (FactorExprStartIntr) LPAREN {: RESULT=new FactorExprStartIntr(); :};
+
+
+FactorExprEndIntr	::= (FactorExprEndIntr) RPAREN {: RESULT=new FactorExprEndIntr(); :};
 
 
 FCallInterrupt		::= (FCallInterrupt) LPAREN {: RESULT=new FCallInterrupt(); :};

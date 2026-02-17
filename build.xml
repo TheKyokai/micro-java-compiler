@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project name="MJCompiler" default="compile" basedir=".">
+<project name="MJCompiler" default="compileSource" basedir=".">
 	
 	<target name="cleanLogs">
 		<delete>
@@ -49,7 +49,6 @@
 			<arg value="src.rs.ac.bg.etf.pp1.ast"/>
 			<arg value="-parser"/>
 			<arg value="MJParser"/>
-			<!-- <arg value="-dump_states"/> -->
 			<arg value="-buildtree"/>
 			<arg value="./src/spec/mjparser.cup"/>
 			
@@ -66,7 +65,7 @@
 		<replace dir="src" value="rs.ac.bg.etf.pp1.ast" token="src.rs.ac.bg.etf.pp1.ast" summary="true"/>
 	</target>
 	
-	<target name="compile" depends="repackage">
+	<target name="compileSource" depends="repackage">
 		<javac srcdir="./src/rs/ac/bg/etf/pp1" includeantruntime="false">
 			<classpath>
 				<pathelement path="./lib/JFlex.jar"/>
@@ -79,9 +78,26 @@
 	</target>
 	
 	
+	<target name="runCompiler">
+		<java classname="rs.ac.bg.etf.pp1.Compiler">
+			<arg value="${mj}"/>
+			<arg value="${obj}"/>
+	        <classpath>
+	            <pathelement path="./src"/>
+	        	<pathelement path="./config"/>
+	            <pathelement path="./lib/JFlex.jar"/>
+	            <pathelement path="./lib/cup_v10k.jar"/>
+	            <pathelement path="./lib/log4j-1.2.17.jar"/>
+	            <pathelement path="./lib/symboltable-1-1.jar"/>
+	            <pathelement path="./lib/mj-runtime-1.1.jar"/>
+	        </classpath>
+		</java>
+	</target>
+	
+	
 	<target name="disasm">
 		<java classname="rs.etf.pp1.mj.runtime.disasm">
-			<arg value="${basedir}/test/code_test.obj"/>
+			<arg value="${obj}"/>
 			<classpath>
 				<pathelement path="./lib/mj-runtime-1.1.jar"/>
 			</classpath>
@@ -90,7 +106,7 @@
 
 	<target name="runObj" depends="disasm" >
 		<java classname="rs.etf.pp1.mj.runtime.Run">
-			<arg value="${basedir}/test/code_test.obj"/>
+			<arg value="${obj}"/>
 			<classpath>
 				<pathelement path="./lib/mj-runtime-1.1.jar"/>
 			</classpath>
@@ -99,7 +115,7 @@
 	
 	<target name="runObjDebug" depends="disasm" >
 		<java classname="rs.etf.pp1.mj.runtime.Run">
-			<arg value="${basedir}/test/code_test.obj"/>
+			<arg value="${obj}"/>
 			<arg value="-debug"/>
 			<classpath>
 				<pathelement path="./lib/mj-runtime-1.1.jar"/>

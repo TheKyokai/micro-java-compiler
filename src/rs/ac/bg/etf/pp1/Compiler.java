@@ -50,6 +50,12 @@ public class Compiler {
 			log.error("Source file not specified.");
 			return;
 		}
+		
+		
+		if (args.length < 2) {
+			log.error("Obj file not specified.");
+			return;
+		}
 
 		Reader br = null;
 		try {
@@ -76,7 +82,7 @@ public class Compiler {
 			}
 			log.info("Syntax Analysis Successful\n");
 			programAst = (Program) (s.value);
-//			log.info("\n\n" + programAst.toString("") + "\n");
+			log.info("\n\n" + programAst.toString("") + "\n");
 			
 			
 			log.info("==================== Semantic Analysis ====================");
@@ -104,14 +110,13 @@ public class Compiler {
 			Code.mainPc = codeGenerator.mainObj.getAdr();	
 			Code.dataSize = codeGenerator.currentStaticAddr;
 			
-			File objFile = new File("test/code_test.obj");
+			File objFile = new File(args[1]);
         	log.info("Generating bytecode file: " + objFile.getAbsolutePath());
         	if (objFile.exists())
         		objFile.delete();
 			
-			
 			Code.write(new FileOutputStream(objFile));
-			log.info("Compiling successfull. Bytecode generated.");
+			log.info("Compiling successful. Bytecode generated.");
 			
 
 		} finally {

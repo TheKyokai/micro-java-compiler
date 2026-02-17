@@ -1,0 +1,13 @@
+program ternary_test
+
+const bool tr = true;
+{
+
+		
+	void main() bool cond; int x; 
+	{	
+		cond = true;
+		x = x == 10 && (x == 10 && cond ? false : true) ? 55:44;
+		print(x);
+	}
+}

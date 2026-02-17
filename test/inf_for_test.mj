@@ -1,0 +1,18 @@
+program inf
+
+{
+	void main() int x, i;
+	{
+		x = 100;
+		for (i=0;;i++)
+		{
+			if (i % 2 == 1)
+				continue;
+			print(x + i);
+			print(eol);
+			if (i == 10)
+				//break;
+				i++;
+		}
+	}
+}
