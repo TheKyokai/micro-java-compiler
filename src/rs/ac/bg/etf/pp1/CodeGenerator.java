@@ -7,72 +7,7 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.stream.Collectors;
 
-import rs.ac.bg.etf.pp1.ast.AbsClassName;
-import rs.ac.bg.etf.pp1.ast.ActualParam;
-import rs.ac.bg.etf.pp1.ast.BreakStatement;
-import rs.ac.bg.etf.pp1.ast.CaseNum;
-import rs.ac.bg.etf.pp1.ast.ClassMethodDecl;
-import rs.ac.bg.etf.pp1.ast.ClassMethodName;
-import rs.ac.bg.etf.pp1.ast.ClassName;
-import rs.ac.bg.etf.pp1.ast.ContinueStatement;
-import rs.ac.bg.etf.pp1.ast.Designator;
-import rs.ac.bg.etf.pp1.ast.DesignatorAssignment;
-import rs.ac.bg.etf.pp1.ast.DesignatorChain;
-import rs.ac.bg.etf.pp1.ast.DesignatorChainFieldAccess;
-import rs.ac.bg.etf.pp1.ast.DesignatorChainIdent;
-import rs.ac.bg.etf.pp1.ast.DesignatorChainIndexAccess;
-import rs.ac.bg.etf.pp1.ast.DesignatorDec;
-import rs.ac.bg.etf.pp1.ast.DesignatorDst;
-import rs.ac.bg.etf.pp1.ast.DesignatorFCall;
-import rs.ac.bg.etf.pp1.ast.DesignatorInc;
-import rs.ac.bg.etf.pp1.ast.Div;
-import rs.ac.bg.etf.pp1.ast.ElseInterrupt;
-import rs.ac.bg.etf.pp1.ast.Equal;
-import rs.ac.bg.etf.pp1.ast.FCallInterrupt;
-import rs.ac.bg.etf.pp1.ast.FactorArrayInst;
-import rs.ac.bg.etf.pp1.ast.FactorBoolConst;
-import rs.ac.bg.etf.pp1.ast.FactorCharConst;
-import rs.ac.bg.etf.pp1.ast.FactorFCall;
-import rs.ac.bg.etf.pp1.ast.FactorNumConst;
-import rs.ac.bg.etf.pp1.ast.FactorTypeInst;
-import rs.ac.bg.etf.pp1.ast.Factors;
-import rs.ac.bg.etf.pp1.ast.ForAfterCond;
-import rs.ac.bg.etf.pp1.ast.ForBeforeCond;
-import rs.ac.bg.etf.pp1.ast.ForInterrupt;
-import rs.ac.bg.etf.pp1.ast.ForStatement;
-import rs.ac.bg.etf.pp1.ast.GreaterEqual;
-import rs.ac.bg.etf.pp1.ast.GreaterThan;
-import rs.ac.bg.etf.pp1.ast.IfAfterCond;
-import rs.ac.bg.etf.pp1.ast.IfBeforeCond;
-import rs.ac.bg.etf.pp1.ast.IfElseStatement;
-import rs.ac.bg.etf.pp1.ast.IfStatement;
-import rs.ac.bg.etf.pp1.ast.LesserThan;
-import rs.ac.bg.etf.pp1.ast.LesserThanEqual;
-import rs.ac.bg.etf.pp1.ast.MethodDecl;
-import rs.ac.bg.etf.pp1.ast.MethodName;
-import rs.ac.bg.etf.pp1.ast.Minus;
-import rs.ac.bg.etf.pp1.ast.Mod;
-import rs.ac.bg.etf.pp1.ast.Mul;
-import rs.ac.bg.etf.pp1.ast.NotEqual;
-import rs.ac.bg.etf.pp1.ast.NumConstPrintStatement;
-import rs.ac.bg.etf.pp1.ast.OrInterrupt;
-import rs.ac.bg.etf.pp1.ast.Plus;
-import rs.ac.bg.etf.pp1.ast.PrintStatement;
-import rs.ac.bg.etf.pp1.ast.ReadStatement;
-import rs.ac.bg.etf.pp1.ast.RelopCondFact;
-import rs.ac.bg.etf.pp1.ast.SimpleCondFact;
-import rs.ac.bg.etf.pp1.ast.SingleCase;
-import rs.ac.bg.etf.pp1.ast.SwitchInterrupt;
-import rs.ac.bg.etf.pp1.ast.SwitchStatement;
-import rs.ac.bg.etf.pp1.ast.SyntaxNode;
-import rs.ac.bg.etf.pp1.ast.Terms;
-import rs.ac.bg.etf.pp1.ast.TernaryElse;
-import rs.ac.bg.etf.pp1.ast.TernaryExpr;
-import rs.ac.bg.etf.pp1.ast.TernaryInterrupt;
-import rs.ac.bg.etf.pp1.ast.TypedReturnStatement;
-import rs.ac.bg.etf.pp1.ast.UMinusFirstTermInList;
-import rs.ac.bg.etf.pp1.ast.VisitorAdaptor;
-import rs.ac.bg.etf.pp1.ast.VoidReturnStatement;
+import rs.ac.bg.etf.pp1.ast.*;
 import rs.etf.pp1.mj.runtime.Code;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.Obj;
@@ -95,7 +30,7 @@ public class CodeGenerator extends VisitorAdaptor {
 		program = Tab.currentScope.getLocals().symbols().stream().filter(sym -> sym.getKind() == Obj.Prog).findFirst()
 				.get();
 
-		// Inserting built in methods
+		// Inserting built-in methods
 
 		Tab.chrObj.setAdr(Code.pc);
 		Code.put(Code.enter);
@@ -129,8 +64,6 @@ public class CodeGenerator extends VisitorAdaptor {
 		for (Obj classObj : program.getLocalSymbols().stream()
 				.filter(sym -> sym.getKind() == Obj.Type && sym.getType().getKind() == Struct.Class)
 				.collect(Collectors.toList())) {
-			// TODO REMOVE
-//			System.out.println("Checking class " + classObj.getName());
 			classObj.setAdr(currentStaticAddr);
 			// Getting all class methods
 			for (Obj meth : classObj.getType().getMembers().stream().filter(sym -> sym.getKind() == Obj.Meth)
@@ -211,8 +144,6 @@ public class CodeGenerator extends VisitorAdaptor {
 
 	@Override
 	public void visit(ClassMethodName classMethodName) {
-		// TODO REMOVE
-//		System.out.println("Class meth " + classMethodName.obj.getName());
 		classMethodName.obj.setAdr(Code.pc);
 		// ENTER
 		Code.put(Code.enter);
@@ -429,7 +360,6 @@ public class CodeGenerator extends VisitorAdaptor {
 		Code.store(designatorAssignment.getDesignatorDst().obj);
 	}
 
-	// TODO Check for array elem loading
 	@Override
 	public void visit(DesignatorInc designatorInc) {
 		Obj prevObj = designatorInc.getDesignatorDst().obj;
@@ -502,7 +432,6 @@ public class CodeGenerator extends VisitorAdaptor {
 			Code.put(Code.astore);
 	}
 
-	// TODO Move to Compiler
 	private enum ADDOP {
 		NONE, ADD, SUB;
 	}

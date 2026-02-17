@@ -95,6 +95,8 @@ nonterminal ClassDecl, ClassExtension;
 nonterminal ExtFieldIntercept, FieldDeclList, FieldDecl;
 nonterminal ClassMethods, ExtMethodIntercept, ClassMethodDeclList; 	
 nonterminal AbsClassDecl, AbsClassMethods, AbsClassMethodList, AbsMethodDecl, AbsMethodName;
+nonterminal SingleGlVarDecl, MultGlVarDecl, GlVarDecl;
+
 
 nonterminal MethodDeclList, ReturnType, FormalParamList, FormalParams, FormalParam, VarDeclList;
 nonterminal StatementList, Statement, DesignatorStatement, ForDesignatorStmnt, ForBeforeCond, ForCondition, ForAfterCond, ForInterrupt, IndexInterrupt;
@@ -149,14 +151,28 @@ GlobalDeclList 		::= (GlobalDecls) GlobalDeclList GlobalDecl
 
 GlobalDecl 			::= (GlobalConstDecl) ConstDecl
 						|
-						(GlobalVarDecl) VarDecl
+						(GlobalVarDecl) GlVarDecl
 						|
 						(GlobalClassDecl) ClassDecl
 						|
 						(GlobalEnumDecl) EnumDecl
 						|
 						(GlobalAbsClassDecl) AbsClassDecl;
-				
+						
+						
+GlVarDecl			::= (GlVarDecl) Type MultGlVarDecl SEMI;
+
+
+MultGlVarDecl		::= (MultGlVarDecls) MultGlVarDecl COMMA SingleGlVarDecl
+						|
+						(FirstGlVarDecl) SingleGlVarDecl; 
+						
+	
+SingleGlVarDecl		::= (SingleGlVarDeclValid) SingleVarDecl
+						|
+						(SingleGlVarDeclError) error:e
+							{: parser.report_error("Invalid global variable declaration on line " + eleft, null); :};
+							
 
 
 /*------------------------- Constant Declaration -------------------------*/
@@ -352,6 +368,9 @@ Type				::= (Type) IDENT:typeName;
 /*------------------------- Statements -------------------------*/
 
 Statement			::= (GeneralDesignatorStatement) DesignatorStatement SEMI
+						|
+						(GeneralDesignatorStatementError) error SEMI:e
+							{: parser.report_error("Invalid assignmentq on line " + eleft, null); :}
 						|
 						(IfStatement) IF IfBeforeCond Condition IfAfterCond Statement
 						|

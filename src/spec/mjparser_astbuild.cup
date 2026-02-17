@@ -113,6 +113,10 @@ nonterminal AbsClassMethods AbsClassMethods;
 nonterminal AbsClassMethodList AbsClassMethodList;
 nonterminal AbsMethodDecl AbsMethodDecl;
 nonterminal AbsMethodName AbsMethodName;
+nonterminal SingleGlVarDecl SingleGlVarDecl;
+nonterminal MultGlVarDecl MultGlVarDecl;
+nonterminal GlVarDecl GlVarDecl;
+
 
 nonterminal MethodDeclList MethodDeclList;
 nonterminal ReturnType ReturnType;
@@ -192,14 +196,28 @@ GlobalDeclList 		::= (GlobalDecls) GlobalDeclList:G1 GlobalDecl:G2 {: RESULT=new
 
 GlobalDecl 			::= (GlobalConstDecl) ConstDecl:C1 {: RESULT=new GlobalConstDecl(C1); RESULT.setLine(C1left); :}
 						|
-						(GlobalVarDecl) VarDecl:V1 {: RESULT=new GlobalVarDecl(V1); RESULT.setLine(V1left); :}
+						(GlobalVarDecl) GlVarDecl:G1 {: RESULT=new GlobalVarDecl(G1); RESULT.setLine(G1left); :}
 						|
 						(GlobalClassDecl) ClassDecl:C1 {: RESULT=new GlobalClassDecl(C1); RESULT.setLine(C1left); :}
 						|
 						(GlobalEnumDecl) EnumDecl:E1 {: RESULT=new GlobalEnumDecl(E1); RESULT.setLine(E1left); :}
 						|
 						(GlobalAbsClassDecl) AbsClassDecl:A1 {: RESULT=new GlobalAbsClassDecl(A1); RESULT.setLine(A1left); :};
-				
+						
+						
+GlVarDecl			::= (GlVarDecl) Type:T1 MultGlVarDecl:M2 SEMI {: RESULT=new GlVarDecl(T1, M2); RESULT.setLine(T1left); :};
+
+
+MultGlVarDecl		::= (MultGlVarDecls) MultGlVarDecl:M1 COMMA SingleGlVarDecl:S2 {: RESULT=new MultGlVarDecls(M1, S2); RESULT.setLine(M1left); :}
+						|
+						(FirstGlVarDecl) SingleGlVarDecl:S1 {: RESULT=new FirstGlVarDecl(S1); RESULT.setLine(S1left); :}; 
+						
+	
+SingleGlVarDecl		::= (SingleGlVarDeclValid) SingleVarDecl:S1 {: RESULT=new SingleGlVarDeclValid(S1); RESULT.setLine(S1left); :}
+						|
+						(SingleGlVarDeclError) error:e
+							{: parser.report_error("Invalid global variable declaration on line " + eleft, null); :} {: RESULT=new SingleGlVarDeclError(); :};
+							
 
 
 /*------------------------- Constant Declaration -------------------------*/
@@ -395,6 +413,9 @@ Type				::= (Type) IDENT:typeName {: RESULT=new Type(typeName); RESULT.setLine(t
 /*------------------------- Statements -------------------------*/
 
 Statement			::= (GeneralDesignatorStatement) DesignatorStatement:D1 SEMI {: RESULT=new GeneralDesignatorStatement(D1); RESULT.setLine(D1left); :}
+						|
+						(GeneralDesignatorStatementError) error SEMI:e
+							{: parser.report_error("Invalid assignmentq on line " + eleft, null); :} {: RESULT=new GeneralDesignatorStatementError(); :}
 						|
 						(IfStatement) IF IfBeforeCond:I1 Condition:C2 IfAfterCond:I3 Statement:S4 {: RESULT=new IfStatement(I1, C2, I3, S4); RESULT.setLine(I1left); :}
 						|

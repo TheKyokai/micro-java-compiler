@@ -65,8 +65,9 @@ int tezinaK, tezinaS;
 		if(p.dohvVrstu() == 's') print('S');
 		else if(p.dohvVrstu() == 'k') print('K');
 
-		print(eol); 
+		print('-'); 
 		print(p.dohvTezinu());
+		print(eol);
 	}
 		
 	void main() Predmet predmeti[]; AbsPredmet absPredmeti[]; int i; Sfera s1, s2, s3; Kvadar k1, k2, k3; int t;
@@ -97,7 +98,7 @@ int tezinaK, tezinaS;
 		predmeti[5] = k3;
 
 		//read(t);
-		t = 4;
+		t = 120;
 		for(i=0;i<absPredmeti.length;i++)
 		{
 			predmeti[i].postaviTezinu(t);	

@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 16/1/2026 23:34:31
+// 17/1/2026 12:7:1
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -38,6 +38,7 @@ public interface Visitor {
     public void visit(Assignop Assignop);
     public void visit(ReturnType ReturnType);
     public void visit(FormalParam FormalParam);
+    public void visit(MultGlVarDecl MultGlVarDecl);
     public void visit(CondTerm CondTerm);
     public void visit(FieldDecl FieldDecl);
     public void visit(MethodDeclList MethodDeclList);
@@ -47,6 +48,7 @@ public interface Visitor {
     public void visit(VarDeclList VarDeclList);
     public void visit(CondFact CondFact);
     public void visit(ClassExtension ClassExtension);
+    public void visit(SingleGlVarDecl SingleGlVarDecl);
     public void visit(ConstVal ConstVal);
     public void visit(Mod Mod);
     public void visit(Div Div);
@@ -130,6 +132,7 @@ public interface Visitor {
     public void visit(IfStatementError IfStatementError);
     public void visit(IfElseStatement IfElseStatement);
     public void visit(IfStatement IfStatement);
+    public void visit(GeneralDesignatorStatementError GeneralDesignatorStatementError);
     public void visit(GeneralDesignatorStatement GeneralDesignatorStatement);
     public void visit(Type Type);
     public void visit(EmptyStatementList EmptyStatementList);
@@ -194,6 +197,11 @@ public interface Visitor {
     public void visit(FirstConstDecl FirstConstDecl);
     public void visit(MultConstDecls MultConstDecls);
     public void visit(ConstDecl ConstDecl);
+    public void visit(SingleGlVarDeclError SingleGlVarDeclError);
+    public void visit(SingleGlVarDeclValid SingleGlVarDeclValid);
+    public void visit(FirstGlVarDecl FirstGlVarDecl);
+    public void visit(MultGlVarDecls MultGlVarDecls);
+    public void visit(GlVarDecl GlVarDecl);
     public void visit(GlobalAbsClassDecl GlobalAbsClassDecl);
     public void visit(GlobalEnumDecl GlobalEnumDecl);
     public void visit(GlobalClassDecl GlobalClassDecl);

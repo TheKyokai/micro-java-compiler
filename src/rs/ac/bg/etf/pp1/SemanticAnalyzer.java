@@ -8,10 +8,8 @@ import java.util.Stack;
 import org.apache.log4j.Logger;
 
 import rs.ac.bg.etf.pp1.ast.*;
-import rs.ac.bg.etf.pp1.util.ExpandedDumpSymbolTableVisitor;
 import rs.etf.pp1.symboltable.Tab;
 import rs.etf.pp1.symboltable.concepts.*;
-import rs.etf.pp1.symboltable.visitors.SymbolTableVisitor;
 
 public class SemanticAnalyzer extends VisitorAdaptor {
 
@@ -40,6 +38,57 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		if (line != 0)
 			msg.append(" on line ").append(line);
 		log.info(msg.toString());
+	}
+	
+	
+	private String getStructInfo(Obj obj) {
+		StringBuilder output = new StringBuilder();
+		Struct type = obj.getType();
+		if (type.getKind() == Struct.Array) {
+			output.append("Array of ");
+			type = type.getElemType();
+		}
+		if (type == Tab.noType)
+			output.append("void");
+		else 
+			output.append(findTypeObj(type).getName());
+		return output.toString();
+	}
+
+	private void report_object(Obj obj, SyntaxNode node) {
+		StringBuilder output = new StringBuilder();
+		
+		switch (obj.getKind()) {
+		case Obj.Con:
+			output.append("Con ");
+			break;
+		case Obj.Var:
+			output.append("Var ");
+			break;
+		case Obj.Type:
+			output.append("Type ");
+			break;
+		case Obj.Meth:
+			output.append("Meth ");
+			break;
+		case Obj.Fld:
+			output.append("Fld ");
+			break;
+		default:
+			// Will not happen
+		}
+
+		output.append(obj.getName());
+		output.append(": ");
+		
+		output.append(getStructInfo(obj));
+
+		output.append(", ");
+		output.append(obj.getAdr());
+		output.append(", ");
+		output.append(obj.getLevel());
+
+		report_info("Found (" + obj.getName() + ") ->  | " + output.toString() + " |", node);
 	}
 
 	// UTIL
@@ -179,6 +228,11 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 	// VarDecl
 	@Override
 	public void visit(VarDecl varDecl) {
+		currentType = Tab.noType;
+	}
+
+	@Override
+	public void visit(GlVarDecl glVarDecl) {
 		currentType = Tab.noType;
 	}
 
@@ -528,7 +582,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		Tab.closeScope();
 		currentMeth = Tab.noObj;
 		overridingMeth = Tab.noObj;
-		
+
 	}
 
 	@Override
@@ -623,7 +677,6 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		});
 	}
 
-	// TODO TEST FOR BUGS
 	@Override
 	public void visit(AbsMethodName absMethodName) {
 		if ((returnTyped && currentType == Tab.noType) || currentClassType == Tab.noType) {
@@ -866,12 +919,9 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 
 	private Struct assignOpEnumType = Tab.noType; // Enum assignment
 	private Obj lastVisitedDesignator = Tab.noObj; // Actual parameter checking
-	
+
 	private Stack<Obj> invMethStack = new Stack<Obj>();
 	private Obj invokedMethod = Tab.noObj;
-	
-	private String foundDesignatorName = "";
-	private String nameOfIndexedArray = "";
 
 	@Override
 	public void visit(Designator designator) {
@@ -880,7 +930,6 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 
 	@Override
 	public void visit(DesignatorDst designatorDst) {
-		// TODO Test more
 		lastVisitedDesignator = designatorDst.obj = designatorDst.getDesignatorChain().obj;
 	}
 
@@ -893,7 +942,6 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			designatorChainIdent.obj = Tab.noObj;
 			return;
 		}
-		// TODO Test
 		if (foundSymbol.getKind() == Obj.Type && foundSymbol.getType().getKind() != Struct.Enum) {
 			report_error("Name '" + designatorChainIdent.getName()
 					+ "' does not represent an enum, a constant, a method nor a variable reachable from the current scope",
@@ -902,11 +950,9 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return;
 		}
 		designatorChainIdent.obj = foundSymbol;
-		foundDesignatorName = foundSymbol.getName();
-		if (foundSymbol.getKind() != Obj.Type) {
-			// TODO SPEC
-			report_info("Found (" + foundDesignatorName + "):  OBJ MISSING", designatorChainIdent);
-		}
+		if (foundSymbol.getKind() != Obj.Type)
+			report_object(designatorChainIdent.obj, designatorChainIdent);
+
 	}
 
 	@Override
@@ -933,7 +979,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 				designatorChainFieldAccess.obj = Tab.noObj;
 				return;
 			}
-			// TODO CHECK
+			// CHECK
 			designatorChainFieldAccess.obj = new Obj(Obj.Type, "array_length_wrapper", Tab.intType); // Type kind to
 																										// disable
 																										// assignment
@@ -953,10 +999,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 				return;
 			}
 			assignOpEnumType = designatorChainFieldAccess.getDesignatorChain().obj.getType();
-			designatorChainFieldAccess.obj = enumConstOpt.get(); // TODO CHECK
-			foundDesignatorName += "." + accessName;
-			// TODO SPEC
-			report_info("Found (" + foundDesignatorName + "):  OBJ MISSING", designatorChainFieldAccess);
+			designatorChainFieldAccess.obj = enumConstOpt.get();
+			report_object(designatorChainFieldAccess.obj, designatorChainFieldAccess);
 			break;
 		case Struct.Class:
 			if (designatorChainFieldAccess.getDesignatorChain().obj.getKind() == Obj.Type) {
@@ -979,9 +1023,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 				return;
 			}
 			designatorChainFieldAccess.obj = classFieldOpt.get();
-			foundDesignatorName += "." + accessName;
-			// TODO SPEC
-			report_info("Found (" + foundDesignatorName + "):  OBJ MISSING", designatorChainFieldAccess);
+			report_object(designatorChainFieldAccess.obj, designatorChainFieldAccess);
 		}
 
 	}
@@ -992,7 +1034,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			designatorChainIndexAccess.obj = Tab.noObj;
 			return;
 		}
-		if (designatorChainIndexAccess.getDesignatorChain().obj.getKind() != Obj.Var && designatorChainIndexAccess.getDesignatorChain().obj.getKind() != Obj.Fld) {
+		if (designatorChainIndexAccess.getDesignatorChain().obj.getKind() != Obj.Var
+				&& designatorChainIndexAccess.getDesignatorChain().obj.getKind() != Obj.Fld) {
 			report_error("Indexed access of non-variable", designatorChainIndexAccess);
 			designatorChainIndexAccess.obj = Tab.noObj;
 			return;
@@ -1002,7 +1045,6 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			designatorChainIndexAccess.obj = Tab.noObj;
 			return;
 		}
-		// TODO TEST
 		Obj indexExpr = designatorChainIndexAccess.getExpr().obj;
 		if (indexExpr.getType().getKind() == Struct.Enum
 				&& (indexExpr.getKind() == Obj.Var || indexExpr.getKind() == Obj.Elem))
@@ -1016,11 +1058,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		Obj arrayElemObj = new Obj(Obj.Elem, "array_elem_wrapper",
 				designatorChainIndexAccess.getDesignatorChain().obj.getType().getElemType());
 		designatorChainIndexAccess.obj = arrayElemObj;
-	}
-
-	@Override
-	public void visit(IndexInterrupt indexInterrupt) {
-		nameOfIndexedArray = foundDesignatorName;
+		report_info("\tArray element access", designatorChainIndexAccess);
 	}
 
 	@Override
@@ -1033,13 +1071,12 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		factorDesignator.obj = factorDesignator.getDesignator().obj;
 	}
 
-	// TODO Fix act param checking -> fails for one line method calls
 	@Override
 	public void visit(FactorFCall factorFCall) {
 		Obj methObj = factorFCall.getDesignator().obj;
 		if (methObj == Tab.noObj || methObj.getKind() != Obj.Meth) {
 			report_error("Method call of non-method designator", factorFCall);
-			factorFCall.obj = Tab.noObj;	
+			factorFCall.obj = Tab.noObj;
 		} else {
 			Obj methRetObj = findTypeObj(methObj.getType());
 			factorFCall.obj = methRetObj;
@@ -1087,7 +1124,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return;
 		}
 		factorTypeInst.obj = new Obj(Obj.Var, classTypeObj.getName() + " inst_wrapper", classTypeObj.getType());
-		report_info("Found (" + classTypeObj.getName() + "):  OBJ MISSING", factorTypeInst);
+		report_object(classTypeObj, factorTypeInst);
+		report_info("\tClass object creation", null);
 	}
 
 	@Override
@@ -1177,7 +1215,6 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 
 	@Override
 	public void visit(TernaryExpr ternaryExpr) {
-		// TODO TEST MORE
 		if (!ternaryExpr.getExpr().obj.getType().equals(ternaryExpr.getExpr1().obj.getType())) {
 			report_error("Ternary expression sub-expression types do not match", ternaryExpr);
 			ternaryExpr.obj = Tab.noObj;
@@ -1188,9 +1225,8 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 
 	@Override
 	public void visit(SimpleCondFact simpleCondFact) {
-		//TODO Check
 		if (simpleCondFact.getTermList().obj.getType().getKind() != Struct.Bool) {
-			report_error("Condfact not bool", simpleCondFact);
+			report_error("CondFact not bool", simpleCondFact);
 			simpleCondFact.obj = Tab.noObj;
 			return;
 		}
@@ -1287,10 +1323,9 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			report_error("Continue outside of a for loop", continueStatement);
 	}
 
-	
 	private Stack<List<Integer>> caseConstStack = new Stack<List<Integer>>();
 	private List<Integer> usedCaseConsts = null;
-	
+
 	@Override
 	public void visit(SwitchInterrupt switchInterrupt) {
 		switchDepth++;
@@ -1315,8 +1350,6 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			usedCaseConsts.add(val);
 	}
 
-	// TODO TEST EVERYTHING BELOW
-	
 	@Override
 	public void visit(PrintStatement printStatement) {
 		Struct exprType = printStatement.getExpr().obj.getType();
@@ -1405,7 +1438,7 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 			return;
 		}
 		if (!assignmentTypeCompatible(designatorObj, designatorAssignment.getExpr().obj))
-			// TODO Debug format
+			// Debug format
 			report_error("'" + designatorAssignment.getExpr().obj.getName() + "' cannot be assigned to '"
 					+ designatorObj.getName() + "'", designatorAssignment);
 		assignOpEnumType = Tab.noType;
@@ -1440,8 +1473,9 @@ public class SemanticAnalyzer extends VisitorAdaptor {
 		}
 		invokedMethod = lastVisitedDesignator;
 		currentApPos = invokedMethod.getFpPos() == 0 ? 0 : 1; // Adjusting for this in class methods
+		report_object(invokedMethod, fCallInterrupt);
 	}
-	
+
 	private Stack<Integer> apPosStack = new Stack<Integer>();
 	private int currentApPos = 0;
 

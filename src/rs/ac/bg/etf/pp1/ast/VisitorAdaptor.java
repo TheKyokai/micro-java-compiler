@@ -1,6 +1,6 @@
 // generated with ast extension for cup
 // version 0.8
-// 16/1/2026 23:34:31
+// 17/1/2026 12:7:1
 
 
 package rs.ac.bg.etf.pp1.ast;
@@ -38,6 +38,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(Assignop Assignop) { }
     public void visit(ReturnType ReturnType) { }
     public void visit(FormalParam FormalParam) { }
+    public void visit(MultGlVarDecl MultGlVarDecl) { }
     public void visit(CondTerm CondTerm) { }
     public void visit(FieldDecl FieldDecl) { }
     public void visit(MethodDeclList MethodDeclList) { }
@@ -47,6 +48,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(VarDeclList VarDeclList) { }
     public void visit(CondFact CondFact) { }
     public void visit(ClassExtension ClassExtension) { }
+    public void visit(SingleGlVarDecl SingleGlVarDecl) { }
     public void visit(ConstVal ConstVal) { }
     public void visit(Mod Mod) { visit(); }
     public void visit(Div Div) { visit(); }
@@ -130,6 +132,7 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(IfStatementError IfStatementError) { visit(); }
     public void visit(IfElseStatement IfElseStatement) { visit(); }
     public void visit(IfStatement IfStatement) { visit(); }
+    public void visit(GeneralDesignatorStatementError GeneralDesignatorStatementError) { visit(); }
     public void visit(GeneralDesignatorStatement GeneralDesignatorStatement) { visit(); }
     public void visit(Type Type) { visit(); }
     public void visit(EmptyStatementList EmptyStatementList) { visit(); }
@@ -194,6 +197,11 @@ public abstract class VisitorAdaptor implements Visitor {
     public void visit(FirstConstDecl FirstConstDecl) { visit(); }
     public void visit(MultConstDecls MultConstDecls) { visit(); }
     public void visit(ConstDecl ConstDecl) { visit(); }
+    public void visit(SingleGlVarDeclError SingleGlVarDeclError) { visit(); }
+    public void visit(SingleGlVarDeclValid SingleGlVarDeclValid) { visit(); }
+    public void visit(FirstGlVarDecl FirstGlVarDecl) { visit(); }
+    public void visit(MultGlVarDecls MultGlVarDecls) { visit(); }
+    public void visit(GlVarDecl GlVarDecl) { visit(); }
     public void visit(GlobalAbsClassDecl GlobalAbsClassDecl) { visit(); }
     public void visit(GlobalEnumDecl GlobalEnumDecl) { visit(); }
     public void visit(GlobalClassDecl GlobalClassDecl) { visit(); }
